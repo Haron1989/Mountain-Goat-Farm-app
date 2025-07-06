@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>🐐 Mountain Goat Farm</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#goats">Our Goats</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h2>Welcome to Mountain Goat Farm</h2>
+                <p>Premium goat products from the heart of the mountains</p>
+                <button class="cta-button">Explore Our Farm</button>
+            </div>
+        </section>
+
+        <section id="goats" class="goats-section">
+            <div class="container">
+                <h2>Our Goats</h2>
+                <div class="goat-grid" id="goat-grid">
+                    <!-- Goats will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="products-section">
+            <div class="container">
+                <h2>Farm Products</h2>
+                <div class="product-grid">
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/300x200?text=Goat+Milk" alt="Fresh Goat Milk">
+                        <h3>Fresh Goat Milk</h3>
+                        <p>Rich, creamy milk from our healthy goats</p>
+                        <span class="price">$8.99/gallon</span>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/300x200?text=Goat+Cheese" alt="Artisan Goat Cheese">
+                        <h3>Artisan Goat Cheese</h3>
+                        <p>Handcrafted cheese with unique mountain flavors</p>
+                        <span class="price">$12.99/lb</span>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/300x200?text=Goat+Soap" alt="Natural Goat Soap">
+                        <h3>Natural Goat Soap</h3>
+                        <p>Moisturizing soap made from pure goat milk</p>
+                        <span class="price">$6.99/bar</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about-section">
+            <div class="container">
+                <h2>About Our Farm</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Mountain Goat Farm has been family-owned and operated for over 30 years. Located in the pristine mountains, our goats graze on natural pastures and are raised with care and attention to their well-being.</p>
+                        <p>We pride ourselves on sustainable farming practices and producing the highest quality goat products for our community.</p>
+                    </div>
+                    <div class="farm-stats">
+                        <div class="stat">
+                            <h3 id="goat-count">25</h3>
+                            <p>Happy Goats</p>
+                        </div>
+                        <div class="stat">
+                            <h3>30+</h3>
+                            <p>Years Experience</p>
+                        </div>
+                        <div class="stat">
+                            <h3>100%</h3>
+                            <p>Natural Products</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2>Contact Us</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <h3>Visit Our Farm</h3>
+                        <p>📍 123 Mountain View Road<br>
+                        Alpine Valley, CO 80424</p>
+                        <p>📞 (555) 123-4567</p>
+                        <p>📧 info@mountaingoatfarm.com</p>
+                    </div>
+                    <form class="contact-form">
+                        <input type="text" placeholder="Your Name" required>
+                        <input type="email" placeholder="Your Email" required>
+                        <textarea placeholder="Your Message" rows="5" required></textarea>
+                        <button type="submit">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Mountain Goat Farm. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
