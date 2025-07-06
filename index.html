@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mountain Goat Farm</title>
+    <title>The Mountain Goat Farm - Premium Goat Products from the Heart of Kenya</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <nav>
             <div class="logo">
-                <h1>🐐 Mountain Goat Farm</h1>
+                <img src="The_Mountain_Goat_Farm_Logo_Media (2).png" alt="The Mountain Goat Farm Logo">
+                <h1>The Mountain Goat Farm</h1>
             </div>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
@@ -18,6 +22,7 @@
                 <li><a href="#products">Products</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
+                <li><a href="farm-records.html" style="background-color: #e74c3c; padding: 8px 16px; border-radius: 5px; color: white;">Farm Records</a></li>
             </ul>
         </nav>
     </header>
@@ -25,8 +30,8 @@
     <main>
         <section id="home" class="hero">
             <div class="hero-content">
-                <h2>Welcome to Mountain Goat Farm</h2>
-                <p>Premium goat products from the heart of the mountains</p>
+                <h2>Welcome to The Mountain Goat Farm</h2>
+                <p>Raising Kenya's Finest Meat Goats – Quality Breeding, Superior Genetics from the Heart of the Mountain</p>
                 <button class="cta-button">Explore Our Farm</button>
             </div>
         </section>
@@ -43,25 +48,67 @@
         <section id="products" class="products-section">
             <div class="container">
                 <h2>Farm Products</h2>
-                <div class="product-grid">
-                    <div class="product-card">
-                        <img src="https://via.placeholder.com/300x200?text=Goat+Milk" alt="Fresh Goat Milk">
-                        <h3>Fresh Goat Milk</h3>
-                        <p>Rich, creamy milk from our healthy goats</p>
-                        <span class="price">$8.99/gallon</span>
+                <div class="breeding-emphasis">
+                    <h3>🐐 Meat Goats – Quality Breeding, Superior Genetics 🏆</h3>
+                    <p>We specialize in breeding Kenya's finest meat goats with superior genetics for exceptional meat quality, rapid growth, and disease resistance.</p>
+                </div>
+                <button id="admin-manage-products" class="admin-btn">Admin: Manage Products</button>
+                
+                <!-- Product Categories Filter -->
+                <div class="product-filters">
+                    <button class="filter-btn active" data-category="all">All Products</button>
+                    <button class="filter-btn" data-category="meat">Meat Products</button>
+                    <button class="filter-btn" data-category="skincare">Skincare</button>
+                    <button class="filter-btn" data-category="other">Other</button>
+                    <button class="filter-btn" data-category="sale">🔥 On Sale</button>
+                    <button class="filter-btn" data-category="new">✨ New</button>
+                    <button class="filter-btn" data-category="seasonal">🍂 Seasonal</button>
+                    <button class="filter-btn" data-category="bundles">📦 Bundles</button>
+                </div>
+
+                <!-- New Products -->
+                <div class="new-products">
+                    <h3>New Products</h3>
+                    <div class="new-grid" id="new-grid">
+                        <!-- New products will be populated by JavaScript -->
                     </div>
-                    <div class="product-card">
-                        <img src="https://via.placeholder.com/300x200?text=Goat+Cheese" alt="Artisan Goat Cheese">
-                        <h3>Artisan Goat Cheese</h3>
-                        <p>Handcrafted cheese with unique mountain flavors</p>
-                        <span class="price">$12.99/lb</span>
+                </div>
+
+                <!-- Product Bundles -->
+                <div class="product-bundles">
+                    <h3>Product Bundles & Packages</h3>
+                    <div class="bundles-grid" id="bundles-grid">
+                        <!-- Bundles will be populated by JavaScript -->
                     </div>
-                    <div class="product-card">
-                        <img src="https://via.placeholder.com/300x200?text=Goat+Soap" alt="Natural Goat Soap">
-                        <h3>Natural Goat Soap</h3>
-                        <p>Moisturizing soap made from pure goat milk</p>
-                        <span class="price">$6.99/bar</span>
+                </div>
+
+                <!-- Sale Products -->
+                <div class="sale-products">
+                    <h3>🔥 Products on Sale</h3>
+                    <div class="sale-grid" id="sale-grid">
+                        <!-- Sale products will be populated by JavaScript -->
                     </div>
+                </div>
+
+                <!-- Seasonal Products -->
+                <div class="seasonal-products">
+                    <h3>🍂 Seasonal Products</h3>
+                    <div class="seasonal-grid" id="seasonal-grid">
+                        <!-- Seasonal products will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Featured Products -->
+                <div class="featured-products">
+                    <h3>Featured Products</h3>
+                    <div class="featured-grid" id="featured-grid">
+                        <!-- Featured products will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- All Products -->
+                <div class="product-grid" id="product-grid">
+                    <!-- Products will be populated by JavaScript -->
                 </div>
             </div>
         </section>
@@ -69,24 +116,37 @@
         <section id="about" class="about-section">
             <div class="container">
                 <h2>About Our Farm</h2>
+                <div class="breeding-emphasis">
+                    <h3>🏆 Meat Goats – Quality Breeding, Superior Genetics Excellence 🏆</h3>
+                    <p>Leading Kenya's meat goat industry with award-winning breeding programs and genetically superior livestock for premium meat production. Our experienced team with over 10 years of expertise ensures exceptional quality from our newly established farm.</p>
+                </div>
                 <div class="about-content">
                     <div class="about-text">
-                        <p>Mountain Goat Farm has been family-owned and operated for over 30 years. Located in the pristine mountains, our goats graze on natural pastures and are raised with care and attention to their well-being.</p>
-                        <p>We pride ourselves on sustainable farming practices and producing the highest quality goat products for our community.</p>
+                        <p>The Mountain Goat Farm is a newly established farm in the foothills of Mount Kenya, founded by experienced professionals with over 10 years of expertise in goat breeding and livestock management. Our team's extensive knowledge ensures the highest standards in meat goat production from day one.</p>
+                        <p>We pride ourselves on sustainable farming practices, superior genetics, and quality breeding programs that produce healthy, robust meat goats for both local and international markets. Our experienced staff brings proven expertise to deliver exceptional results. Raising Kenya's Finest Meat Goats – Quality Breeding, Superior Genetics from the Heart of the Mountain.</p>
                     </div>
                     <div class="farm-stats">
                         <div class="stat">
                             <h3 id="goat-count">25</h3>
-                            <p>Happy Goats</p>
+                            <p>Premium Goats</p>
                         </div>
                         <div class="stat">
-                            <h3>30+</h3>
+                            <h3>10+</h3>
                             <p>Years Experience</p>
                         </div>
                         <div class="stat">
                             <h3>100%</h3>
-                            <p>Natural Products</p>
+                            <p>Quality Genetics</p>
                         </div>
+                        <div class="stat">
+                            <h3>2025</h3>
+                            <p>Established</p>
+                        </div>
+                    </div>
+                    
+                    <div class="experience-highlight">
+                        <h3>🎯 Expert Team - Proven Experience</h3>
+                        <p>Our newly established farm is led by seasoned professionals with over 10 years of combined experience in goat breeding, livestock management, and meat production. We bring proven expertise to ensure the highest standards in meat goat breeding from day one.</p>
                     </div>
                 </div>
             </div>
@@ -98,10 +158,28 @@
                 <div class="contact-content">
                     <div class="contact-info">
                         <h3>Visit Our Farm</h3>
-                        <p>📍 123 Mountain View Road<br>
-                        Alpine Valley, CO 80424</p>
-                        <p>📞 (555) 123-4567</p>
-                        <p>📧 info@mountaingoatfarm.com</p>
+                        <p>📍 Kiambu Road, Near Kikuyu<br>
+                        Kiambu County, Kenya</p>
+                        <p id="contact-phone">📞 +254 722 123 456</p>
+                        <p id="contact-email">📧 info@themountaingoat.co.ke</p>
+                        <p id="contact-whatsapp"></p>
+                        <p id="contact-facebook"></p>
+                        <p id="contact-tiktok"></p>
+                        <button id="admin-edit-contact" style="margin-top:10px;">Admin: Edit Contact Details</button>
+                        <div id="admin-contact-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+                          <div style="background:#fff; padding:24px; border-radius:8px; min-width:300px; max-width:90vw;">
+                            <h3>Edit Contact Details</h3>
+                            <form id="admin-contact-form">
+                              <label>Phone:<br><input type="text" id="admin-phone" /></label><br><br>
+                              <label>Email:<br><input type="email" id="admin-email" /></label><br><br>
+                              <label>WhatsApp:<br><input type="text" id="admin-whatsapp" /></label><br><br>
+                              <label>Facebook:<br><input type="text" id="admin-facebook" /></label><br><br>
+                              <label>TikTok:<br><input type="text" id="admin-tiktok" /></label><br><br>
+                              <button type="submit">Save</button>
+                              <button type="button" id="admin-cancel">Cancel</button>
+                            </form>
+                          </div>
+                        </div>
                     </div>
                     <form class="contact-form">
                         <input type="text" placeholder="Your Name" required>
@@ -114,9 +192,119 @@
         </section>
     </main>
 
+    <!-- Product Management Modal -->
+    <div id="product-management-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:24px; border-radius:8px; min-width:800px; max-width:90vw; max-height:80vh; overflow-y:auto;">
+            <h3>Product Management Dashboard</h3>
+            
+            <!-- Stock Alerts -->
+            <div id="stock-alerts" style="background:#fff3cd; border:1px solid #ffeaa7; padding:15px; border-radius:5px; margin-bottom:20px;">
+                <h4>📊 Stock Alerts</h4>
+                <div id="low-stock-items">
+                    <!-- Low stock items will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div style="margin-bottom:20px;">
+                <button id="add-product-btn" style="background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:5px; margin-right:10px;">Add New Product</button>
+                <button id="add-bundle-btn" style="background:#3498db; color:white; border:none; padding:10px 20px; border-radius:5px; margin-right:10px;">Create Bundle</button>
+                <button id="seasonal-manager-btn" style="background:#f39c12; color:white; border:none; padding:10px 20px; border-radius:5px;">Seasonal Manager</button>
+            </div>
+            
+            <div id="products-list">
+                <!-- Products list will be populated here -->
+            </div>
+            
+            <button id="close-product-management" style="background:#95a5a6; color:white; border:none; padding:10px 20px; border-radius:5px; margin-top:20px;">Close</button>
+        </div>
+    </div>
+
+    <!-- Seasonal Manager Modal -->
+    <div id="seasonal-manager-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1001; align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:24px; border-radius:8px; min-width:600px; max-width:90vw; max-height:80vh; overflow-y:auto;">
+            <h3>🍂 Seasonal Products Manager</h3>
+            <p>Manage which products are shown based on current season (Currently: <span id="current-season"></span>)</p>
+            
+            <div id="seasonal-products-list">
+                <!-- Seasonal products will be populated here -->
+            </div>
+            
+            <button id="close-seasonal-manager" style="background:#95a5a6; color:white; border:none; padding:10px 20px; border-radius:5px; margin-top:20px;">Close</button>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="product-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1001; align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:24px; border-radius:8px; min-width:500px; max-width:90vw; max-height:80vh; overflow-y:auto;">
+            <h3 id="product-modal-title">Add New Product</h3>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                
+                <label>Product Name:<br><input type="text" id="product-name" required style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
+                
+                <label>Category:<br>
+                    <select id="product-category" required style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;">
+                        <option value="">Select Category</option>
+                        <option value="dairy">Dairy</option>
+                        <option value="skincare">Skincare</option>
+                        <option value="meat">Meat</option>
+                        <option value="bundles">Product Bundle</option>
+                        <option value="other">Other</option>
+                    </select>
+                </label><br>
+                
+                <label>Regular Price:<br><input type="text" id="product-price" placeholder="e.g., KSh 350/litre" required style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
+                
+                <label>Sale Price (optional):<br><input type="text" id="product-sale-price" placeholder="e.g., KSh 280/litre" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
+                
+                <label>Description:<br><textarea id="product-description" required style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px; height:80px;"></textarea></label><br>
+                
+                <label>Bundle Contents (if bundle):<br><textarea id="product-bundle-contents" placeholder="List what's included in this bundle" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px; height:60px;"></textarea></label><br>
+                
+                <label>Image URL:<br><input type="url" id="product-image" placeholder="https://example.com/image.jpg" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
+                
+                <label>Stock Quantity:<br><input type="number" id="product-stock-quantity" placeholder="Enter quantity" min="0" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
+                
+                <label>Low Stock Alert (when to warn):<br><input type="number" id="product-low-stock" placeholder="e.g., 5" min="0" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
+                
+                <label>Season:<br>
+                    <select id="product-season" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;">
+                        <option value="">All Year</option>
+                        <option value="spring">Spring</option>
+                        <option value="summer">Summer</option>
+                        <option value="fall">Fall</option>
+                        <option value="winter">Winter</option>
+                    </select>
+                </label><br>
+                
+                <label>
+                    <input type="checkbox" id="product-featured" style="margin:5px;"> Featured Product
+                </label><br>
+                
+                <label>
+                    <input type="checkbox" id="product-new" style="margin:5px;"> New Product
+                </label><br>
+                
+                <label>
+                    <input type="checkbox" id="product-available" checked style="margin:5px;"> Available for Sale
+                </label><br>
+                
+                <label>
+                    <input type="checkbox" id="product-auto-stock" style="margin:5px;"> Enable Auto Stock Management
+                </label><br>
+                
+                <div style="margin-top:20px;">
+                    <button type="submit" style="background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:5px; margin-right:10px;">Save Product</button>
+                    <button type="button" id="product-cancel" style="background:#95a5a6; color:white; border:none; padding:10px 20px; border-radius:5px;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <footer>
         <div class="container">
-            <p>&copy; 2024 Mountain Goat Farm. All rights reserved.</p>
+            <p>&copy; 2025 The Mountain Goat Farm Kenya. All rights reserved.</p>
         </div>
     </footer>
 
