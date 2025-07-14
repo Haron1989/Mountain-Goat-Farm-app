@@ -1,48 +1,92 @@
-/* Farm Records Styles */
+/* Farm Records Styles - Override for header-free pages */
+* {
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    margin-top: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
 }
 
 /* Responsive body margin for stacked header */
 @media (max-width: 1200px) {
     body {
-        margin-top: 0;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
 
 @media (max-width: 900px) {
     body {
-        margin-top: 0;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
 
 @media (max-width: 700px) {
     body {
-        margin-top: 0;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
 
 @media (max-width: 600px) {
     body {
-        margin-top: 0;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
 
-/* Section spacing - normal padding */
+/* Section spacing - start from top */
 .records-section,
 .dashboard-section {
-    padding-top: 1rem;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    position: relative;
+    top: 0;
 }
 
 .records-section .container,
 .dashboard-section .container {
-    padding-top: 1rem;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
 }
 
 .records-section h2,
 .dashboard-section h2 {
-    margin-top: 0;
-    padding-top: 1rem;
+    margin-top: 0 !important;
+    padding-top: 0.5rem;
+}
+
+/* Ensure main content starts at top */
+#main-content {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    position: relative;
+    top: 0;
+}
+
+/* Override any fixed header spacing */
+main {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    position: relative;
+    top: 0;
+}
+
+/* Force all sections to start at top */
+section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Remove any inherited spacing */
+.container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
 /* Ensure section controls are visible */
