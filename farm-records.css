@@ -3,6 +3,25 @@ body {
     margin-top: 80px;
 }
 
+/* Responsive body margin for stacked header */
+@media (max-width: 1200px) {
+    body {
+        margin-top: 120px;
+    }
+}
+
+@media (max-width: 900px) {
+    body {
+        margin-top: 140px;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        margin-top: 130px;
+    }
+}
+
 .modal {
     display: none;
     position: fixed;
