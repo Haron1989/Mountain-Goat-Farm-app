@@ -2641,6 +2641,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Maintain backward compatibility for onclick handlers
     window.farmRecords = window.farmApp;
     
+    // Hamburger mobile nav toggle
+    const hamburger = document.getElementById('hamburger-btn');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', function() {
+            navLinks.classList.toggle('show');
+            // Animate hamburger into an 'X'
+            hamburger.classList.toggle('open');
+            console.log('Mobile navigation toggled');
+        });
+        
+        // Close mobile menu when clicking on a navigation link
+        navLinks.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && e.target.getAttribute('href').startsWith('#')) {
+                navLinks.classList.remove('show');
+                hamburger.classList.remove('open');
+                console.log('Mobile navigation closed after link click');
+            }
+        });
+        
+        console.log('Hamburger menu initialized');
+    }
+    
     // Add debugging function
     window.testButton = function(buttonId) {
         const button = document.getElementById(buttonId);
