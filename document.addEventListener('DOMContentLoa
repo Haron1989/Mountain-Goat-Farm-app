@@ -1,5 +1,0 @@
-document.addEventListener('DOMContentLoaded', function() {
-    window.farmApp = new FarmRecordsManager();
-    // Backward compatibility for old onclicks, etc.
-    window.farmRecords = window.farmApp;
-});
