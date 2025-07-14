@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reminders - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Reminders -->
+        <section id="reminders" class="records-section">
+            <div class="container">
+                <h2>Reminders & Alerts</h2>
+                
+                <div class="reminder-overview">
+                    <div class="reminder-stats">
+                        <div class="stat-card urgent">
+                            <h3>Urgent</h3>
+                            <p class="stat-number" id="urgent-reminders">0</p>
+                        </div>
+                        <div class="stat-card due-today">
+                            <h3>Due Today</h3>
+                            <p class="stat-number" id="today-reminders">0</p>
+                        </div>
+                        <div class="stat-card upcoming">
+                            <h3>This Week</h3>
+                            <p class="stat-number" id="week-reminders">0</p>
+                        </div>
+                        <div class="stat-card total">
+                            <h3>Total Active</h3>
+                            <p class="stat-number" id="total-reminders">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="add-reminder-btn" class="btn-primary">Add Reminder</button>
+
+                <div class="reminder-tabs">
+                    <button class="tab-btn active" data-tab="all">All Reminders</button>
+                    <button class="tab-btn" data-tab="health">Health</button>
+                    <button class="tab-btn" data-tab="breeding">Breeding</button>
+                    <button class="tab-btn" data-tab="feeding">Feeding</button>
+                    <button class="tab-btn" data-tab="general">General</button>
+                </div>
+
+                <div id="all-tab" class="tab-content active">
+                    <div class="reminder-filters">
+                        <select id="priority-filter">
+                            <option value="">All Priorities</option>
+                            <option value="high">High Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="low">Low Priority</option>
+                        </select>
+                        <select id="status-filter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                            <option value="snoozed">Snoozed</option>
+                        </select>
+                    </div>
+
+                    <div class="reminder-list" id="all-reminders">
+                        <!-- All reminders will be populated here -->
+                    </div>
+                </div>
+
+                <div id="health-tab" class="tab-content">
+                    <div class="reminder-list" id="health-reminders">
+                        <!-- Health reminders will be populated here -->
+                    </div>
+                </div>
+
+                <div id="breeding-tab" class="tab-content">
+                    <div class="reminder-list" id="breeding-reminders">
+                        <!-- Breeding reminders will be populated here -->
+                    </div>
+                </div>
+
+                <div id="feeding-tab" class="tab-content">
+                    <div class="reminder-list" id="feeding-reminders">
+                        <!-- Feeding reminders will be populated here -->
+                    </div>
+                </div>
+
+                <div id="general-tab" class="tab-content">
+                    <div class="reminder-list" id="general-reminders">
+                        <!-- General reminders will be populated here -->
+                    </div>
+                </div>
+
+                <div class="auto-reminders">
+                    <h3>Automatic Reminder Settings</h3>
+                    <div class="auto-reminder-grid">
+                        <div class="auto-reminder-card">
+                            <h4>Vaccination Reminders</h4>
+                            <label>
+                                <input type="checkbox" id="auto-vaccination" checked> 
+                                Remind 7 days before due
+                            </label>
+                        </div>
+                        <div class="auto-reminder-card">
+                            <h4>Breeding Cycle Reminders</h4>
+                            <label>
+                                <input type="checkbox" id="auto-breeding" checked> 
+                                Remind at heat cycle
+                            </label>
+                        </div>
+                        <div class="auto-reminder-card">
+                            <h4>Feed Inventory Alerts</h4>
+                            <label>
+                                <input type="checkbox" id="auto-feed" checked> 
+                                Alert when stock is low
+                            </label>
+                        </div>
+                        <div class="auto-reminder-card">
+                            <h4>Health Check Reminders</h4>
+                            <label>
+                                <input type="checkbox" id="auto-health" checked> 
+                                Monthly health check alerts
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Reminder Modal -->
+    <div id="reminder-modal" class="modal">
+        <div class="modal-content">
+            <h2>Add Reminder</h2>
+            <form id="reminder-form">
+                <input type="hidden" id="reminder-id">
+                <input type="text" id="reminder-title" placeholder="Reminder Title" required>
+                <textarea id="reminder-description" placeholder="Description"></textarea>
+                <select id="reminder-category" required>
+                    <option value="">Select Category</option>
+                    <option value="health">Health</option>
+                    <option value="breeding">Breeding</option>
+                    <option value="feeding">Feeding</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="financial">Financial</option>
+                    <option value="general">General</option>
+                </select>
+                <select id="reminder-priority" required>
+                    <option value="">Select Priority</option>
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="low">Low Priority</option>
+                </select>
+                <input type="datetime-local" id="reminder-datetime" required>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="repeat-reminder"> Repeat Reminder
+                    </label>
+                </div>
+                <div id="repeat-options" style="display: none;">
+                    <select id="repeat-frequency">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+                <select id="reminder-goat">
+                    <option value="">Link to Specific Goat (Optional)</option>
+                </select>
+                <div class="modal-buttons">
+                    <button type="submit">Save Reminder</button>
+                    <button type="button" id="reminder-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Records - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Sales Records -->
+        <section id="sales-records" class="records-section">
+            <div class="container">
+                <h2>Sales Records</h2>
+                <div class="sales-dashboard">
+                    <div class="sales-summary">
+                        <div class="summary-card">
+                            <h3>Total Sales This Month</h3>
+                            <p class="summary-amount" id="monthly-sales">KSh 0</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Total Sales This Year</h3>
+                            <p class="summary-amount" id="yearly-sales">KSh 0</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Average Sale Value</h3>
+                            <p class="summary-amount" id="average-sale">KSh 0</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Goats Sold This Month</h3>
+                            <p class="summary-amount" id="goats-sold-monthly">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sales-actions">
+                    <button id="add-sale-btn" class="btn-primary">Record New Sale</button>
+                    <button id="generate-invoice-btn" class="btn-secondary">Generate Invoice</button>
+                    <button id="export-sales-btn" class="btn-secondary">Export Sales Data</button>
+                </div>
+
+                <div class="sales-filters">
+                    <select id="sale-filter" class="filter-select">
+                        <option value="">All Sales</option>
+                        <option value="live">Live Goats</option>
+                        <option value="meat">Meat Products</option>
+                        <option value="dairy">Dairy Products</option>
+                        <option value="breeding">Breeding Stock</option>
+                    </select>
+                    <input type="date" id="sales-date-from" class="date-filter">
+                    <input type="date" id="sales-date-to" class="date-filter">
+                    <input type="text" id="customer-search" placeholder="Search customer..." class="search-input">
+                </div>
+
+                <div class="records-table">
+                    <table id="sales-table">
+                        <thead>
+                            <tr>
+                                <th>Sale ID</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Product Type</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price (KSh)</th>
+                                <th>Total (KSh)</th>
+                                <th>Payment Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-tbody">
+                            <!-- Sales records will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sales-charts">
+                    <div class="chart-container">
+                        <h3>Monthly Sales Trend</h3>
+                        <canvas id="monthly-sales-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Sales by Product Type</h3>
+                        <canvas id="product-sales-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="customer-stats">
+                    <h3>Top Customers</h3>
+                    <div class="customer-list" id="top-customers">
+                        <!-- Top customers will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Sale Modal -->
+    <div id="sale-modal" class="modal">
+        <div class="modal-content">
+            <h2>Record Sale</h2>
+            <form id="sale-form">
+                <input type="hidden" id="sale-id">
+                <input type="date" id="sale-date" required>
+                <input type="text" id="customer-name" placeholder="Customer Name" required>
+                <input type="tel" id="customer-phone" placeholder="Customer Phone">
+                <select id="product-type" required>
+                    <option value="">Select Product Type</option>
+                    <option value="live">Live Goats</option>
+                    <option value="meat">Meat Products</option>
+                    <option value="dairy">Dairy Products</option>
+                    <option value="breeding">Breeding Stock</option>
+                </select>
+                <input type="text" id="product-description" placeholder="Product Description" required>
+                <input type="number" id="sale-quantity" placeholder="Quantity" min="1" required>
+                <input type="number" id="unit-price" placeholder="Unit Price (KSh)" step="0.01" required>
+                <input type="number" id="total-amount" placeholder="Total Amount (KSh)" step="0.01" readonly>
+                <select id="payment-status" required>
+                    <option value="">Payment Status</option>
+                    <option value="paid">Paid</option>
+                    <option value="pending">Pending</option>
+                    <option value="partial">Partial</option>
+                </select>
+                <input type="number" id="amount-paid" placeholder="Amount Paid (KSh)" step="0.01">
+                <select id="payment-method">
+                    <option value="">Payment Method</option>
+                    <option value="cash">Cash</option>
+                    <option value="bank">Bank Transfer</option>
+                    <option value="mpesa">M-Pesa</option>
+                    <option value="check">Check</option>
+                </select>
+                <textarea id="sale-notes" placeholder="Additional Notes"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Save Sale</button>
+                    <button type="button" id="sale-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoice-modal" class="modal">
+        <div class="modal-content invoice-content">
+            <div class="invoice-header">
+                <h2>Generate Invoice</h2>
+                <button type="button" id="close-invoice" class="close-btn">&times;</button>
+            </div>
+            <div class="invoice-form">
+                <select id="invoice-customer" class="form-control">
+                    <option value="">Select Customer</option>
+                </select>
+                <input type="date" id="invoice-date" class="form-control">
+                <button id="create-invoice-btn" class="btn-primary">Create Invoice</button>
+            </div>
+            <div id="invoice-preview" class="invoice-preview">
+                <!-- Invoice will be generated here -->
+            </div>
+            <div class="invoice-actions">
+                <button id="print-invoice-btn" class="btn-secondary">Print Invoice</button>
+                <button id="download-invoice-btn" class="btn-secondary">Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+</body>
+</html>

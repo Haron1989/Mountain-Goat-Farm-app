@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Management - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Crop Management -->
+        <section id="crop-management" class="records-section">
+            <div class="container">
+                <h2>Crop Management</h2>
+                
+                <div class="crop-tabs">
+                    <button class="tab-btn active" data-tab="pasture">Pasture Management</button>
+                    <button class="tab-btn" data-tab="feed-crops">Feed Crops</button>
+                    <button class="tab-btn" data-tab="irrigation">Irrigation</button>
+                    <button class="tab-btn" data-tab="harvest">Harvest Records</button>
+                </div>
+
+                <div id="pasture-tab" class="tab-content active">
+                    <div class="pasture-overview">
+                        <h3>Pasture Status</h3>
+                        <div class="pasture-stats">
+                            <div class="stat-card">
+                                <h4>Total Pasture Area</h4>
+                                <p class="stat-number">50 acres</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Currently Grazed</h4>
+                                <p class="stat-number" id="grazed-area">0 acres</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Resting Pastures</h4>
+                                <p class="stat-number" id="resting-area">0 acres</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Next Rotation</h4>
+                                <p class="stat-number" id="next-rotation">-- days</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="add-pasture-btn" class="btn-primary">Add Pasture Section</button>
+                    <button id="rotate-pasture-btn" class="btn-secondary">Record Rotation</button>
+                    
+                    <div class="pasture-grid" id="pasture-grid">
+                        <!-- Pasture sections will be populated here -->
+                    </div>
+
+                    <div class="records-table">
+                        <h3>Pasture Rotation Schedule</h3>
+                        <table id="pasture-table">
+                            <thead>
+                                <tr>
+                                    <th>Section</th>
+                                    <th>Size (acres)</th>
+                                    <th>Current Status</th>
+                                    <th>Grass Type</th>
+                                    <th>Last Grazed</th>
+                                    <th>Rest Period</th>
+                                    <th>Condition</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pasture-tbody">
+                                <!-- Pasture records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="feed-crops-tab" class="tab-content">
+                    <button id="add-crop-btn" class="btn-primary">Plant New Crop</button>
+                    
+                    <div class="crop-overview">
+                        <h3>Current Crops</h3>
+                        <div class="crop-cards" id="crop-cards">
+                            <!-- Crop cards will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="records-table">
+                        <table id="crops-table">
+                            <thead>
+                                <tr>
+                                    <th>Crop</th>
+                                    <th>Variety</th>
+                                    <th>Area (acres)</th>
+                                    <th>Planting Date</th>
+                                    <th>Expected Harvest</th>
+                                    <th>Growth Stage</th>
+                                    <th>Yield Estimate</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crops-tbody">
+                                <!-- Crop records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="irrigation-tab" class="tab-content">
+                    <div class="irrigation-overview">
+                        <h3>Irrigation System Status</h3>
+                        <div class="irrigation-stats">
+                            <div class="stat-card">
+                                <h4>Water Usage Today</h4>
+                                <p class="stat-number" id="daily-water">0 L</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Active Zones</h4>
+                                <p class="stat-number" id="active-zones">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Efficiency Rate</h4>
+                                <p class="stat-number" id="efficiency-rate">0%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="add-irrigation-btn" class="btn-primary">Log Irrigation</button>
+                    
+                    <div class="records-table">
+                        <table id="irrigation-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Zone</th>
+                                    <th>Duration (hours)</th>
+                                    <th>Water Used (L)</th>
+                                    <th>Method</th>
+                                    <th>Weather</th>
+                                    <th>Soil Moisture</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="irrigation-tbody">
+                                <!-- Irrigation records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="harvest-tab" class="tab-content">
+                    <button id="add-harvest-btn" class="btn-primary">Record Harvest</button>
+                    
+                    <div class="harvest-summary">
+                        <h3>This Season's Harvest</h3>
+                        <div class="harvest-stats">
+                            <div class="stat-card">
+                                <h4>Total Harvested</h4>
+                                <p class="stat-number" id="total-harvest">0 tons</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Feed Value</h4>
+                                <p class="stat-number" id="feed-value">KSh 0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Storage Capacity</h4>
+                                <p class="stat-number" id="storage-used">0% used</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="records-table">
+                        <table id="harvest-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Crop</th>
+                                    <th>Area Harvested</th>
+                                    <th>Yield (tons/acre)</th>
+                                    <th>Total Harvest</th>
+                                    <th>Quality Grade</th>
+                                    <th>Storage Location</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="harvest-tbody">
+                                <!-- Harvest records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="crop-analytics">
+                    <div class="chart-container">
+                        <h3>Seasonal Yield Trends</h3>
+                        <canvas id="yield-trend-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Water Usage Efficiency</h3>
+                        <canvas id="water-efficiency-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Pasture Modal -->
+    <div id="pasture-modal" class="modal">
+        <div class="modal-content">
+            <h2>Add Pasture Section</h2>
+            <form id="pasture-form">
+                <input type="hidden" id="pasture-id">
+                <input type="text" id="pasture-name" placeholder="Section Name" required>
+                <input type="number" id="pasture-size" placeholder="Size (acres)" step="0.1" required>
+                <input type="text" id="grass-type" placeholder="Grass Type">
+                <select id="pasture-status" required>
+                    <option value="">Current Status</option>
+                    <option value="grazed">Currently Grazed</option>
+                    <option value="resting">Resting</option>
+                    <option value="maintenance">Under Maintenance</option>
+                </select>
+                <select id="pasture-condition" required>
+                    <option value="">Condition</option>
+                    <option value="excellent">Excellent</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="poor">Poor</option>
+                </select>
+                <input type="date" id="last-grazed">
+                <textarea id="pasture-notes" placeholder="Notes"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Save Pasture</button>
+                    <button type="button" id="pasture-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Crop Modal -->
+    <div id="crop-modal" class="modal">
+        <div class="modal-content">
+            <h2>Plant New Crop</h2>
+            <form id="crop-form">
+                <input type="hidden" id="crop-id">
+                <select id="crop-type" required>
+                    <option value="">Select Crop</option>
+                    <option value="napier-grass">Napier Grass</option>
+                    <option value="rhodes-grass">Rhodes Grass</option>
+                    <option value="lucerne">Lucerne (Alfalfa)</option>
+                    <option value="maize">Maize</option>
+                    <option value="sorghum">Sorghum</option>
+                    <option value="sunflower">Sunflower</option>
+                </select>
+                <input type="text" id="crop-variety" placeholder="Variety">
+                <input type="number" id="crop-area" placeholder="Area (acres)" step="0.1" required>
+                <input type="date" id="planting-date" required>
+                <input type="date" id="expected-harvest">
+                <input type="number" id="seed-cost" placeholder="Seed Cost (KSh)" step="0.01">
+                <textarea id="crop-notes" placeholder="Notes"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Save Crop</button>
+                    <button type="button" id="crop-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+</body>
+</html>

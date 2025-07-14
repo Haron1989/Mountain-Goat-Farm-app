@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goat Records - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Goat Records -->
+        <section id="goat-records" class="records-section">
+            <div class="container">
+                <h2>🐐 Goat Register - Premium Breeding Stock</h2>
+                <div class="breeding-focus-banner">
+                    <h3>Superior Genetics - Quality Breeding Stock Management</h3>
+                    <p>Manage our premium meat goat breeding stock with emphasis on superior genetics, breeding quality, and performance tracking. Our experienced team with over 10 years of expertise ensures exceptional standards from our newly established farm.</p>
+                </div>
+                
+                <!-- Controls -->
+                <div class="section-controls">
+                    <button id="add-goat-btn" class="btn-primary">Add New Goat</button>
+                    <button id="bulk-import-btn" class="btn-secondary">Bulk Import</button>
+                    <button id="export-goats-btn" class="btn-secondary">Export</button>
+                    <button id="print-id-cards-btn" class="btn-secondary">Print ID Cards</button>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                    <input type="text" id="goat-search" placeholder="Search by ID, name, or tag number..." class="search-input">
+                    <select id="goat-status-filter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="alive">Alive</option>
+                        <option value="sold">Sold</option>
+                        <option value="dead">Dead</option>
+                        <option value="breeding">Breeding</option>
+                    </select>
+                    <select id="goat-gender-filter" class="filter-select">
+                        <option value="">All Gender</option>
+                        <option value="buck">Buck</option>
+                        <option value="doe">Doe</option>
+                        <option value="kid">Kid</option>
+                    </select>
+                    <select id="goat-location-filter" class="filter-select">
+                        <option value="">All Locations</option>
+                        <option value="pen-1">Pen 1</option>
+                        <option value="pen-2">Pen 2</option>
+                        <option value="pasture-a">Pasture A</option>
+                        <option value="pasture-b">Pasture B</option>
+                    </select>
+                </div>
+
+                <!-- Goat Statistics -->
+                <div class="goat-stats">
+                    <div class="stat-card">
+                        <h4>Total Goats</h4>
+                        <p id="total-goats-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Bucks</h4>
+                        <p id="buck-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Does</h4>
+                        <p id="doe-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Kids</h4>
+                        <p id="kid-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Breeding Stock</h4>
+                        <p id="breeding-count">0</p>
+                    </div>
+                </div>
+
+                <!-- Goat Records Table -->
+                <div class="records-table">
+                    <table id="goats-table">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>ID/Tag</th>
+                                <th>Name</th>
+                                <th>Gender</th>
+                                <th>Breed</th>
+                                <th>DOB/Age</th>
+                                <th>Weight (kg)</th>
+                                <th>Status</th>
+                                <th>Location</th>
+                                <th>QR Code</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="goats-tbody">
+                            <!-- Goat records will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Goat Modal -->
+    <div id="goat-modal" class="modal">
+        <div class="modal-content large-modal">
+            <h2 id="goat-modal-title">Add New Goat</h2>
+            <form id="goat-form">
+                <input type="hidden" id="goat-id">
+                
+                <div class="form-tabs">
+                    <button type="button" class="tab-btn active" data-tab="basic">Basic Info</button>
+                    <button type="button" class="tab-btn" data-tab="physical">Physical Traits</button>
+                    <button type="button" class="tab-btn" data-tab="breeding">Breeding</button>
+                    <button type="button" class="tab-btn" data-tab="health">Health</button>
+                    <button type="button" class="tab-btn" data-tab="financial">Financial</button>
+                </div>
+
+                <!-- Basic Information Tab -->
+                <div id="basic-tab" class="tab-content active">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Tag/ID Number:</label>
+                            <input type="text" id="goat-tag" placeholder="e.g., MG001" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" id="goat-name" placeholder="Goat Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender:</label>
+                            <select id="goat-gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="buck">Buck (Male)</option>
+                                <option value="doe">Doe (Female)</option>
+                                <option value="kid">Kid (Young)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth:</label>
+                            <input type="date" id="goat-dob" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Breed:</label>
+                            <select id="goat-breed" required>
+                                <option value="">Select Breed</option>
+                                <option value="boer">Boer</option>
+                                <option value="kiko">Kiko</option>
+                                <option value="spanish">Spanish</option>
+                                <option value="nubian">Nubian</option>
+                                <option value="galla">Galla</option>
+                                <option value="crossbreed">Crossbreed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Location/Pen:</label>
+                            <select id="goat-location" required>
+                                <option value="">Select Location</option>
+                                <option value="pen-1">Pen 1</option>
+                                <option value="pen-2">Pen 2</option>
+                                <option value="pasture-a">Pasture A</option>
+                                <option value="pasture-b">Pasture B</option>
+                                <option value="quarantine">Quarantine</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <select id="goat-status" required>
+                                <option value="alive">Alive</option>
+                                <option value="sold">Sold</option>
+                                <option value="dead">Dead</option>
+                                <option value="missing">Missing</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="submit">Save Goat</button>
+                    <button type="button" id="goat-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+</body>
+</html>

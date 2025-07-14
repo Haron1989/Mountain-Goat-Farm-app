@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products Management - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Products Management -->
+        <section id="products-management" class="records-section">
+            <div class="container">
+                <h2>Products Management</h2>
+                
+                <div class="product-tabs">
+                    <button class="tab-btn active" data-tab="live-goats">Live Goats</button>
+                    <button class="tab-btn" data-tab="meat-products">Meat Products</button>
+                    <button class="tab-btn" data-tab="dairy-products">Dairy Products</button>
+                    <button class="tab-btn" data-tab="value-added">Value Added</button>
+                </div>
+
+                <div id="live-goats-tab" class="tab-content active">
+                    <div class="product-overview">
+                        <h3>Live Goat Sales</h3>
+                        <div class="product-stats">
+                            <div class="stat-card">
+                                <h4>Available for Sale</h4>
+                                <p class="stat-number" id="available-goats">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Average Price</h4>
+                                <p class="stat-number" id="avg-goat-price">KSh 0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>This Month Sales</h4>
+                                <p class="stat-number" id="monthly-goat-sales">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="add-live-goat-product-btn" class="btn-primary">Add to Sales Inventory</button>
+                    
+                    <div class="records-table">
+                        <table id="live-goats-table">
+                            <thead>
+                                <tr>
+                                    <th>Goat ID</th>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Weight (kg)</th>
+                                    <th>Breed</th>
+                                    <th>Price (KSh)</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="live-goats-tbody">
+                                <!-- Live goat products will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="meat-products-tab" class="tab-content">
+                    <div class="product-overview">
+                        <h3>Meat Products Catalog</h3>
+                        <div class="product-grid" id="meat-products-grid">
+                            <!-- Meat products will be populated here -->
+                        </div>
+                    </div>
+
+                    <button id="add-meat-product-btn" class="btn-primary">Add Meat Product</button>
+                    
+                    <div class="records-table">
+                        <table id="meat-products-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Cut Type</th>
+                                    <th>Weight (kg)</th>
+                                    <th>Price per kg</th>
+                                    <th>Stock Level</th>
+                                    <th>Storage</th>
+                                    <th>Expiry</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="meat-products-tbody">
+                                <!-- Meat products will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="dairy-products-tab" class="tab-content">
+                    <div class="product-overview">
+                        <h3>Dairy Products</h3>
+                        <div class="dairy-stats">
+                            <div class="stat-card">
+                                <h4>Daily Milk Production</h4>
+                                <p class="stat-number" id="daily-milk">0 L</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Cheese in Stock</h4>
+                                <p class="stat-number" id="cheese-stock">0 kg</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Dairy Revenue</h4>
+                                <p class="stat-number" id="dairy-revenue">KSh 0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="add-dairy-product-btn" class="btn-primary">Add Dairy Product</button>
+                    
+                    <div class="records-table">
+                        <table id="dairy-products-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Type</th>
+                                    <th>Quantity</th>
+                                    <th>Production Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Price per Unit</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dairy-products-tbody">
+                                <!-- Dairy products will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="value-added-tab" class="tab-content">
+                    <div class="product-overview">
+                        <h3>Value Added Products</h3>
+                        <div class="value-added-grid">
+                            <div class="product-category">
+                                <h4>Processed Meats</h4>
+                                <p>Sausages, jerky, cured meats</p>
+                            </div>
+                            <div class="product-category">
+                                <h4>Leather Goods</h4>
+                                <p>Hides, leather products</p>
+                            </div>
+                            <div class="product-category">
+                                <h4>Organic Fertilizer</h4>
+                                <p>Composted manure</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="add-value-added-btn" class="btn-primary">Add Value Added Product</button>
+                    
+                    <div class="records-table">
+                        <table id="value-added-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Production Cost</th>
+                                    <th>Selling Price</th>
+                                    <th>Profit Margin</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="value-added-tbody">
+                                <!-- Value added products will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="product-analytics">
+                    <div class="chart-container">
+                        <h3>Product Sales Distribution</h3>
+                        <canvas id="product-distribution-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Monthly Revenue by Product</h3>
+                        <canvas id="product-revenue-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <h2>Add Product</h2>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <input type="hidden" id="product-category">
+                <input type="text" id="product-name" placeholder="Product Name" required>
+                <input type="text" id="product-description" placeholder="Description">
+                <input type="number" id="product-quantity" placeholder="Quantity" step="0.1" required>
+                <input type="text" id="product-unit" placeholder="Unit (kg, pieces, liters)">
+                <input type="number" id="product-cost" placeholder="Production Cost (KSh)" step="0.01">
+                <input type="number" id="product-price" placeholder="Selling Price (KSh)" step="0.01" required>
+                <input type="date" id="product-date">
+                <input type="date" id="product-expiry">
+                <textarea id="product-notes" placeholder="Notes"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Save Product</button>
+                    <button type="button" id="product-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+</body>
+</html>

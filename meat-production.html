@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meat Production - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Meat Production -->
+        <section id="meat-production" class="records-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>🥩 Meat Production Excellence</h2>
+                    <p class="section-subtitle">Premium quality goat meat production and processing</p>
+                </div>
+                
+                <div class="production-tabs">
+                    <button class="tab-btn active" data-tab="processing">Processing Records</button>
+                    <button class="tab-btn" data-tab="inventory">Meat Inventory</button>
+                    <button class="tab-btn" data-tab="quality">Quality Control</button>
+                    <button class="tab-btn" data-tab="packaging">Packaging & Distribution</button>
+                </div>
+
+                <div id="processing-tab" class="tab-content active">
+                    <div class="production-overview">
+                        <div class="production-stats">
+                            <div class="stat-card">
+                                <h3>This Month</h3>
+                                <p class="stat-number" id="monthly-processed">0</p>
+                                <p class="stat-label">Goats Processed</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Total Meat Yield</h3>
+                                <p class="stat-number" id="monthly-yield">0 kg</p>
+                                <p class="stat-label">This Month</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Average Yield</h3>
+                                <p class="stat-number" id="average-yield">0%</p>
+                                <p class="stat-label">Carcass to Live Weight</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Revenue</h3>
+                                <p class="stat-number" id="meat-revenue">KSh 0</p>
+                                <p class="stat-label">This Month</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="add-processing-btn" class="btn-primary">Record New Processing</button>
+                    
+                    <div class="records-table">
+                        <table id="processing-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Goat ID</th>
+                                    <th>Live Weight (kg)</th>
+                                    <th>Carcass Weight (kg)</th>
+                                    <th>Yield %</th>
+                                    <th>Cuts Produced</th>
+                                    <th>Quality Grade</th>
+                                    <th>Processing Cost</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="processing-tbody">
+                                <!-- Processing records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="inventory-tab" class="tab-content">
+                    <div class="inventory-overview">
+                        <div class="inventory-stats">
+                            <div class="inventory-card">
+                                <h4>Fresh Cuts</h4>
+                                <p class="inventory-amount" id="fresh-inventory">0 kg</p>
+                            </div>
+                            <div class="inventory-card">
+                                <h4>Frozen Cuts</h4>
+                                <p class="inventory-amount" id="frozen-inventory">0 kg</p>
+                            </div>
+                            <div class="inventory-card">
+                                <h4>Value Added</h4>
+                                <p class="inventory-amount" id="processed-inventory">0 kg</p>
+                            </div>
+                            <div class="inventory-card">
+                                <h4>Total Value</h4>
+                                <p class="inventory-amount" id="inventory-value">KSh 0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="add-inventory-btn" class="btn-primary">Add Inventory Item</button>
+                    <button id="inventory-movement-btn" class="btn-secondary">Record Movement</button>
+
+                    <div class="meat-cuts-grid" id="meat-cuts-grid">
+                        <!-- Meat cuts inventory will be populated here -->
+                    </div>
+
+                    <div class="records-table">
+                        <h3>Detailed Inventory</h3>
+                        <table id="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Cut Type</th>
+                                    <th>Weight (kg)</th>
+                                    <th>Processing Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Storage</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Value</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-tbody">
+                                <!-- Inventory items will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="quality-tab" class="tab-content">
+                    <div class="quality-standards">
+                        <h3>Quality Control Standards</h3>
+                        <div class="standards-grid">
+                            <div class="standard-card">
+                                <h4>Grade A Premium</h4>
+                                <p>• Marbling: Excellent</p>
+                                <p>• Color: Bright red</p>
+                                <p>• Texture: Fine grain</p>
+                                <p>• Fat: 2-4mm thickness</p>
+                            </div>
+                            <div class="standard-card">
+                                <h4>Grade B Standard</h4>
+                                <p>• Marbling: Good</p>
+                                <p>• Color: Red</p>
+                                <p>• Texture: Medium grain</p>
+                                <p>• Fat: 4-6mm thickness</p>
+                            </div>
+                            <div class="standard-card">
+                                <h4>Grade C Commercial</h4>
+                                <p>• Marbling: Fair</p>
+                                <p>• Color: Dark red</p>
+                                <p>• Texture: Coarse grain</p>
+                                <p>• Fat: >6mm thickness</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="add-quality-check-btn" class="btn-primary">Record Quality Check</button>
+
+                    <div class="records-table">
+                        <table id="quality-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Batch ID</th>
+                                    <th>Inspector</th>
+                                    <th>Quality Grade</th>
+                                    <th>Marbling Score</th>
+                                    <th>Color Rating</th>
+                                    <th>pH Level</th>
+                                    <th>Temperature</th>
+                                    <th>Pass/Fail</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quality-tbody">
+                                <!-- Quality records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="packaging-tab" class="tab-content">
+                    <div class="packaging-options">
+                        <h3>Packaging Options</h3>
+                        <div class="packaging-grid">
+                            <div class="package-type">
+                                <h4>Vacuum Sealed</h4>
+                                <p>Premium cuts, extended shelf life</p>
+                                <p>Cost: KSh 50 per package</p>
+                            </div>
+                            <div class="package-type">
+                                <h4>Butcher Paper</h4>
+                                <p>Traditional wrapping, cost-effective</p>
+                                <p>Cost: KSh 20 per package</p>
+                            </div>
+                            <div class="package-type">
+                                <h4>Retail Tray</h4>
+                                <p>Display-ready, branded packaging</p>
+                                <p>Cost: KSh 75 per package</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="add-packaging-btn" class="btn-primary">Record Packaging</button>
+                    <button id="create-shipment-btn" class="btn-secondary">Create Shipment</button>
+
+                    <div class="records-table">
+                        <table id="packaging-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Package Type</th>
+                                    <th>Quantity</th>
+                                    <th>Weight per Package</th>
+                                    <th>Total Weight</th>
+                                    <th>Packaging Cost</th>
+                                    <th>Destination</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="packaging-tbody">
+                                <!-- Packaging records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="production-analytics">
+                    <div class="chart-container">
+                        <h3>Monthly Production Trend</h3>
+                        <canvas id="production-trend-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Yield Analysis</h3>
+                        <canvas id="yield-analysis-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Processing Record Modal -->
+    <div id="processing-modal" class="modal">
+        <div class="modal-content">
+            <h2>Record Processing</h2>
+            <form id="processing-form">
+                <input type="hidden" id="processing-id">
+                <input type="date" id="processing-date" required>
+                <select id="processing-goat" required>
+                    <option value="">Select Goat</option>
+                </select>
+                <input type="number" id="live-weight" placeholder="Live Weight (kg)" step="0.1" required>
+                <input type="number" id="carcass-weight" placeholder="Carcass Weight (kg)" step="0.1" required>
+                <input type="number" id="yield-percentage" placeholder="Yield %" step="0.1" readonly>
+                <select id="quality-grade" required>
+                    <option value="">Select Quality Grade</option>
+                    <option value="A">Grade A - Premium</option>
+                    <option value="B">Grade B - Standard</option>
+                    <option value="C">Grade C - Commercial</option>
+                </select>
+                <input type="number" id="processing-cost" placeholder="Processing Cost (KSh)" step="0.01">
+                <textarea id="cuts-produced" placeholder="Cuts Produced (describe cuts and weights)"></textarea>
+                <textarea id="processing-notes" placeholder="Processing Notes"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Save Processing Record</button>
+                    <button type="button" id="processing-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Inventory Modal -->
+    <div id="inventory-item-modal" class="modal">
+        <div class="modal-content">
+            <h2>Add Inventory Item</h2>
+            <form id="inventory-item-form">
+                <input type="hidden" id="inventory-item-id">
+                <input type="text" id="product-name" placeholder="Product Name" required>
+                <select id="cut-type" required>
+                    <option value="">Select Cut Type</option>
+                    <option value="leg">Leg</option>
+                    <option value="shoulder">Shoulder</option>
+                    <option value="ribs">Ribs</option>
+                    <option value="chops">Chops</option>
+                    <option value="ground">Ground Meat</option>
+                    <option value="stew">Stew Meat</option>
+                    <option value="organ">Organ Meat</option>
+                </select>
+                <input type="number" id="item-weight" placeholder="Weight (kg)" step="0.1" required>
+                <input type="date" id="processing-date-item" required>
+                <input type="date" id="expiry-date" required>
+                <select id="storage-type" required>
+                    <option value="">Storage Type</option>
+                    <option value="fresh">Fresh (Refrigerated)</option>
+                    <option value="frozen">Frozen</option>
+                    <option value="processed">Value Added</option>
+                </select>
+                <input type="number" id="unit-price-item" placeholder="Unit Price per kg (KSh)" step="0.01" required>
+                <textarea id="item-notes" placeholder="Notes"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Save Inventory Item</button>
+                    <button type="button" id="inventory-item-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quality Check Modal -->
+    <div id="quality-check-modal" class="modal">
+        <div class="modal-content">
+            <h2>Quality Control Check</h2>
+            <form id="quality-check-form">
+                <input type="hidden" id="quality-check-id">
+                <input type="date" id="quality-date" required>
+                <input type="text" id="batch-id" placeholder="Batch ID" required>
+                <input type="text" id="inspector" placeholder="Inspector Name" required>
+                <select id="quality-grade-check" required>
+                    <option value="">Quality Grade</option>
+                    <option value="A">Grade A - Premium</option>
+                    <option value="B">Grade B - Standard</option>
+                    <option value="C">Grade C - Commercial</option>
+                </select>
+                <select id="marbling-score" required>
+                    <option value="">Marbling Score</option>
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Fair</option>
+                    <option value="1">1 - Poor</option>
+                </select>
+                <select id="color-rating" required>
+                    <option value="">Color Rating</option>
+                    <option value="excellent">Excellent - Bright Red</option>
+                    <option value="good">Good - Red</option>
+                    <option value="fair">Fair - Dark Red</option>
+                    <option value="poor">Poor - Off Color</option>
+                </select>
+                <input type="number" id="ph-level" placeholder="pH Level" step="0.1" min="5.0" max="7.0">
+                <input type="number" id="temperature" placeholder="Temperature (°C)" step="0.1">
+                <select id="pass-fail" required>
+                    <option value="">Pass/Fail</option>
+                    <option value="pass">Pass</option>
+                    <option value="fail">Fail</option>
+                </select>
+                <textarea id="quality-notes" placeholder="Quality Notes"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Save Quality Check</button>
+                    <button type="button" id="quality-check-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+</body>
+</html>

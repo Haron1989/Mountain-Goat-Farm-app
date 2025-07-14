@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Task Manager -->
+        <section id="task-manager" class="records-section">
+            <div class="container">
+                <h2>Task Manager</h2>
+                
+                <div class="task-overview">
+                    <div class="task-stats">
+                        <div class="stat-card pending">
+                            <h3>Pending Tasks</h3>
+                            <p class="stat-number" id="pending-tasks">0</p>
+                        </div>
+                        <div class="stat-card progress">
+                            <h3>In Progress</h3>
+                            <p class="stat-number" id="progress-tasks">0</p>
+                        </div>
+                        <div class="stat-card completed">
+                            <h3>Completed Today</h3>
+                            <p class="stat-number" id="completed-today">0</p>
+                        </div>
+                        <div class="stat-card overdue">
+                            <h3>Overdue</h3>
+                            <p class="stat-number" id="overdue-tasks">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-actions">
+                    <button id="add-task-btn" class="btn-primary">Add New Task</button>
+                    <button id="create-routine-btn" class="btn-secondary">Create Routine</button>
+                </div>
+
+                <div class="task-tabs">
+                    <button class="tab-btn active" data-tab="today">Today's Tasks</button>
+                    <button class="tab-btn" data-tab="weekly">This Week</button>
+                    <button class="tab-btn" data-tab="all">All Tasks</button>
+                    <button class="tab-btn" data-tab="routines">Routines</button>
+                </div>
+
+                <div id="today-tab" class="tab-content active">
+                    <div class="task-filters">
+                        <select id="priority-filter">
+                            <option value="">All Priorities</option>
+                            <option value="high">High Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="low">Low Priority</option>
+                        </select>
+                        <select id="category-filter">
+                            <option value="">All Categories</option>
+                            <option value="feeding">Feeding</option>
+                            <option value="health">Health Care</option>
+                            <option value="breeding">Breeding</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="sales">Sales</option>
+                            <option value="administration">Administration</option>
+                        </select>
+                        <select id="assignee-filter">
+                            <option value="">All Assignees</option>
+                            <option value="admin">Admin</option>
+                            <option value="staff1">Staff Member 1</option>
+                            <option value="staff2">Staff Member 2</option>
+                        </select>
+                    </div>
+
+                    <div class="task-list" id="today-tasks">
+                        <!-- Today's tasks will be populated here -->
+                    </div>
+                </div>
+
+                <div id="weekly-tab" class="tab-content">
+                    <div class="weekly-calendar">
+                        <div class="calendar-header">
+                            <button id="prev-week">&lt;</button>
+                            <h3 id="week-range">Week Range</h3>
+                            <button id="next-week">&gt;</button>
+                        </div>
+                        <div class="calendar-grid" id="weekly-calendar">
+                            <!-- Weekly calendar will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="all-tab" class="tab-content">
+                    <div class="task-search">
+                        <input type="text" id="task-search" placeholder="Search tasks..." class="search-input">
+                        <select id="status-filter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="records-table">
+                        <table id="all-tasks-table">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Category</th>
+                                    <th>Priority</th>
+                                    <th>Assignee</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="all-tasks-tbody">
+                                <!-- All tasks will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="routines-tab" class="tab-content">
+                    <div class="routine-list" id="routine-list">
+                        <!-- Routines will be populated here -->
+                    </div>
+                </div>
+
+                <div class="task-analytics">
+                    <div class="chart-container">
+                        <h3>Task Completion Rate</h3>
+                        <canvas id="completion-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Tasks by Category</h3>
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Task Modal -->
+    <div id="task-modal" class="modal">
+        <div class="modal-content">
+            <h2>Add Task</h2>
+            <form id="task-form">
+                <input type="hidden" id="task-id">
+                <input type="text" id="task-title" placeholder="Task Title" required>
+                <textarea id="task-description" placeholder="Task Description"></textarea>
+                <select id="task-category" required>
+                    <option value="">Select Category</option>
+                    <option value="feeding">Feeding</option>
+                    <option value="health">Health Care</option>
+                    <option value="breeding">Breeding</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="sales">Sales</option>
+                    <option value="administration">Administration</option>
+                </select>
+                <select id="task-priority" required>
+                    <option value="">Select Priority</option>
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="low">Low Priority</option>
+                </select>
+                <input type="date" id="task-due-date" required>
+                <input type="time" id="task-due-time">
+                <select id="task-assignee" required>
+                    <option value="">Assign To</option>
+                    <option value="admin">Admin</option>
+                    <option value="staff1">Staff Member 1</option>
+                    <option value="staff2">Staff Member 2</option>
+                </select>
+                <input type="number" id="estimated-duration" placeholder="Estimated Duration (minutes)">
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="recurring-task"> Recurring Task
+                    </label>
+                </div>
+                <div id="recurring-options" style="display: none;">
+                    <select id="recurrence-frequency">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                    <input type="number" id="recurrence-interval" placeholder="Every X days/weeks/months" value="1" min="1">
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit">Save Task</button>
+                    <button type="button" id="task-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Routine Modal -->
+    <div id="routine-modal" class="modal">
+        <div class="modal-content">
+            <h2>Create Routine</h2>
+            <form id="routine-form">
+                <input type="hidden" id="routine-id">
+                <input type="text" id="routine-name" placeholder="Routine Name" required>
+                <textarea id="routine-description" placeholder="Routine Description"></textarea>
+                <select id="routine-frequency" required>
+                    <option value="">Select Frequency</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+                <input type="time" id="routine-time" placeholder="Preferred Time">
+                <div id="routine-tasks">
+                    <h4>Tasks in this Routine</h4>
+                    <div class="routine-task-item">
+                        <input type="text" placeholder="Task name" class="routine-task-name">
+                        <select class="routine-task-category">
+                            <option value="feeding">Feeding</option>
+                            <option value="health">Health Care</option>
+                            <option value="breeding">Breeding</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="sales">Sales</option>
+                            <option value="administration">Administration</option>
+                        </select>
+                        <button type="button" class="remove-routine-task">Remove</button>
+                    </div>
+                </div>
+                <button type="button" id="add-routine-task">Add Another Task</button>
+                <div class="modal-buttons">
+                    <button type="submit">Save Routine</button>
+                    <button type="button" id="routine-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div id="task-detail-modal" class="modal">
+        <div class="modal-content">
+            <h2>Task Details</h2>
+            <div id="task-detail-content">
+                <!-- Task details will be populated here -->
+            </div>
+            <div class="task-actions-modal">
+                <button id="mark-complete" class="btn-success">Mark Complete</button>
+                <button id="edit-task" class="btn-secondary">Edit Task</button>
+                <button id="delete-task" class="btn-danger">Delete Task</button>
+                <button id="close-task-detail" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+</body>
+</html>

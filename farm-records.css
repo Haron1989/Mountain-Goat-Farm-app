@@ -1,37 +1,37 @@
 /* Farm Records Styles */
 body {
-    margin-top: 180px;
+    margin-top: 0;
 }
 
 /* Responsive body margin for stacked header */
 @media (max-width: 1200px) {
     body {
-        margin-top: 220px;
+        margin-top: 0;
     }
 }
 
 @media (max-width: 900px) {
     body {
-        margin-top: 260px;
+        margin-top: 0;
     }
 }
 
 @media (max-width: 700px) {
     body {
-        margin-top: 380px;
+        margin-top: 0;
     }
 }
 
 @media (max-width: 600px) {
     body {
-        margin-top: 360px;
+        margin-top: 0;
     }
 }
 
-/* Section spacing to prevent header overlap */
+/* Section spacing - normal padding */
 .records-section,
 .dashboard-section {
-    padding-top: 3rem !important;
+    padding-top: 1rem;
 }
 
 .records-section .container,
