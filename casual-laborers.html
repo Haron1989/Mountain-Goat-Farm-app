@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casual Laborers - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Casual Laborers Management -->
+        <section id="casual-laborers" class="records-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Casual Laborers Management</h2>
+                    <div class="section-actions">
+                        <button id="add-laborer-btn" class="btn btn-primary">
+                            <i class="icon">👷</i> Add Laborer
+                        </button>
+                        <button id="add-job-assignment-btn" class="btn btn-secondary">
+                            <i class="icon">📋</i> Assign Job
+                        </button>
+                        <button id="record-payment-btn" class="btn btn-success">
+                            <i class="icon">💰</i> Record Payment
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Laborers Filters -->
+                <div class="laborers-filters">
+                    <input type="text" id="laborers-search" placeholder="Search laborers...">
+                    <select id="laborers-status-filter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="available">Available</option>
+                        <option value="working">Currently Working</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <select id="laborers-skill-filter">
+                        <option value="">All Skills</option>
+                        <option value="general">General Labor</option>
+                        <option value="animal-care">Animal Care</option>
+                        <option value="machinery">Machinery Operation</option>
+                        <option value="construction">Construction</option>
+                        <option value="maintenance">Maintenance</option>
+                    </select>
+                </div>
+
+                <!-- Labor Summary Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Laborers</h3>
+                        <div class="stat-value" id="total-laborers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Currently Working</h3>
+                        <div class="stat-value" id="working-laborers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>This Month Payments</h3>
+                        <div class="stat-value" id="monthly-labor-cost">KSh 0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending Payments</h3>
+                        <div class="stat-value" id="pending-payments">KSh 0</div>
+                    </div>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="laborers">Laborers</button>
+                    <button class="tab-btn" data-tab="assignments">Job Assignments</button>
+                    <button class="tab-btn" data-tab="payments">Payment Records</button>
+                </div>
+
+                <!-- Laborers Tab -->
+                <div id="laborers-tab" class="tab-content active">
+                    <div class="table-container">
+                        <table class="records-table">
+                            <thead>
+                                <tr>
+                                    <th>Laborer ID</th>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Skills</th>
+                                    <th>Daily Rate</th>
+                                    <th>Status</th>
+                                    <th>Current Job</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="laborers-tbody">
+                                <tr>
+                                    <td colspan="8" class="empty-state">No laborers registered</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Job Assignments Tab -->
+                <div id="assignments-tab" class="tab-content">
+                    <div class="table-container">
+                        <table class="records-table">
+                            <thead>
+                                <tr>
+                                    <th>Assignment ID</th>
+                                    <th>Laborer</th>
+                                    <th>Job Description</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Days Worked</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignments-tbody">
+                                <tr>
+                                    <td colspan="8" class="empty-state">No job assignments found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Payment Records Tab -->
+                <div id="payments-tab" class="tab-content">
+                    <div class="table-container">
+                        <table class="records-table">
+                            <thead>
+                                <tr>
+                                    <th>Payment ID</th>
+                                    <th>Laborer</th>
+                                    <th>Period</th>
+                                    <th>Days Worked</th>
+                                    <th>Amount Paid</th>
+                                    <th>Payment Date</th>
+                                    <th>Payment Method</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payments-tbody">
+                                <tr>
+                                    <td colspan="8" class="empty-state">No payment records found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Laborer Modal -->
+    <div id="laborer-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="laborer-modal-title">Add New Laborer</h2>
+                <span class="close" onclick="farmRecords.hideLaborerModal()">&times;</span>
+            </div>
+            
+            <form id="laborer-form">
+                <input type="hidden" id="laborer-id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="laborer-name">Full Name</label>
+                        <input type="text" id="laborer-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="laborer-id-number">ID Number</label>
+                        <input type="text" id="laborer-id-number">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="laborer-contact">Phone Number</label>
+                        <input type="tel" id="laborer-contact" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="laborer-email">Email (Optional)</label>
+                        <input type="email" id="laborer-email">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="laborer-address">Address</label>
+                        <textarea id="laborer-address" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="laborer-emergency-contact">Emergency Contact</label>
+                        <input type="tel" id="laborer-emergency-contact">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="laborer-skills">Primary Skills</label>
+                        <select id="laborer-skills" multiple>
+                            <option value="general">General Labor</option>
+                            <option value="animal-care">Animal Care</option>
+                            <option value="machinery">Machinery Operation</option>
+                            <option value="construction">Construction</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="crop-farming">Crop Farming</option>
+                            <option value="irrigation">Irrigation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="laborer-daily-rate">Daily Rate (KSh)</label>
+                        <input type="number" id="laborer-daily-rate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="laborer-status">Status</label>
+                        <select id="laborer-status">
+                            <option value="active">Active</option>
+                            <option value="available">Available</option>
+                            <option value="working">Currently Working</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="laborer-join-date">Join Date</label>
+                        <input type="date" id="laborer-join-date" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="laborer-notes">Notes</label>
+                    <textarea id="laborer-notes" rows="3" placeholder="Additional notes about the laborer..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="laborer-cancel" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Laborer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Job Assignment Modal -->
+    <div id="assignment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="assignment-modal-title">Assign Job</h2>
+                <span class="close" onclick="farmRecords.hideAssignmentModal()">&times;</span>
+            </div>
+            
+            <form id="assignment-form">
+                <input type="hidden" id="assignment-id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="assignment-laborer">Select Laborer</label>
+                        <select id="assignment-laborer" required>
+                            <option value="">Select a laborer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignment-supervisor">Supervisor</label>
+                        <input type="text" id="assignment-supervisor">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="assignment-job-description">Job Description</label>
+                    <textarea id="assignment-job-description" rows="3" required placeholder="Describe the job to be done..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="assignment-start-date">Start Date</label>
+                        <input type="date" id="assignment-start-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignment-expected-end">Expected End Date</label>
+                        <input type="date" id="assignment-expected-end">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="assignment-location">Work Location</label>
+                        <input type="text" id="assignment-location">
+                    </div>
+                    <div class="form-group">
+                        <label for="assignment-status">Status</label>
+                        <select id="assignment-status">
+                            <option value="assigned">Assigned</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="assignment-cancel" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Assignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="payment-modal-title">Record Payment</h2>
+                <span class="close" onclick="farmRecords.hidePaymentModal()">&times;</span>
+            </div>
+            
+            <form id="payment-form">
+                <input type="hidden" id="payment-id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="payment-laborer">Select Laborer</label>
+                        <select id="payment-laborer" required>
+                            <option value="">Select a laborer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-assignment">Related Assignment (Optional)</label>
+                        <select id="payment-assignment">
+                            <option value="">Select assignment</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="payment-period-start">Period Start</label>
+                        <input type="date" id="payment-period-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-period-end">Period End</label>
+                        <input type="date" id="payment-period-end" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="payment-days-worked">Days Worked</label>
+                        <input type="number" id="payment-days-worked" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-daily-rate">Daily Rate (KSh)</label>
+                        <input type="number" id="payment-daily-rate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="payment-amount">Total Amount (KSh)</label>
+                        <input type="number" id="payment-amount" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-date">Payment Date</label>
+                        <input type="date" id="payment-date" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="payment-method">Payment Method</label>
+                        <select id="payment-method">
+                            <option value="cash">Cash</option>
+                            <option value="mpesa">M-Pesa</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                            <option value="check">Check</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-reference">Reference Number</label>
+                        <input type="text" id="payment-reference">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment-notes">Notes</label>
+                    <textarea id="payment-notes" rows="2" placeholder="Additional notes..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="payment-cancel" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+    <script>
+        // Initialize farm records when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            window.farmRecords = new FarmRecordsManager();
+            farmRecords.init();
+            farmRecords.loadLaborers();
+            farmRecords.loadJobAssignments();
+            farmRecords.loadLaborPayments();
+        });
+    </script>
+</body>
+</html>

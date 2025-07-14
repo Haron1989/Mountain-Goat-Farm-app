@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings & Permissions - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Settings & Permissions -->
+        <section id="settings-permissions" class="records-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Settings & Permissions</h2>
+                    <button id="add-user-btn" class="btn btn-primary">
+                        <i class="icon">👤</i> Add User
+                    </button>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="users">User Management</button>
+                    <button class="tab-btn" data-tab="roles">Roles & Permissions</button>
+                    <button class="tab-btn" data-tab="system">System Settings</button>
+                    <button class="tab-btn" data-tab="backup">Backup & Security</button>
+                </div>
+
+                <!-- User Management Tab -->
+                <div id="users-tab" class="tab-content active">
+                    <div class="settings-section">
+                        <h3>System Users</h3>
+                        <p>Manage users who have access to the farm records system</p>
+                        
+                        <div class="table-container">
+                            <table class="records-table">
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Last Login</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-tbody">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>System Administrator</td>
+                                        <td>admin</td>
+                                        <td>admin@mountaingoatfarm.com</td>
+                                        <td><span class="role-badge admin">Administrator</span></td>
+                                        <td><span class="status-active">Active</span></td>
+                                        <td>Today</td>
+                                        <td>
+                                            <button class="action-btn edit" onclick="farmRecords.editUser(1)">Edit</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Roles & Permissions Tab -->
+                <div id="roles-tab" class="tab-content">
+                    <div class="settings-section">
+                        <h3>Role Definitions</h3>
+                        <p>Define roles and their access permissions to different modules</p>
+                        
+                        <div class="roles-grid">
+                            <!-- Administrator Role -->
+                            <div class="role-card">
+                                <h4>Administrator</h4>
+                                <p>Full system access and user management</p>
+                                <div class="permissions-list">
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="admin-goats" checked disabled>
+                                        <label for="admin-goats">Goat Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="admin-breeding" checked disabled>
+                                        <label for="admin-breeding">Breeding Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="admin-financial" checked disabled>
+                                        <label for="admin-financial">Financial Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="admin-health" checked disabled>
+                                        <label for="admin-health">Health Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="admin-labor" checked disabled>
+                                        <label for="admin-labor">Labor Management</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="admin-equipment" checked disabled>
+                                        <label for="admin-equipment">Equipment Management</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="admin-lease" checked disabled>
+                                        <label for="admin-lease">Land Lease Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="admin-settings" checked disabled>
+                                        <label for="admin-settings">Settings & User Management</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Farm Manager Role -->
+                            <div class="role-card">
+                                <h4>Farm Manager</h4>
+                                <p>Access to operational records and reports</p>
+                                <div class="permissions-list">
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="manager-goats" checked>
+                                        <label for="manager-goats">Goat Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="manager-breeding" checked>
+                                        <label for="manager-breeding">Breeding Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="manager-financial">
+                                        <label for="manager-financial">Financial Records (View Only)</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="manager-health" checked>
+                                        <label for="manager-health">Health Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="manager-labor" checked>
+                                        <label for="manager-labor">Labor Management</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="manager-equipment" checked>
+                                        <label for="manager-equipment">Equipment Management</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="manager-lease">
+                                        <label for="manager-lease">Land Lease Records (View Only)</label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-secondary">Edit Role</button>
+                            </div>
+
+                            <!-- Veterinarian Role -->
+                            <div class="role-card">
+                                <h4>Veterinarian</h4>
+                                <p>Access to animal health and breeding records</p>
+                                <div class="permissions-list">
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="vet-goats" checked>
+                                        <label for="vet-goats">Goat Records (View Only)</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="vet-breeding" checked>
+                                        <label for="vet-breeding">Breeding Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="vet-health" checked>
+                                        <label for="vet-health">Health Records</label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-secondary">Edit Role</button>
+                            </div>
+
+                            <!-- Accountant Role -->
+                            <div class="role-card">
+                                <h4>Accountant</h4>
+                                <p>Access to financial and sales records</p>
+                                <div class="permissions-list">
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="acc-financial" checked>
+                                        <label for="acc-financial">Financial Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="acc-sales" checked>
+                                        <label for="acc-sales">Sales Records</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="acc-labor" checked>
+                                        <label for="acc-labor">Labor Payments</label>
+                                    </div>
+                                    <div class="permission-item">
+                                        <input type="checkbox" id="acc-lease" checked>
+                                        <label for="acc-lease">Land Lease Records</label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-secondary">Edit Role</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Settings Tab -->
+                <div id="system-tab" class="tab-content">
+                    <div class="settings-section">
+                        <h3>General Settings</h3>
+                        
+                        <form id="system-settings-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="farm-name">Farm Name</label>
+                                    <input type="text" id="farm-name" value="The Mountain Goat Farm">
+                                </div>
+                                <div class="form-group">
+                                    <label for="farm-location">Farm Location</label>
+                                    <input type="text" id="farm-location" value="Nakuru, Kenya">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="farm-contact">Primary Contact</label>
+                                    <input type="tel" id="farm-contact" value="+254 700 000 000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="farm-email">Farm Email</label>
+                                    <input type="email" id="farm-email" value="info@mountaingoatfarm.com">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="currency">Default Currency</label>
+                                    <select id="currency">
+                                        <option value="KSh">Kenyan Shilling (KSh)</option>
+                                        <option value="USD">US Dollar ($)</option>
+                                        <option value="EUR">Euro (€)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="date-format">Date Format</label>
+                                    <select id="date-format">
+                                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="session-timeout">Session Timeout (minutes)</label>
+                                    <input type="number" id="session-timeout" value="60" min="15" max="480">
+                                </div>
+                                <div class="form-group">
+                                    <label for="auto-backup">Auto Backup</label>
+                                    <select id="auto-backup">
+                                        <option value="daily">Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="disabled">Disabled</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Notification Settings</h3>
+                        
+                        <div class="notification-settings">
+                            <div class="notification-item">
+                                <input type="checkbox" id="notify-health" checked>
+                                <label for="notify-health">Health check reminders</label>
+                            </div>
+                            <div class="notification-item">
+                                <input type="checkbox" id="notify-breeding" checked>
+                                <label for="notify-breeding">Breeding cycle notifications</label>
+                            </div>
+                            <div class="notification-item">
+                                <input type="checkbox" id="notify-lease" checked>
+                                <label for="notify-lease">Lease expiration alerts</label>
+                            </div>
+                            <div class="notification-item">
+                                <input type="checkbox" id="notify-maintenance" checked>
+                                <label for="notify-maintenance">Equipment maintenance reminders</label>
+                            </div>
+                            <div class="notification-item">
+                                <input type="checkbox" id="notify-payments" checked>
+                                <label for="notify-payments">Payment due notifications</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backup & Security Tab -->
+                <div id="backup-tab" class="tab-content">
+                    <div class="settings-section">
+                        <h3>Data Backup</h3>
+                        
+                        <div class="backup-controls">
+                            <button id="backup-now" class="btn btn-primary">Create Backup Now</button>
+                            <button id="restore-backup" class="btn btn-secondary">Restore from Backup</button>
+                            <button id="export-data" class="btn btn-info">Export All Data</button>
+                        </div>
+
+                        <div class="backup-status">
+                            <p><strong>Last Backup:</strong> <span id="last-backup-date">Never</span></p>
+                            <p><strong>Backup Size:</strong> <span id="backup-size">0 KB</span></p>
+                            <p><strong>Auto Backup:</strong> <span id="auto-backup-status">Enabled (Daily)</span></p>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Security Settings</h3>
+                        
+                        <form id="security-settings-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="password-policy">Password Policy</label>
+                                    <select id="password-policy">
+                                        <option value="simple">Simple (6+ characters)</option>
+                                        <option value="medium" selected>Medium (8+ chars, mixed case)</option>
+                                        <option value="strong">Strong (12+ chars, symbols)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="login-attempts">Max Login Attempts</label>
+                                    <input type="number" id="login-attempts" value="3" min="3" max="10">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <input type="checkbox" id="two-factor" checked>
+                                    <label for="two-factor">Enable Two-Factor Authentication</label>
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" id="audit-log" checked>
+                                    <label for="audit-log">Enable Audit Logging</label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save Security Settings</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>System Information</h3>
+                        
+                        <div class="system-info">
+                            <p><strong>Version:</strong> 1.0.0</p>
+                            <p><strong>Database Size:</strong> <span id="db-size">2.5 MB</span></p>
+                            <p><strong>Total Records:</strong> <span id="total-records">156</span></p>
+                            <p><strong>System Uptime:</strong> <span id="system-uptime">2 days, 14 hours</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- User Modal -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="user-modal-title">Add New User</h2>
+                <span class="close" onclick="farmRecords.hideUserModal()">&times;</span>
+            </div>
+            
+            <form id="user-form">
+                <input type="hidden" id="user-id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user-full-name">Full Name</label>
+                        <input type="text" id="user-full-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-username">Username</label>
+                        <input type="text" id="user-username" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user-email">Email</label>
+                        <input type="email" id="user-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-phone">Phone Number</label>
+                        <input type="tel" id="user-phone">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user-role">Role</label>
+                        <select id="user-role" required>
+                            <option value="">Select Role</option>
+                            <option value="administrator">Administrator</option>
+                            <option value="farm-manager">Farm Manager</option>
+                            <option value="veterinarian">Veterinarian</option>
+                            <option value="accountant">Accountant</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-status">Status</label>
+                        <select id="user-status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user-password">Password</label>
+                        <input type="password" id="user-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-confirm-password">Confirm Password</label>
+                        <input type="password" id="user-confirm-password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="user-notes">Notes</label>
+                    <textarea id="user-notes" rows="2" placeholder="Additional notes about the user..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="user-cancel" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+    <script>
+        // Initialize farm records when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            window.farmRecords = new FarmRecordsManager();
+            farmRecords.init();
+            farmRecords.loadUsers();
+            farmRecords.loadSystemSettings();
+        });
+    </script>
+</body>
+</html>

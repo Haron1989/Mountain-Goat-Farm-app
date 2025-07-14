@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land Lease Records - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Land Lease Records -->
+        <section id="land-lease-records" class="records-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Land Lease Records</h2>
+                    <button id="add-lease-btn" class="btn btn-primary">
+                        <i class="icon">📄</i> Add New Lease
+                    </button>
+                </div>
+
+                <!-- Lease Filters -->
+                <div class="lease-filters">
+                    <input type="text" id="lease-search" placeholder="Search leases...">
+                    <select id="lease-status-filter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="expired">Expired</option>
+                        <option value="terminated">Terminated</option>
+                    </select>
+                    <select id="lease-type-filter">
+                        <option value="">All Types</option>
+                        <option value="agricultural">Agricultural</option>
+                        <option value="grazing">Grazing</option>
+                        <option value="residential">Residential</option>
+                        <option value="commercial">Commercial</option>
+                    </select>
+                </div>
+
+                <!-- Lease Summary Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Leases</h3>
+                        <div class="stat-value" id="total-leases">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Leases</h3>
+                        <div class="stat-value" id="active-leases">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Monthly Revenue</h3>
+                        <div class="stat-value" id="monthly-lease-revenue">KSh 0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Expiring Soon</h3>
+                        <div class="stat-value" id="expiring-leases">0</div>
+                    </div>
+                </div>
+
+                <!-- Lease Records Table -->
+                <div class="table-container">
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>Lease ID</th>
+                                <th>Property Name</th>
+                                <th>Lessee</th>
+                                <th>Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Monthly Rent</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leases-tbody">
+                            <tr>
+                                <td colspan="9" class="empty-state">No lease records found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Lease Modal -->
+    <div id="lease-modal" class="modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h2 id="lease-modal-title">Add New Lease</h2>
+                <span class="close" onclick="farmRecords.hideLeaseModal()">&times;</span>
+            </div>
+            
+            <form id="lease-form">
+                <input type="hidden" id="lease-id">
+                
+                <div class="form-tabs">
+                    <button type="button" class="tab-btn active" data-tab="basic">Basic Info</button>
+                    <button type="button" class="tab-btn" data-tab="financial">Financial</button>
+                    <button type="button" class="tab-btn" data-tab="terms">Terms & Conditions</button>
+                </div>
+
+                <!-- Basic Info Tab -->
+                <div id="basic-tab" class="tab-content active">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lease-property-name">Property Name</label>
+                            <input type="text" id="lease-property-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lease-type">Lease Type</label>
+                            <select id="lease-type" required>
+                                <option value="">Select Type</option>
+                                <option value="agricultural">Agricultural</option>
+                                <option value="grazing">Grazing</option>
+                                <option value="residential">Residential</option>
+                                <option value="commercial">Commercial</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lease-lessee-name">Lessee Name</label>
+                            <input type="text" id="lease-lessee-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lease-lessee-contact">Lessee Contact</label>
+                            <input type="tel" id="lease-lessee-contact" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lease-area">Area (Acres)</label>
+                            <input type="number" id="lease-area" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lease-location">Location/Plot Number</label>
+                            <input type="text" id="lease-location" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Tab -->
+                <div id="financial-tab" class="tab-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lease-monthly-rent">Monthly Rent (KSh)</label>
+                            <input type="number" id="lease-monthly-rent" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lease-security-deposit">Security Deposit (KSh)</label>
+                            <input type="number" id="lease-security-deposit">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lease-payment-method">Payment Method</label>
+                            <select id="lease-payment-method">
+                                <option value="bank-transfer">Bank Transfer</option>
+                                <option value="mpesa">M-Pesa</option>
+                                <option value="cash">Cash</option>
+                                <option value="check">Check</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lease-payment-day">Payment Due Day</label>
+                            <input type="number" id="lease-payment-day" min="1" max="31" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions Tab -->
+                <div id="terms-tab" class="tab-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lease-start-date">Start Date</label>
+                            <input type="date" id="lease-start-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lease-end-date">End Date</label>
+                            <input type="date" id="lease-end-date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lease-renewal">Auto Renewal</label>
+                            <select id="lease-renewal">
+                                <option value="no">No</option>
+                                <option value="yes">Yes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lease-status">Status</label>
+                            <select id="lease-status">
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                                <option value="expired">Expired</option>
+                                <option value="terminated">Terminated</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lease-terms">Special Terms & Conditions</label>
+                        <textarea id="lease-terms" rows="4" placeholder="Enter any special terms and conditions..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lease-notes">Additional Notes</label>
+                        <textarea id="lease-notes" rows="3" placeholder="Any additional notes..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="lease-cancel" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Lease</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+    <script>
+        // Initialize farm records when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            window.farmRecords = new FarmRecordsManager();
+            farmRecords.init();
+            farmRecords.loadLeases();
+        });
+    </script>
+</body>
+</html>

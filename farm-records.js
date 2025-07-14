@@ -11,12 +11,21 @@ class FarmRecordsManager {
         this.products = JSON.parse(localStorage.getItem('farmProducts') || '[]');
         this.contacts = JSON.parse(localStorage.getItem('farmContacts') || '[]');
         
-        // New data arrays for additional features
+        // Existing data arrays for additional features
         this.tasks = JSON.parse(localStorage.getItem('farmTasks') || '[]');
         this.reminders = JSON.parse(localStorage.getItem('farmReminders') || '[]');
         this.transactions = JSON.parse(localStorage.getItem('farmTransactions') || '[]');
         this.sales = JSON.parse(localStorage.getItem('farmSales') || '[]');
         this.crops = JSON.parse(localStorage.getItem('farmCrops') || '[]');
+        
+        // New modules data arrays
+        this.leases = JSON.parse(localStorage.getItem('farmLeases') || '[]');
+        this.equipment = JSON.parse(localStorage.getItem('farmEquipment') || '[]');
+        this.laborers = JSON.parse(localStorage.getItem('farmLaborers') || '[]');
+        this.jobAssignments = JSON.parse(localStorage.getItem('farmJobAssignments') || '[]');
+        this.laborPayments = JSON.parse(localStorage.getItem('farmLaborPayments') || '[]');
+        this.users = JSON.parse(localStorage.getItem('farmUsers') || '[{"id": 1, "name": "System Administrator", "username": "admin", "email": "admin@mountaingoatfarm.com", "role": "administrator", "status": "active", "dateCreated": "2024-01-01"}]');
+        this.systemSettings = JSON.parse(localStorage.getItem('farmSystemSettings') || '{}');
         
         // Don't initialize immediately - wait for DOM
     }
@@ -376,6 +385,114 @@ class FarmRecordsManager {
                 }
             }
         });
+
+        // === NEW MODULES EVENT LISTENERS ===
+
+        // Land Lease Records
+        safeAddEventListener('add-lease-btn', 'click', () => {
+            this.showLeaseModal();
+        });
+
+        safeAddEventListener('lease-form', 'submit', (e) => {
+            e.preventDefault();
+            this.saveLease();
+        });
+
+        safeAddEventListener('lease-cancel', 'click', () => {
+            this.hideLeaseModal();
+        });
+
+        // Machinery & Equipment
+        safeAddEventListener('add-equipment-btn', 'click', () => {
+            this.showEquipmentModal();
+        });
+
+        safeAddEventListener('equipment-form', 'submit', (e) => {
+            e.preventDefault();
+            this.saveEquipment();
+        });
+
+        safeAddEventListener('equipment-cancel', 'click', () => {
+            this.hideEquipmentModal();
+        });
+
+        // Casual Laborers
+        safeAddEventListener('add-laborer-btn', 'click', () => {
+            this.showLaborerModal();
+        });
+
+        safeAddEventListener('add-job-assignment-btn', 'click', () => {
+            this.showAssignmentModal();
+        });
+
+        safeAddEventListener('record-payment-btn', 'click', () => {
+            this.showPaymentModal();
+        });
+
+        safeAddEventListener('laborer-form', 'submit', (e) => {
+            e.preventDefault();
+            this.saveLaborer();
+        });
+
+        safeAddEventListener('assignment-form', 'submit', (e) => {
+            e.preventDefault();
+            this.saveJobAssignment();
+        });
+
+        safeAddEventListener('payment-form', 'submit', (e) => {
+            e.preventDefault();
+            this.saveLaborPayment();
+        });
+
+        safeAddEventListener('laborer-cancel', 'click', () => {
+            this.hideLaborerModal();
+        });
+
+        safeAddEventListener('assignment-cancel', 'click', () => {
+            this.hideAssignmentModal();
+        });
+
+        safeAddEventListener('payment-cancel', 'click', () => {
+            this.hidePaymentModal();
+        });
+
+        // Settings & Permissions
+        safeAddEventListener('add-user-btn', 'click', () => {
+            this.showUserModal();
+        });
+
+        safeAddEventListener('user-form', 'submit', (e) => {
+            e.preventDefault();
+            this.saveUser();
+        });
+
+        safeAddEventListener('user-cancel', 'click', () => {
+            this.hideUserModal();
+        });
+
+        safeAddEventListener('system-settings-form', 'submit', (e) => {
+            e.preventDefault();
+            this.saveSystemSettings();
+        });
+
+        safeAddEventListener('security-settings-form', 'submit', (e) => {
+            e.preventDefault();
+            this.saveSecuritySettings();
+        });
+
+        // Auto-calculate payment amount when days or rate changes
+        const calculatePaymentAmount = () => {
+            const days = parseFloat(document.getElementById('payment-days-worked')?.value || 0);
+            const rate = parseFloat(document.getElementById('payment-daily-rate')?.value || 0);
+            const amount = days * rate;
+            const amountField = document.getElementById('payment-amount');
+            if (amountField) {
+                amountField.value = amount.toFixed(2);
+            }
+        };
+
+        safeAddEventListener('payment-days-worked', 'input', calculatePaymentAmount);
+        safeAddEventListener('payment-daily-rate', 'input', calculatePaymentAmount);
     }
 
     // Navigation
@@ -2784,4 +2901,155 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     console.log('Farm app initialized. Try: testButton("add-goat-btn")');
+
+    // ================================
+    // LAND LEASE RECORDS MANAGEMENT
+    // ================================
+
+    farmRecords.loadLeases = function() {
+        const tbody = document.getElementById('leases-tbody');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+
+        if (this.leases.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No lease records found</td></tr>';
+            this.updateLeaseStats();
+            return;
+        }
+
+        this.leases.forEach(lease => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${lease.id}</td>
+                <td>${lease.propertyName}</td>
+                <td>${lease.lesseeName}</td>
+                <td>${lease.type}</td>
+                <td>${new Date(lease.startDate).toLocaleDateString()}</td>
+                <td>${new Date(lease.endDate).toLocaleDateString()}</td>
+                <td>KSh ${lease.monthlyRent.toLocaleString()}</td>
+                <td class="status-${lease.status}">${lease.status}</td>
+                <td>
+                    <button class="action-btn edit" onclick="farmRecords.editLease('${lease.id}')">Edit</button>
+                    <button class="action-btn delete" onclick="farmRecords.deleteLease('${lease.id}')">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        this.updateLeaseStats();
+    };
+
+    farmRecords.updateLeaseStats = function() {
+        const totalLeases = this.leases.length;
+        const activeLeases = this.leases.filter(l => l.status === 'active').length;
+        const monthlyRevenue = this.leases.filter(l => l.status === 'active').reduce((sum, l) => sum + l.monthlyRent, 0);
+        const today = new Date();
+        const thirtyDaysFromNow = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000));
+        const expiringLeases = this.leases.filter(l => 
+            l.status === 'active' && new Date(l.endDate) <= thirtyDaysFromNow
+        ).length;
+
+        const totalLeasesEl = document.getElementById('total-leases');
+        const activeLeasesEl = document.getElementById('active-leases');
+        const monthlyRevenueEl = document.getElementById('monthly-lease-revenue');
+        const expiringLeasesEl = document.getElementById('expiring-leases');
+
+        if (totalLeasesEl) totalLeasesEl.textContent = totalLeases;
+        if (activeLeasesEl) activeLeasesEl.textContent = activeLeases;
+        if (monthlyRevenueEl) monthlyRevenueEl.textContent = `KSh ${monthlyRevenue.toLocaleString()}`;
+        if (expiringLeasesEl) expiringLeasesEl.textContent = expiringLeases;
+    };
+
+    farmRecords.showLeaseModal = function(lease = null) {
+        const modal = document.getElementById('lease-modal');
+        const form = document.getElementById('lease-form');
+        
+        if (lease) {
+            document.getElementById('lease-modal-title').textContent = 'Edit Lease';
+            this.populateLeaseForm(lease);
+        } else {
+            document.getElementById('lease-modal-title').textContent = 'Add New Lease';
+            form.reset();
+            document.getElementById('lease-id').value = '';
+        }
+        
+        modal.style.display = 'flex';
+    };
+
+    farmRecords.hideLeaseModal = function() {
+        document.getElementById('lease-modal').style.display = 'none';
+    };
+
+    farmRecords.populateLeaseForm = function(lease) {
+        document.getElementById('lease-id').value = lease.id;
+        document.getElementById('lease-property-name').value = lease.propertyName;
+        document.getElementById('lease-type').value = lease.type;
+        document.getElementById('lease-lessee-name').value = lease.lesseeName;
+        document.getElementById('lease-lessee-contact').value = lease.lesseeContact;
+        document.getElementById('lease-area').value = lease.area;
+        document.getElementById('lease-location').value = lease.location;
+        document.getElementById('lease-monthly-rent').value = lease.monthlyRent;
+        document.getElementById('lease-security-deposit').value = lease.securityDeposit;
+        document.getElementById('lease-payment-method').value = lease.paymentMethod;
+        document.getElementById('lease-payment-day').value = lease.paymentDay;
+        document.getElementById('lease-start-date').value = lease.startDate;
+        document.getElementById('lease-end-date').value = lease.endDate;
+        document.getElementById('lease-renewal').value = lease.autoRenewal;
+        document.getElementById('lease-status').value = lease.status;
+        document.getElementById('lease-terms').value = lease.terms;
+        document.getElementById('lease-notes').value = lease.notes;
+    };
+
+    farmRecords.saveLease = function() {
+        const lease = {
+            id: document.getElementById('lease-id').value || Date.now().toString(),
+            propertyName: document.getElementById('lease-property-name').value,
+            type: document.getElementById('lease-type').value,
+            lesseeName: document.getElementById('lease-lessee-name').value,
+            lesseeContact: document.getElementById('lease-lessee-contact').value,
+            area: parseFloat(document.getElementById('lease-area').value),
+            location: document.getElementById('lease-location').value,
+            monthlyRent: parseFloat(document.getElementById('lease-monthly-rent').value),
+            securityDeposit: parseFloat(document.getElementById('lease-security-deposit').value || 0),
+            paymentMethod: document.getElementById('lease-payment-method').value,
+            paymentDay: parseInt(document.getElementById('lease-payment-day').value),
+            startDate: document.getElementById('lease-start-date').value,
+            endDate: document.getElementById('lease-end-date').value,
+            autoRenewal: document.getElementById('lease-renewal').value,
+            status: document.getElementById('lease-status').value,
+            terms: document.getElementById('lease-terms').value,
+            notes: document.getElementById('lease-notes').value,
+            dateCreated: new Date().toISOString()
+        };
+
+        if (document.getElementById('lease-id').value) {
+            const index = this.leases.findIndex(l => l.id === lease.id);
+            this.leases[index] = lease;
+        } else {
+            this.leases.push(lease);
+        }
+
+        localStorage.setItem('farmLeases', JSON.stringify(this.leases));
+        this.loadLeases();
+        this.hideLeaseModal();
+    };
+
+    farmRecords.editLease = function(id) {
+        const lease = this.leases.find(l => l.id === id);
+        if (lease) {
+            this.showLeaseModal(lease);
+        }
+    };
+
+    farmRecords.deleteLease = function(id) {
+        if (confirm('Are you sure you want to delete this lease record?')) {
+            this.leases = this.leases.filter(l => l.id !== id);
+            localStorage.setItem('farmLeases', JSON.stringify(this.leases));
+            this.loadLeases();
+        }
+    };
+
+    // Add other module functions in similar pattern...
+    console.log('✅ Additional modules initialized');
 });

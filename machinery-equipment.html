@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machinery & Equipment - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Machinery & Equipment -->
+        <section id="machinery-equipment" class="records-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Machinery & Equipment Management</h2>
+                    <button id="add-equipment-btn" class="btn btn-primary">
+                        <i class="icon">🚜</i> Add Equipment
+                    </button>
+                </div>
+
+                <!-- Equipment Filters -->
+                <div class="equipment-filters">
+                    <input type="text" id="equipment-search" placeholder="Search equipment...">
+                    <select id="equipment-type-filter">
+                        <option value="">All Types</option>
+                        <option value="tractor">Tractor</option>
+                        <option value="harvester">Harvester</option>
+                        <option value="plough">Plough</option>
+                        <option value="irrigation">Irrigation</option>
+                        <option value="tools">Hand Tools</option>
+                        <option value="vehicle">Vehicle</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <select id="equipment-status-filter">
+                        <option value="">All Status</option>
+                        <option value="operational">Operational</option>
+                        <option value="maintenance">Under Maintenance</option>
+                        <option value="repair">Needs Repair</option>
+                        <option value="retired">Retired</option>
+                    </select>
+                </div>
+
+                <!-- Equipment Summary Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Equipment</h3>
+                        <div class="stat-value" id="total-equipment">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Operational</h3>
+                        <div class="stat-value" id="operational-equipment">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Under Maintenance</h3>
+                        <div class="stat-value" id="maintenance-equipment">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Value</h3>
+                        <div class="stat-value" id="total-equipment-value">KSh 0</div>
+                    </div>
+                </div>
+
+                <!-- Equipment Records Table -->
+                <div class="table-container">
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th>Equipment ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Brand/Model</th>
+                                <th>Purchase Date</th>
+                                <th>Purchase Price</th>
+                                <th>Current Value</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="equipment-tbody">
+                            <tr>
+                                <td colspan="9" class="empty-state">No equipment records found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Equipment Modal -->
+    <div id="equipment-modal" class="modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h2 id="equipment-modal-title">Add New Equipment</h2>
+                <span class="close" onclick="farmRecords.hideEquipmentModal()">&times;</span>
+            </div>
+            
+            <form id="equipment-form">
+                <input type="hidden" id="equipment-id">
+                
+                <div class="form-tabs">
+                    <button type="button" class="tab-btn active" data-tab="basic">Basic Info</button>
+                    <button type="button" class="tab-btn" data-tab="financial">Financial</button>
+                    <button type="button" class="tab-btn" data-tab="maintenance">Maintenance</button>
+                </div>
+
+                <!-- Basic Info Tab -->
+                <div id="basic-tab" class="tab-content active">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="equipment-name">Equipment Name</label>
+                            <input type="text" id="equipment-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-type">Type</label>
+                            <select id="equipment-type" required>
+                                <option value="">Select Type</option>
+                                <option value="tractor">Tractor</option>
+                                <option value="harvester">Harvester</option>
+                                <option value="plough">Plough</option>
+                                <option value="irrigation">Irrigation Equipment</option>
+                                <option value="tools">Hand Tools</option>
+                                <option value="vehicle">Vehicle</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="equipment-brand">Brand</label>
+                            <input type="text" id="equipment-brand">
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-model">Model</label>
+                            <input type="text" id="equipment-model">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="equipment-serial">Serial Number</label>
+                            <input type="text" id="equipment-serial">
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-year">Year of Manufacture</label>
+                            <input type="number" id="equipment-year" min="1900" max="2030">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="equipment-description">Description</label>
+                        <textarea id="equipment-description" rows="3" placeholder="Equipment description and specifications..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Financial Tab -->
+                <div id="financial-tab" class="tab-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="equipment-purchase-price">Purchase Price (KSh)</label>
+                            <input type="number" id="equipment-purchase-price" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-purchase-date">Purchase Date</label>
+                            <input type="date" id="equipment-purchase-date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="equipment-current-value">Current Value (KSh)</label>
+                            <input type="number" id="equipment-current-value">
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-depreciation">Annual Depreciation (%)</label>
+                            <input type="number" id="equipment-depreciation" step="0.1" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="equipment-supplier">Supplier</label>
+                            <input type="text" id="equipment-supplier">
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-warranty">Warranty Period (Months)</label>
+                            <input type="number" id="equipment-warranty" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maintenance Tab -->
+                <div id="maintenance-tab" class="tab-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="equipment-status">Current Status</label>
+                            <select id="equipment-status">
+                                <option value="operational">Operational</option>
+                                <option value="maintenance">Under Maintenance</option>
+                                <option value="repair">Needs Repair</option>
+                                <option value="retired">Retired</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-location">Current Location</label>
+                            <input type="text" id="equipment-location">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="equipment-last-maintenance">Last Maintenance Date</label>
+                            <input type="date" id="equipment-last-maintenance">
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-next-maintenance">Next Maintenance Due</label>
+                            <input type="date" id="equipment-next-maintenance">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="equipment-maintenance-notes">Maintenance Notes</label>
+                        <textarea id="equipment-maintenance-notes" rows="4" placeholder="Maintenance history and notes..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="equipment-operating-hours">Operating Hours</label>
+                        <input type="number" id="equipment-operating-hours" step="0.1" min="0" placeholder="Total operating hours">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="equipment-cancel" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Equipment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+    <script>
+        // Initialize farm records when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            window.farmRecords = new FarmRecordsManager();
+            farmRecords.init();
+            farmRecords.loadEquipment();
+        });
+    </script>
+</body>
+</html>
