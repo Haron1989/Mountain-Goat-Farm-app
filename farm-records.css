@@ -28,6 +28,81 @@ body {
     }
 }
 
+/* Section spacing to prevent header overlap */
+.records-section,
+.dashboard-section {
+    padding-top: 3rem !important;
+}
+
+.records-section .container,
+.dashboard-section .container {
+    padding-top: 1rem;
+}
+
+.records-section h2,
+.dashboard-section h2 {
+    margin-top: 0;
+    padding-top: 1rem;
+}
+
+/* Ensure section controls are visible */
+.section-controls,
+.contact-filters,
+.task-filters,
+.reminder-filters,
+.financial-tabs {
+    margin-top: 1.5rem;
+}
+
+/* Responsive section spacing */
+@media (max-width: 1200px) {
+    .records-section,
+    .dashboard-section {
+        padding-top: 4rem !important;
+    }
+    
+    .records-section .container,
+    .dashboard-section .container {
+        padding-top: 1.5rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .records-section,
+    .dashboard-section {
+        padding-top: 4.5rem !important;
+    }
+    
+    .records-section .container,
+    .dashboard-section .container {
+        padding-top: 2rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .records-section,
+    .dashboard-section {
+        padding-top: 5rem !important;
+    }
+    
+    .records-section .container,
+    .dashboard-section .container {
+        padding-top: 2.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .records-section,
+    .dashboard-section {
+        padding-top: 4.5rem !important;
+    }
+    
+    .records-section .container,
+    .dashboard-section .container {
+        padding-top: 2rem;
+    }
+}
+
 .modal {
     display: none;
     position: fixed;
