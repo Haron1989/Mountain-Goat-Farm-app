@@ -3052,4 +3052,248 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add other module functions in similar pattern...
     console.log('✅ Additional modules initialized');
+
+    // User Management Functions
+    farmRecords.loadUsers = function() {
+        const tbody = document.getElementById('users-tbody');
+        if (!tbody) return; // Skip if not on settings page
+        
+        tbody.innerHTML = '';
+        
+        if (this.users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No users registered yet</td></tr>';
+            return;
+        }
+        
+        this.users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.name}</td>
+                <td>${user.username}</td>
+                <td>${user.email || 'N/A'}</td>
+                <td><span class="role-badge ${user.role}">${user.role}</span></td>
+                <td><span class="status-${user.status}">${user.status}</span></td>
+                <td>${user.lastLogin || 'Never'}</td>
+                <td>
+                    <button class="action-btn edit" onclick="farmRecords.editUser('${user.id}')">Edit</button>
+                    ${user.id !== 1 ? `<button class="action-btn delete" onclick="farmRecords.deleteUser('${user.id}')">Delete</button>` : ''}
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    };
+
+    farmRecords.showUserModal = function(user = null) {
+        const modal = document.getElementById('user-modal');
+        const form = document.getElementById('user-form');
+        
+        if (user) {
+            document.getElementById('user-modal-title').textContent = 'Edit User';
+            document.getElementById('user-id').value = user.id;
+            document.getElementById('user-full-name').value = user.name;
+            document.getElementById('user-username').value = user.username;
+            document.getElementById('user-email').value = user.email || '';
+            document.getElementById('user-phone').value = user.phone || '';
+            document.getElementById('user-role').value = user.role;
+            document.getElementById('user-status').value = user.status;
+            document.getElementById('user-notes').value = user.notes || '';
+            // Don't prefill passwords for editing
+            document.getElementById('user-password').value = '';
+            document.getElementById('user-confirm-password').value = '';
+        } else {
+            document.getElementById('user-modal-title').textContent = 'Add New User';
+            form.reset();
+        }
+        
+        modal.style.display = 'flex';
+    };
+
+    farmRecords.hideUserModal = function() {
+        document.getElementById('user-modal').style.display = 'none';
+    };
+
+    farmRecords.saveUser = function() {
+        const form = document.getElementById('user-form');
+        
+        // Helper function to safely get form values
+        const getValue = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        };
+
+        const password = getValue('user-password');
+        const confirmPassword = getValue('user-confirm-password');
+        
+        if (password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+        
+        const user = {
+            id: getValue('user-id') || Date.now().toString(),
+            name: getValue('user-full-name'),
+            username: getValue('user-username'),
+            email: getValue('user-email'),
+            phone: getValue('user-phone'),
+            role: getValue('user-role'),
+            status: getValue('user-status') || 'active',
+            notes: getValue('user-notes'),
+            dateCreated: new Date().toISOString(),
+            lastLogin: null
+        };
+        
+        if (getValue('user-id')) {
+            // Update existing user
+            const index = this.users.findIndex(u => u.id == user.id);
+            if (index !== -1) {
+                this.users[index] = { ...this.users[index], ...user };
+            }
+        } else {
+            // Add new user
+            this.users.push(user);
+        }
+        
+        localStorage.setItem('farmUsers', JSON.stringify(this.users));
+        this.loadUsers();
+        this.hideUserModal();
+    };
+
+    farmRecords.editUser = function(id) {
+        const user = this.users.find(u => u.id == id);
+        if (user) {
+            this.showUserModal(user);
+        }
+    };
+
+    farmRecords.deleteUser = function(id) {
+        if (id == 1) {
+            alert('Cannot delete the system administrator!');
+            return;
+        }
+        
+        if (confirm('Are you sure you want to delete this user?')) {
+            this.users = this.users.filter(u => u.id != id);
+            localStorage.setItem('farmUsers', JSON.stringify(this.users));
+            this.loadUsers();
+        }
+    };
+
+    // System Settings Functions
+    farmRecords.loadSystemSettings = function() {
+        const settings = this.systemSettings;
+        
+        // Load settings into form fields if they exist
+        const setValue = (id, value) => {
+            const element = document.getElementById(id);
+            if (element && value !== undefined) {
+                element.value = value;
+            }
+        };
+        
+        setValue('farm-name', settings.farmName || 'The Mountain Goat Farm');
+        setValue('farm-location', settings.farmLocation || 'Nakuru, Kenya');
+        setValue('farm-contact', settings.farmContact || '+254 700 000 000');
+        setValue('farm-email', settings.farmEmail || 'info@mountaingoatfarm.com');
+        setValue('currency', settings.currency || 'KSh');
+        setValue('date-format', settings.dateFormat || 'DD/MM/YYYY');
+        setValue('session-timeout', settings.sessionTimeout || 60);
+        setValue('auto-backup', settings.autoBackup || 'daily');
+        
+        // Load notification settings
+        const setCheckbox = (id, value) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.checked = value !== false; // default to true if not set
+            }
+        };
+        
+        setCheckbox('notify-health', settings.notifyHealth);
+        setCheckbox('notify-breeding', settings.notifyBreeding);
+        setCheckbox('notify-lease', settings.notifyLease);
+        setCheckbox('notify-maintenance', settings.notifyMaintenance);
+        setCheckbox('notify-payments', settings.notifyPayments);
+    };
+
+    farmRecords.saveSystemSettings = function() {
+        const getValue = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        };
+        
+        const getCheckbox = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.checked : false;
+        };
+        
+        const settings = {
+            farmName: getValue('farm-name'),
+            farmLocation: getValue('farm-location'),
+            farmContact: getValue('farm-contact'),
+            farmEmail: getValue('farm-email'),
+            currency: getValue('currency'),
+            dateFormat: getValue('date-format'),
+            sessionTimeout: parseInt(getValue('session-timeout')) || 60,
+            autoBackup: getValue('auto-backup'),
+            notifyHealth: getCheckbox('notify-health'),
+            notifyBreeding: getCheckbox('notify-breeding'),
+            notifyLease: getCheckbox('notify-lease'),
+            notifyMaintenance: getCheckbox('notify-maintenance'),
+            notifyPayments: getCheckbox('notify-payments'),
+            lastUpdated: new Date().toISOString()
+        };
+        
+        this.systemSettings = settings;
+        localStorage.setItem('farmSystemSettings', JSON.stringify(settings));
+        
+        alert('Settings saved successfully!');
+    };
+
+    // Backup Functions
+    farmRecords.createBackup = function() {
+        const backupData = {
+            version: '1.0.0',
+            timestamp: new Date().toISOString(),
+            data: {
+                goats: this.goats,
+                breedingRecords: this.breedingRecords,
+                meatRecords: this.meatRecords,
+                milkRecords: this.milkRecords,
+                feedRecords: this.feedRecords,
+                healthRecords: this.healthRecords,
+                products: this.products,
+                contacts: this.contacts,
+                tasks: this.tasks,
+                reminders: this.reminders,
+                transactions: this.transactions,
+                sales: this.sales,
+                crops: this.crops,
+                leases: this.leases,
+                equipment: this.equipment,
+                laborers: this.laborers,
+                jobAssignments: this.jobAssignments,
+                laborPayments: this.laborPayments,
+                users: this.users,
+                systemSettings: this.systemSettings
+            }
+        };
+        
+        const dataStr = JSON.stringify(backupData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = `farm-backup-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        
+        // Update last backup date
+        localStorage.setItem('lastBackupDate', new Date().toISOString());
+        document.getElementById('last-backup-date').textContent = new Date().toLocaleDateString();
+        
+        alert('Backup created successfully!');
+    };
+
+    farmRecords.exportData = function() {
+        this.createBackup(); // Same as backup for now
+    };
 });
