@@ -18,6 +18,11 @@ class FarmRecordsManager {
         this.sales = JSON.parse(localStorage.getItem('farmSales') || '[]');
         this.crops = JSON.parse(localStorage.getItem('farmCrops') || '[]');
         
+        // Don't initialize immediately - wait for DOM
+    }
+
+    // Initialize the app - called from DOMContentLoaded
+    init() {
         this.initializeAuth();
         this.setupEventListeners();
     }
@@ -76,8 +81,21 @@ class FarmRecordsManager {
 
     // Setup event listeners
     setupEventListeners() {
+        console.log('Setting up event listeners...');
+        
+        // Helper function to safely add event listeners
+        const safeAddEventListener = (selector, event, handler) => {
+            const element = document.getElementById(selector) || document.querySelector(selector);
+            if (element) {
+                element.addEventListener(event, handler);
+                console.log(`✅ Event listener added to: ${selector}`);
+            } else {
+                console.warn(`❌ Element not found: ${selector}`);
+            }
+        };
+
         // Login form
-        document.getElementById('login-form').addEventListener('submit', (e) => {
+        safeAddEventListener('login-form', 'submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -90,73 +108,73 @@ class FarmRecordsManager {
         });
 
         // Logout button
-        document.getElementById('logout-btn').addEventListener('click', () => {
+        safeAddEventListener('logout-btn', 'click', () => {
             this.logout();
         });
 
         // Goat management
-        document.getElementById('add-goat-btn').addEventListener('click', () => {
+        safeAddEventListener('add-goat-btn', 'click', () => {
             this.showGoatModal();
         });
 
-        document.getElementById('goat-form').addEventListener('submit', (e) => {
+        safeAddEventListener('goat-form', 'submit', (e) => {
             e.preventDefault();
             this.saveGoat();
         });
 
-        document.getElementById('goat-cancel').addEventListener('click', () => {
+        safeAddEventListener('goat-cancel', 'click', () => {
             this.hideGoatModal();
         });
 
         // Breeding record management
-        document.getElementById('add-breeding-record-btn').addEventListener('click', () => {
+        safeAddEventListener('add-breeding-record-btn', 'click', () => {
             this.showBreedingModal();
         });
 
         // Meat production record management
-        document.getElementById('add-meat-record-btn').addEventListener('click', () => {
+        safeAddEventListener('add-meat-record-btn', 'click', () => {
             this.showMeatModal();
         });
 
         // Milk record management
-        document.getElementById('add-milk-record-btn').addEventListener('click', () => {
+        safeAddEventListener('add-milk-record-btn', 'click', () => {
             this.showMilkModal();
         });
 
-        document.getElementById('milk-form').addEventListener('submit', (e) => {
+        safeAddEventListener('milk-form', 'submit', (e) => {
             e.preventDefault();
             this.saveMilkRecord();
         });
 
-        document.getElementById('milk-cancel').addEventListener('click', () => {
+        safeAddEventListener('milk-cancel', 'click', () => {
             this.hideMilkModal();
         });
 
         // Feed record management
-        document.getElementById('add-feed-record-btn').addEventListener('click', () => {
+        safeAddEventListener('add-feed-record-btn', 'click', () => {
             this.showFeedModal();
         });
 
-        document.getElementById('feed-form').addEventListener('submit', (e) => {
+        safeAddEventListener('feed-form', 'submit', (e) => {
             e.preventDefault();
             this.saveFeedRecord();
         });
 
-        document.getElementById('feed-cancel').addEventListener('click', () => {
+        safeAddEventListener('feed-cancel', 'click', () => {
             this.hideFeedModal();
         });
 
         // Health record management
-        document.getElementById('add-health-record-btn').addEventListener('click', () => {
+        safeAddEventListener('add-health-record-btn', 'click', () => {
             this.showHealthModal();
         });
 
-        document.getElementById('health-form').addEventListener('submit', (e) => {
+        safeAddEventListener('health-form', 'submit', (e) => {
             e.preventDefault();
             this.saveHealthRecord();
         });
 
-        document.getElementById('health-cancel').addEventListener('click', () => {
+        safeAddEventListener('health-cancel', 'click', () => {
             this.hideHealthModal();
         });
 
@@ -175,52 +193,52 @@ class FarmRecordsManager {
         });
 
         // Contact management
-        document.getElementById('add-contact-btn').addEventListener('click', () => {
+        safeAddEventListener('add-contact-btn', 'click', () => {
             this.showContactModal();
         });
 
-        document.getElementById('contact-form').addEventListener('submit', (e) => {
+        safeAddEventListener('contact-form', 'submit', (e) => {
             e.preventDefault();
             this.saveContact();
         });
 
-        document.getElementById('contact-cancel').addEventListener('click', () => {
+        safeAddEventListener('contact-cancel', 'click', () => {
             this.hideContactModal();
         });
 
-        document.getElementById('contact-filter').addEventListener('change', (e) => {
+        safeAddEventListener('contact-filter', 'change', (e) => {
             this.filterContacts(e.target.value);
         });
 
         // Task management
-        document.getElementById('add-task-btn').addEventListener('click', () => {
+        safeAddEventListener('add-task-btn', 'click', () => {
             this.showTaskModal();
         });
 
-        document.getElementById('task-form').addEventListener('submit', (e) => {
+        safeAddEventListener('task-form', 'submit', (e) => {
             e.preventDefault();
             this.saveTask();
         });
 
-        document.getElementById('task-cancel').addEventListener('click', () => {
+        safeAddEventListener('task-cancel', 'click', () => {
             this.hideTaskModal();
         });
 
-        document.getElementById('task-filter').addEventListener('change', (e) => {
+        safeAddEventListener('task-filter', 'change', (e) => {
             this.filterTasks(e.target.value);
         });
 
         // Reminder management
-        document.getElementById('add-reminder-btn').addEventListener('click', () => {
+        safeAddEventListener('add-reminder-btn', 'click', () => {
             this.showReminderModal();
         });
 
-        document.getElementById('reminder-form').addEventListener('submit', (e) => {
+        safeAddEventListener('reminder-form', 'submit', (e) => {
             e.preventDefault();
             this.saveReminder();
         });
 
-        document.getElementById('reminder-cancel').addEventListener('click', () => {
+        safeAddEventListener('reminder-cancel', 'click', () => {
             this.hideReminderModal();
         });
 
@@ -229,16 +247,16 @@ class FarmRecordsManager {
         });
 
         // Transaction management
-        document.getElementById('add-transaction-btn').addEventListener('click', () => {
+        safeAddEventListener('add-transaction-btn', 'click', () => {
             this.showTransactionModal();
         });
 
-        document.getElementById('transaction-form').addEventListener('submit', (e) => {
+        safeAddEventListener('transaction-form', 'submit', (e) => {
             e.preventDefault();
             this.saveTransaction();
         });
 
-        document.getElementById('transaction-cancel').addEventListener('click', () => {
+        safeAddEventListener('transaction-cancel', 'click', () => {
             this.hideTransactionModal();
         });
 
@@ -255,16 +273,16 @@ class FarmRecordsManager {
         });
 
         // Sales management
-        document.getElementById('add-sale-btn').addEventListener('click', () => {
+        safeAddEventListener('add-sale-btn', 'click', () => {
             this.showSaleModal();
         });
 
-        document.getElementById('sale-form').addEventListener('submit', (e) => {
+        safeAddEventListener('sale-form', 'submit', (e) => {
             e.preventDefault();
             this.saveSale();
         });
 
-        document.getElementById('sale-cancel').addEventListener('click', () => {
+        safeAddEventListener('sale-cancel', 'click', () => {
             this.hideSaleModal();
         });
 
@@ -278,31 +296,49 @@ class FarmRecordsManager {
         });
 
         // Crop management
-        document.getElementById('add-crop-btn').addEventListener('click', () => {
+        safeAddEventListener('add-crop-btn', 'click', () => {
             this.showCropModal();
         });
 
-        document.getElementById('crop-form').addEventListener('submit', (e) => {
+        safeAddEventListener('crop-form', 'submit', (e) => {
             e.preventDefault();
             this.saveCrop();
         });
 
-        document.getElementById('crop-cancel').addEventListener('click', () => {
+        safeAddEventListener('crop-cancel', 'click', () => {
             this.hideCropModal();
         });
 
-        document.getElementById('crop-filter').addEventListener('change', (e) => {
+        safeAddEventListener('crop-filter', 'change', (e) => {
             this.filterCrops(e.target.value);
         });
 
         // Navigation
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                this.showSection(targetId);
-            });
+        const navLinks = document.querySelectorAll('.nav-links a');
+        console.log('Found navigation links:', navLinks.length);
+        
+        navLinks.forEach((link, index) => {
+            const href = link.getAttribute('href');
+            console.log(`Nav link ${index}: ${href}`, link.textContent);
+            
+            if (href && href.startsWith('#')) {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = href.substring(1);
+                    console.log(`Navigation clicked: ${targetId}`);
+                    this.showSection(targetId);
+                });
+                console.log(`✅ Event listener added to: ${link.textContent} -> ${href}`);
+            } else {
+                console.log(`⏭️ Skipping non-hash link: ${href}`);
+            }
         });
+        
+        // Also add a global navigation function for testing
+        window.navigateTo = (sectionId) => {
+            console.log('Direct navigation to:', sectionId);
+            this.showSection(sectionId);
+        };
 
         // Form tabs (for goat modal and other multi-tab forms)
         document.addEventListener('click', (e) => {
@@ -320,17 +356,80 @@ class FarmRecordsManager {
 
     // Navigation
     showSection(sectionId) {
-        document.querySelectorAll('.records-section, .dashboard-section').forEach(section => {
+        console.log('showSection called with:', sectionId);
+        
+        // Hide all sections
+        const allSections = document.querySelectorAll('.records-section, .dashboard-section');
+        console.log('Found sections to hide:', allSections.length);
+        allSections.forEach(section => {
             section.style.display = 'none';
         });
         
         if (sectionId === 'dashboard' || !sectionId) {
-            document.getElementById('dashboard').style.display = 'block';
+            const dashboard = document.getElementById('dashboard');
+            if (dashboard) {
+                dashboard.style.display = 'block';
+                console.log('✅ Showing dashboard');
+            } else {
+                console.error('❌ Dashboard section not found');
+            }
         } else {
             const section = document.getElementById(sectionId);
+            console.log(`Looking for section: ${sectionId}`, section);
             if (section) {
                 section.style.display = 'block';
+                console.log(`✅ Showing section: ${sectionId}`);
+                
+                // Also call the load function for this section if it exists
+                this.loadSectionData(sectionId);
+            } else {
+                console.error(`❌ Section not found: ${sectionId}`);
             }
+        }
+    }
+    
+    // Load data for specific sections
+    loadSectionData(sectionId) {
+        console.log('Loading data for section:', sectionId);
+        switch(sectionId) {
+            case 'goat-records':
+                this.loadGoats();
+                break;
+            case 'breeding-records':
+                this.loadBreedingRecords();
+                break;
+            case 'meat-production':
+                this.loadMeatRecords();
+                break;
+            case 'products-management':
+                this.loadProducts();
+                break;
+            case 'feed-schedule':
+                this.loadFeedRecords();
+                break;
+            case 'health-records':
+                this.loadHealthRecords();
+                break;
+            case 'contact-management':
+                this.loadContacts();
+                break;
+            case 'task-manager':
+                this.loadTasks();
+                break;
+            case 'reminders':
+                this.loadReminders();
+                break;
+            case 'financial-records':
+                this.loadTransactions();
+                break;
+            case 'sales-records':
+                this.loadSales();
+                break;
+            case 'crop-management':
+                this.loadCrops();
+                break;
+            default:
+                console.log('No specific load function for:', sectionId);
         }
     }
 
@@ -1509,6 +1608,19 @@ class FarmRecordsManager {
                         </label><br><br>
                         
                         <label>Price (KSh):<br>
+                            <input type="number" id="meat-price" value="${record ? record.price : ''}" step="0.01" required>
+                        </label><br><br>
+                        
+                        <label>Notes:<br>
+                            <textarea id="meat-notes">${record ? record.notes || '' : ''}</textarea>
+                        </label><br><br>
+                        
+                        <div class="modal-buttons">
+                            <button type="submit">Save Record</button>
+                            <button type="button" onclick="farmRecords.closeMeatModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         `;
         
@@ -2521,8 +2633,25 @@ class FarmRecordsManager {
     }
 }
 
-// Initialize the farm records manager
-const farmRecords = new FarmRecordsManager();
-
-// Make functions available globally for onclick handlers
-window.farmRecords = farmRecords;
+// Initialize the farm records manager when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+    window.farmApp = new FarmRecordsManager();
+    window.farmApp.init(); // Call init after DOM is ready
+    // Maintain backward compatibility for onclick handlers
+    window.farmRecords = window.farmApp;
+    
+    // Add debugging function
+    window.testButton = function(buttonId) {
+        const button = document.getElementById(buttonId);
+        console.log(`Testing button: ${buttonId}`, button);
+        if (button) {
+            console.log('Button found, simulating click...');
+            button.click();
+        } else {
+            console.error('Button not found!');
+        }
+    };
+    
+    console.log('Farm app initialized. Try: testButton("add-goat-btn")');
+});
