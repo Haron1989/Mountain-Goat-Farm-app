@@ -10,15 +10,79 @@
   --logo-yellow: #E9C97C;
 }
 
+/* Mountain Hero Banner */
+.mountain-hero {
+    background: linear-gradient(135deg, var(--logo-green) 0%, var(--logo-brown) 100%);
+    color: var(--logo-white);
+    padding: 60px 0 80px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.mountain-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 80' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0,80 L0,60 Q20,55 40,65 Q60,50 110,50 Q120,40 140,42 Q170,38 170,55 Q200,37 230,50 Q250,30 260,37 Q280,10 310,40 Q320,30 350,45 Q370,25 390,45 Q400,35 420,50 Q460,40 500,45 Q520,33 540,60 Q560,45 600,60 L600,80 Z' fill='%23F8F4EA'/%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: repeat-x;
+    background-position: bottom;
+    z-index: 1;
+}
+
+.mountain-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: var(--logo-white);
+    position: relative;
+    z-index: 2;
+}
+
+.mountain-hero p {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+/* Mountain Silhouette Background */
+.mountain-background {
+  position: relative;
+  overflow: hidden;
+}
+
+.mountain-background::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 80' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0,80 L0,60 Q20,55 40,65 Q60,50 110,50 Q120,40 140,42 Q170,38 170,55 Q200,37 230,50 Q250,30 260,37 Q280,10 310,40 Q320,30 350,45 Q370,25 390,45 Q400,35 420,50 Q460,40 500,45 Q520,33 540,60 Q560,45 600,60 L600,80 Z' fill='%2338643A' opacity='0.17'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: repeat-x;
+  background-position: bottom;
+  z-index: -1;
+}
+
 /* Fonts and Base Styling */
 body {
   font-family: 'Montserrat', 'Open Sans', Arial, sans-serif;
-  background: var(--logo-beige) !important;
+  background: linear-gradient(180deg, var(--logo-beige) 0%, #f5f2e8 100%) !important;
   color: var(--logo-brown) !important;
   margin: 0 !important;
   padding: 0 !important;
   padding-top: 0 !important;
   margin-top: 0 !important;
+  position: relative;
 }
 
 h1, h2, h3, .logo h1 {
@@ -118,12 +182,31 @@ header, nav {
     margin-top: 0 !important;
     position: relative;
     top: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--logo-beige) 0%, #f5f2e8 100%);
+}
+
+.records-section::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 80' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0,80 L0,60 Q20,55 40,65 Q60,50 110,50 Q120,40 140,42 Q170,38 170,55 Q200,37 230,50 Q250,30 260,37 Q280,10 310,40 Q320,30 350,45 Q370,25 390,45 Q400,35 420,50 Q460,40 500,45 Q520,33 540,60 Q560,45 600,60 L600,80 Z' fill='%2338643A' opacity='0.08'/%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: repeat-x;
+    background-position: bottom;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .records-section .container,
 .dashboard-section .container {
     padding-top: 0 !important;
     margin-top: 0 !important;
+    position: relative;
+    z-index: 1;
 }
 
 .records-section h2,
@@ -327,13 +410,32 @@ section {
 
 /* Dashboard Styles */
 .dashboard-section {
-    padding: 40px 0;
-    background: var(--logo-beige);
+    padding: 60px 0 40px 0;
+    background: linear-gradient(180deg, var(--logo-beige) 0%, #f5f2e8 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 80' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0,80 L0,60 Q20,55 40,65 Q60,50 110,50 Q120,40 140,42 Q170,38 170,55 Q200,37 230,50 Q250,30 260,37 Q280,10 310,40 Q320,30 350,45 Q370,25 390,45 Q400,35 420,50 Q460,40 500,45 Q520,33 540,60 Q560,45 600,60 L600,80 Z' fill='%2338643A' opacity='0.12'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: top;
+    transform: scaleY(-1);
+    z-index: 0;
 }
 
 .dashboard-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
+    position: relative;
+    z-index: 1;
 }
 
 .dashboard-header h2 {
@@ -714,14 +816,39 @@ section {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
-    padding-bottom: 15px;
+    padding: 25px;
     border-bottom: 2px solid var(--logo-green);
+    background: linear-gradient(135deg, var(--logo-white) 0%, var(--logo-beige) 100%);
+    border-radius: 16px 16px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 80' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0,80 L0,60 Q20,55 40,65 Q60,50 110,50 Q120,40 140,42 Q170,38 170,55 Q200,37 230,50 Q250,30 260,37 Q280,10 310,40 Q320,30 350,45 Q370,25 390,45 Q400,35 420,50 Q460,40 500,45 Q520,33 540,60 Q560,45 600,60 L600,80 Z' fill='%2338643A' opacity='0.25'/%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: repeat-x;
+    background-position: bottom;
+    z-index: 0;
 }
 
 .section-header h2 {
     color: var(--logo-green);
     font-family: 'Playfair Display', serif;
     margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.section-header .btn {
+    position: relative;
+    z-index: 1;
 }
 
 /* Tab Navigation */
