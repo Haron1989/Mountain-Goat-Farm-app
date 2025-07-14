@@ -16,9 +16,15 @@ body {
     }
 }
 
+@media (max-width: 700px) {
+    body {
+        margin-top: 260px;
+    }
+}
+
 @media (max-width: 600px) {
     body {
-        margin-top: 130px;
+        margin-top: 250px;
     }
 }
 
