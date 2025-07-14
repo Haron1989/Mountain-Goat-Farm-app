@@ -27,6 +27,30 @@ class FarmRecordsManager {
         this.setupEventListeners();
     }
 
+    // Utility function to calculate age from date of birth
+    calculateAge(dob) {
+        if (!dob) return 'N/A';
+        
+        const today = new Date();
+        const birthDate = new Date(dob);
+        
+        if (isNaN(birthDate.getTime())) return 'N/A';
+        
+        const diffTime = today - birthDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays < 30) {
+            return `${diffDays} days`;
+        } else if (diffDays < 365) {
+            const months = Math.floor(diffDays / 30);
+            return `${months} months`;
+        } else {
+            const years = Math.floor(diffDays / 365);
+            const remainingMonths = Math.floor((diffDays % 365) / 30);
+            return remainingMonths > 0 ? `${years}y ${remainingMonths}m` : `${years} years`;
+        }
+    }
+
     // Authentication
     initializeAuth() {
         const loginModal = document.getElementById('login-modal');
@@ -845,6 +869,8 @@ class FarmRecordsManager {
     // Goat Management
     loadGoats() {
         const tbody = document.getElementById('goats-tbody');
+        if (!tbody) return; // Skip if not on goats page
+        
         tbody.innerHTML = '';
         
         if (this.goats.length === 0) {
@@ -854,17 +880,31 @@ class FarmRecordsManager {
         
         this.goats.forEach(goat => {
             const row = document.createElement('tr');
+            
+            // Handle both legacy and new field formats
+            const displayData = {
+                id: goat.id || goat.tag || 'N/A',
+                name: goat.name || 'N/A',
+                breed: goat.breed || 'N/A',
+                age: goat.age || (goat.dob ? this.calculateAge(goat.dob) : 'N/A'),
+                color: goat.color || 'N/A',
+                gender: goat.gender || 'N/A',
+                milkProduction: goat.milkProduction || 'N/A',
+                healthStatus: goat.healthStatus || goat.status || 'Unknown',
+                location: goat.location || 'N/A'
+            };
+            
             row.innerHTML = `
-                <td>${goat.id}</td>
-                <td>${goat.name}</td>
-                <td>${goat.breed}</td>
-                <td>${goat.age}</td>
-                <td>${goat.color}</td>
-                <td>${goat.milkProduction}</td>
-                <td class="status-${goat.healthStatus.toLowerCase()}">${goat.healthStatus}</td>
+                <td>${displayData.id}</td>
+                <td>${displayData.name}</td>
+                <td>${displayData.breed}</td>
+                <td>${displayData.age}</td>
+                <td>${displayData.color}</td>
+                <td>${displayData.milkProduction}</td>
+                <td class="status-${displayData.healthStatus.toLowerCase().replace(' ', '-')}">${displayData.healthStatus}</td>
                 <td>
-                    <button class="action-btn edit" onclick="farmRecords.editGoat(${goat.id})">Edit</button>
-                    <button class="action-btn delete" onclick="farmRecords.deleteGoat(${goat.id})">Delete</button>
+                    <button class="action-btn edit" onclick="farmRecords.editGoat('${goat.id}')">Edit</button>
+                    <button class="action-btn delete" onclick="farmRecords.deleteGoat('${goat.id}')">Delete</button>
                 </td>
             `;
             tbody.appendChild(row);
@@ -878,13 +918,22 @@ class FarmRecordsManager {
         if (goat) {
             document.getElementById('goat-modal-title').textContent = 'Edit Goat';
             document.getElementById('goat-id').value = goat.id;
-            document.getElementById('goat-name').value = goat.name;
-            document.getElementById('goat-breed').value = goat.breed;
-            document.getElementById('goat-age').value = goat.age;
-            document.getElementById('goat-color').value = goat.color;
-            document.getElementById('goat-milk-production').value = goat.milkProduction;
-            document.getElementById('goat-health-status').value = goat.healthStatus;
-            document.getElementById('goat-notes').value = goat.notes || '';
+            
+            // Map goat data to the actual form fields that exist
+            if (document.getElementById('goat-tag')) document.getElementById('goat-tag').value = goat.tag || goat.id || '';
+            if (document.getElementById('goat-name')) document.getElementById('goat-name').value = goat.name || '';
+            if (document.getElementById('goat-gender')) document.getElementById('goat-gender').value = goat.gender || '';
+            if (document.getElementById('goat-dob')) document.getElementById('goat-dob').value = goat.dob || '';
+            if (document.getElementById('goat-breed')) document.getElementById('goat-breed').value = goat.breed || '';
+            if (document.getElementById('goat-location')) document.getElementById('goat-location').value = goat.location || '';
+            if (document.getElementById('goat-status')) document.getElementById('goat-status').value = goat.status || 'alive';
+            
+            // Legacy fields (for backward compatibility)
+            if (document.getElementById('goat-age')) document.getElementById('goat-age').value = goat.age || '';
+            if (document.getElementById('goat-color')) document.getElementById('goat-color').value = goat.color || '';
+            if (document.getElementById('goat-milk-production')) document.getElementById('goat-milk-production').value = goat.milkProduction || '';
+            if (document.getElementById('goat-health-status')) document.getElementById('goat-health-status').value = goat.healthStatus || '';
+            if (document.getElementById('goat-notes')) document.getElementById('goat-notes').value = goat.notes || '';
         } else {
             document.getElementById('goat-modal-title').textContent = 'Add New Goat';
             form.reset();
@@ -899,24 +948,48 @@ class FarmRecordsManager {
 
     saveGoat() {
         const form = document.getElementById('goat-form');
-        const formData = new FormData(form);
+        
+        // Helper function to safely get form values
+        const getValue = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        };
         
         const goat = {
-            id: document.getElementById('goat-id').value || Date.now(),
-            name: document.getElementById('goat-name').value,
-            breed: document.getElementById('goat-breed').value,
-            age: parseInt(document.getElementById('goat-age').value),
-            color: document.getElementById('goat-color').value,
-            milkProduction: document.getElementById('goat-milk-production').value,
-            healthStatus: document.getElementById('goat-health-status').value,
-            notes: document.getElementById('goat-notes').value,
+            id: getValue('goat-id') || Date.now().toString(),
+            // New form fields (preferred)
+            tag: getValue('goat-tag'),
+            name: getValue('goat-name'),
+            gender: getValue('goat-gender'),
+            dob: getValue('goat-dob'),
+            breed: getValue('goat-breed'),
+            location: getValue('goat-location'),
+            status: getValue('goat-status') || 'alive',
+            
+            // Legacy fields for backward compatibility
+            age: parseInt(getValue('goat-age')) || '',
+            color: getValue('goat-color'),
+            milkProduction: getValue('goat-milk-production'),
+            healthStatus: getValue('goat-health-status'),
+            notes: getValue('goat-notes'),
+            
             dateAdded: new Date().toISOString()
         };
         
-        if (document.getElementById('goat-id').value) {
+        // Calculate age from DOB if available
+        if (goat.dob && !goat.age) {
+            const today = new Date();
+            const birthDate = new Date(goat.dob);
+            const ageInMonths = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24 * 30.44));
+            goat.age = ageInMonths;
+        }
+        
+        if (getValue('goat-id')) {
             // Update existing goat
             const index = this.goats.findIndex(g => g.id == goat.id);
-            this.goats[index] = goat;
+            if (index !== -1) {
+                this.goats[index] = { ...this.goats[index], ...goat };
+            }
         } else {
             // Add new goat
             this.goats.push(goat);
@@ -2118,14 +2191,47 @@ class FarmRecordsManager {
         });
         
         // Show selected tab
-        document.getElementById(`${tabName}-tab`).classList.add('active');
+        const targetTab = document.getElementById(`${tabName}-tab`);
+        if (targetTab) {
+            targetTab.classList.add('active');
+        }
         
         // Add active class to selected tab button
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        const targetBtn = document.querySelector(`[data-tab="${tabName}"]`);
+        if (targetBtn) {
+            targetBtn.classList.add('active');
+        }
         
         // Update tab content
         if (tabName === 'profit-loss' || tabName === 'balance-sheet') {
             this.updateFinancialReports();
+        }
+    }
+
+    // Handle modal tab switching
+    switchModalTab(modalContent, tabName) {
+        // Hide all tab contents in this modal
+        modalContent.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+            tab.style.display = 'none';
+        });
+        
+        // Remove active class from all tab buttons in this modal
+        modalContent.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Show selected tab content
+        const targetTab = modalContent.querySelector(`#${tabName}-tab`);
+        if (targetTab) {
+            targetTab.classList.add('active');
+            targetTab.style.display = 'block';
+        }
+        
+        // Add active class to selected tab button
+        const targetBtn = modalContent.querySelector(`[data-tab="${tabName}"]`);
+        if (targetBtn) {
+            targetBtn.classList.add('active');
         }
     }
 
