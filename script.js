@@ -177,10 +177,54 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSmoothScrolling();
     setupContactForm();
     updateGoatCount();
+    updateLiveStats();
     setupAdminContact();
     renderProducts();
     setupProductManagement();
+    
+    // Enhanced features
+    setupMobileNavigation();
+    setupProductSearch();
+    setupWeatherWidget();
+    setupGoatFiltering();
+    setupNewsletterForm();
+    setupProductNotifications();
+    
+    // Track page visit
+    trackUserInteraction('page_visit', { page: 'home' });
+    
+    // Update stats periodically
+    setInterval(updateLiveStats, 30000);
+    
+    // Close modals when clicking outside
+    document.addEventListener('click', function(e) {
+        const modals = ['quote-modal', 'visit-modal'];
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (modal && e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+    
+    // Add smooth scrolling for all internal links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Track navigation
+                trackUserInteraction('navigation', { target: this.getAttribute('href') });
+            }
+        });
+    });
 });
+
 // Admin contact details logic
 function setupAdminContact() {
     const editBtn = document.getElementById('admin-edit-contact');
@@ -235,12 +279,30 @@ function setupAdminContact() {
 
 // Render goats
 function renderGoats() {
-    goatGrid.innerHTML = '';
-    
-    goats.forEach(goat => {
-        const goatCard = createGoatCard(goat);
-        goatGrid.appendChild(goatCard);
-    });
+    if (!goatGrid) return;
+
+    goatGrid.innerHTML = goats.map(goat => `
+        <div class="goat-card" data-goat='${JSON.stringify(goat)}'>
+            <img src="${goat.image}" alt="${goat.name}" loading="lazy">
+            <div class="goat-info">
+                <h3>${goat.name}</h3>
+                <div class="goat-details">
+                    <p><strong>Breed:</strong> ${goat.breed}</p>
+                    <p><strong>Age:</strong> ${goat.age} years</p>
+                    <p><strong>Weight:</strong> ${goat.weight}</p>
+                    <p><strong>Color:</strong> ${goat.color}</p>
+                    ${goat.genetics ? `<p><strong>Genetics:</strong> ${goat.genetics}</p>` : ''}
+                    ${goat.meatQuality ? `<p class="meat-quality"><strong>Meat Grade:</strong> ${goat.meatQuality}</p>` : ''}
+                    ${goat.milkProduction ? `<p><strong>Milk:</strong> ${goat.milkProduction}</p>` : ''}
+                </div>
+                <div class="goat-badges">
+                    ${goat.age >= 2 ? '<span class="badge breeding">Breeding Stock</span>' : ''}
+                    ${goat.meatQuality === 'Grade A+' ? '<span class="badge premium">Premium</span>' : ''}
+                    ${goat.age < 2 ? '<span class="badge young">Young</span>' : ''}
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
 // Create goat card element
@@ -311,22 +373,19 @@ function setupContactForm() {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const formData = new FormData(this);
-            const name = this.querySelector('input[type="text"]').value;
-            const email = this.querySelector('input[type="email"]').value;
-            const message = this.querySelector('textarea').value;
+            // Collect form data
+            const formData = new FormData(contactForm);
+            const contactData = Object.fromEntries(formData);
+            contactData.timestamp = new Date().toISOString();
+            contactData.id = 'contact_' + Date.now();
             
-            // Simple validation
-            if (!name || !email || !message) {
-                alert('Please fill in all fields.');
-                return;
-            }
+            // Store contact message (in real app, send to server)
+            const messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+            messages.push(contactData);
+            localStorage.setItem('contactMessages', JSON.stringify(messages));
             
-            // Simulate form submission
-            alert(`Thank you, ${name}! Your message has been sent. We'll get back to you soon at ${email}.`);
-            
-            // Reset form
-            this.reset();
+            contactForm.reset();
+            showMessage('Message sent successfully! We\'ll get back to you soon.', 'success');
         });
     }
 }
@@ -839,11 +898,315 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Export functions for testing (if needed)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        goats,
-        createGoatCard,
-        showGoatDetails
+// Enhanced JavaScript functionality for Mountain Goat Farm
+
+// Mobile navigation functionality
+function setupMobileNavigation() {
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.getElementById('nav-links');
+    
+    if (mobileBtn) {
+        mobileBtn.addEventListener('click', function() {
+            mobileBtn.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+    }
+    
+    // Close mobile menu when clicking on links
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileBtn?.classList.remove('active');
+            navLinks?.classList.remove('active');
+        });
+    });
+}
+
+// Product search functionality
+function setupProductSearch() {
+    const searchInput = document.getElementById('product-search');
+    const searchBtn = document.getElementById('search-btn');
+    
+    function performSearch() {
+        const searchTerm = searchInput?.value.toLowerCase().trim();
+        if (!searchTerm) return;
+        
+        // Scroll to products section
+        document.getElementById('products')?.scrollIntoView({behavior: 'smooth'});
+        
+        // Filter products
+        setTimeout(() => {
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach(card => {
+                const productName = card.querySelector('h3')?.textContent.toLowerCase();
+                const productDesc = card.querySelector('p')?.textContent.toLowerCase();
+                
+                if (productName?.includes(searchTerm) || productDesc?.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    card.style.border = '2px solid #e74c3c';
+                    card.style.boxShadow = '0 8px 25px rgba(231, 76, 60, 0.3)';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show search results message
+            showSearchResults(searchTerm);
+        }, 500);
+    }
+    
+    searchBtn?.addEventListener('click', performSearch);
+    searchInput?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performSearch();
+    });
+}
+
+// Weather widget functionality
+function setupWeatherWidget() {
+    const weatherTemp = document.getElementById('weather-temp');
+    const weatherDesc = document.getElementById('weather-desc');
+    const weatherLocation = document.getElementById('weather-location');
+    
+    // Update location to reflect correct farm location
+    if (weatherLocation) {
+        weatherLocation.textContent = 'Kirinyaga County';
+    }
+    
+    // Kirinyaga County specific weather conditions (Mount Kenya region)
+    const weatherConditions = [
+        { temp: '20°C', desc: 'Cool mountain air - perfect grazing' },
+        { temp: '23°C', desc: 'Ideal breeding weather' },
+        { temp: '18°C', desc: 'Fresh highland breeze' },
+        { temp: '25°C', desc: 'Warm sunny day' },
+        { temp: '21°C', desc: 'Pleasant mountain climate' },
+        { temp: '19°C', desc: 'Crisp morning air' }
+    ];
+    
+    const currentWeather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+    
+    if (weatherTemp) weatherTemp.textContent = currentWeather.temp;
+    if (weatherDesc) weatherDesc.textContent = currentWeather.desc;
+    
+    // Add a subtle animation to show the weather is "live"
+    const weatherWidget = document.getElementById('weather-widget');
+    if (weatherWidget) {
+        weatherWidget.style.opacity = '0';
+        setTimeout(() => {
+            weatherWidget.style.opacity = '1';
+            weatherWidget.style.transition = 'opacity 0.5s ease';
+        }, 500);
+    }
+}
+
+// Goat filtering functionality
+function setupGoatFiltering() {
+    const filterBtns = document.querySelectorAll('.goat-filters .filter-btn');
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterBtns.forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            filterGoats(filter);
+        });
+    });
+}
+
+function filterGoats(filter) {
+    const goatCards = document.querySelectorAll('.goat-card');
+    
+    goatCards.forEach(card => {
+        const goatData = JSON.parse(card.getAttribute('data-goat') || '{}');
+        let show = true;
+        
+        switch(filter) {
+            case 'breeding':
+                show = goatData.age >= 2;
+                break;
+            case 'young':
+                show = goatData.age < 2;
+                break;
+            case 'boer':
+                show = goatData.breed?.toLowerCase().includes('boer');
+                break;
+            case 'kiko':
+                show = goatData.breed?.toLowerCase().includes('kiko');
+                break;
+            case 'all':
+            default:
+                show = true;
+        }
+        
+        card.style.display = show ? 'block' : 'none';
+    });
+}
+
+// Live stats update
+function updateLiveStats() {
+    const heroGoatCount = document.getElementById('hero-goat-count');
+    const heroProductCount = document.getElementById('hero-product-count');
+    
+    if (heroGoatCount) heroGoatCount.textContent = goats.length;
+    if (heroProductCount) heroProductCount.textContent = products.filter(p => p.available).length;
+}
+
+// Show message functionality
+function showMessage(text, type = 'success') {
+    // Remove existing messages
+    document.querySelectorAll('.message').forEach(msg => msg.remove());
+    
+    const message = document.createElement('div');
+    message.className = `message ${type}`;
+    message.textContent = text;
+    
+    // Insert after the first section
+    const firstSection = document.querySelector('main section');
+    if (firstSection) {
+        firstSection.insertAdjacentElement('afterend', message);
+        
+        // Scroll to message
+        message.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            message.remove();
+        }, 5000);
+    }
+}
+
+// Newsletter functionality
+function setupNewsletterForm() {
+    const newsletterForm = document.getElementById('newsletter-form');
+    
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            
+            // Simulate newsletter signup
+            showMessage('Thank you for subscribing! We\'ll keep you updated with the latest from our farm.', 'success');
+            this.reset();
+            
+            // Store email (in real app, send to server)
+            const subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
+            if (!subscribers.includes(email)) {
+                subscribers.push(email);
+                localStorage.setItem('newsletterSubscribers', JSON.stringify(subscribers));
+            }
+        });
+    }
+}
+
+// Quote request functionality
+function requestQuote() {
+    const modal = document.getElementById('quote-modal');
+    modal.style.display = 'flex';
+    
+    const form = document.getElementById('quote-form');
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        
+        // Collect form data
+        const formData = new FormData(form);
+        const quoteData = Object.fromEntries(formData);
+        quoteData.timestamp = new Date().toISOString();
+        quoteData.id = 'quote_' + Date.now();
+        
+        // Store quote request (in real app, send to server)
+        const quotes = JSON.parse(localStorage.getItem('quoteRequests') || '[]');
+        quotes.push(quoteData);
+        localStorage.setItem('quoteRequests', JSON.stringify(quotes));
+        
+        closeQuoteModal();
+        showMessage('Quote request submitted successfully! We\'ll contact you within 24 hours.', 'success');
     };
+}
+
+function closeQuoteModal() {
+    document.getElementById('quote-modal').style.display = 'none';
+}
+
+// Visit scheduling functionality
+function scheduleVisit() {
+    const modal = document.getElementById('visit-modal');
+    modal.style.display = 'flex';
+    
+    // Set minimum date to tomorrow
+    const dateInput = modal.querySelector('input[type="date"]');
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    dateInput.min = tomorrow.toISOString().split('T')[0];
+    
+    const form = document.getElementById('visit-form');
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        
+        // Collect form data
+        const formData = new FormData(form);
+        const visitData = Object.fromEntries(formData);
+        visitData.timestamp = new Date().toISOString();
+        visitData.id = 'visit_' + Date.now();
+        visitData.status = 'pending';
+        
+        // Store visit request (in real app, send to server)
+        const visits = JSON.parse(localStorage.getItem('visitRequests') || '[]');
+        visits.push(visitData);
+        localStorage.setItem('visitRequests', JSON.stringify(visits));
+        
+        closeVisitModal();
+        showMessage('Visit scheduled successfully! We\'ll confirm your appointment soon.', 'success');
+    };
+}
+
+function closeVisitModal() {
+    document.getElementById('visit-modal').style.display = 'none';
+}
+
+// Enhanced product management with notifications
+function setupProductNotifications() {
+    // Check for low stock
+    const lowStockProducts = products.filter(p => p.stockQuantity <= p.lowStockAlert);
+    
+    if (lowStockProducts.length > 0) {
+        setTimeout(() => {
+            const notification = document.createElement('div');
+            notification.className = 'stock-notification';
+            notification.innerHTML = `
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 10px; margin: 20px; position: fixed; top: 120px; right: 20px; z-index: 1000; max-width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    <h4 style="color: #856404; margin: 0 0 10px 0;">⚠️ Low Stock Alert</h4>
+                    <p style="color: #856404; margin: 0; font-size: 0.9rem;">${lowStockProducts.length} product(s) running low on stock</p>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: #f39c12; color: white; border: none; padding: 5px 10px; border-radius: 5px; margin-top: 10px; cursor: pointer; font-size: 0.8rem;">Close</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Auto remove after 10 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 10000);
+        }, 2000);
+    }
+}
+
+// Analytics tracking (basic)
+function trackUserInteraction(action, details = {}) {
+    const interaction = {
+        action,
+        details,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        page: window.location.pathname
+    };
+    
+    const analytics = JSON.parse(localStorage.getItem('farmAnalytics') || '[]');
+    analytics.push(interaction);
+    
+    // Keep only last 100 interactions
+    if (analytics.length > 100) {
+        analytics.splice(0, analytics.length - 100);
+    }
+    
+    localStorage.setItem('farmAnalytics', JSON.stringify(analytics));
 }

@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Mountain Goat Farm - Premium Goat Products from the Heart of Kenya</title>
+    <title>The Mountain Goat Farm - Premium Goat Products from Kirinyaga County, Kenya</title>
+    <meta name="description" content="Premium meat goats and farm products from The Mountain Goat Farm located on Kimicha-Kangai Road, Kirinyaga County. Superior genetics, quality breeding, expert care in the foothills of Mount Kenya.">
+    <meta name="keywords" content="goat farm, meat goats, Kirinyaga County, Mount Kenya, quality breeding, superior genetics, premium goats, Kimicha-Kangai Road">
+    <meta name="author" content="The Mountain Goat Farm">
+    <meta property="og:title" content="The Mountain Goat Farm - Premium Goat Products from Kirinyaga County">
+    <meta property="og:description" content="Quality breeding and superior genetics from the heart of Mount Kenya. Visit our farm on Kimicha-Kangai Road, Kirinyaga County.">
+    <meta property="og:type" content="business.business">
+    <meta property="og:locale" content="en_KE">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
@@ -17,13 +24,28 @@
                 <img src="The_Mountain_Goat_Farm_Logo_Media (2).png" alt="The Mountain Goat Farm Logo">
                 <h1>The Mountain Goat Farm</h1>
             </div>
-            <ul class="nav-links">
+            
+            <!-- Mobile hamburger menu -->
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle mobile menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-links" id="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#goats">Our Goats</a></li>
                 <li><a href="#products">Products</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><a href="farm-records.html" style="background-color: #e74c3c; padding: 8px 16px; border-radius: 5px; color: white;">Farm Records</a></li>
+                <li>
+                    <!-- Search Products -->
+                    <div class="nav-search">
+                        <input type="text" id="product-search" placeholder="Search products..." aria-label="Search products">
+                        <button type="button" id="search-btn" aria-label="Search">🔍</button>
+                    </div>
+                </li>
+                <li><a href="farm-records.html" class="farm-records-btn">Farm Records</a></li>
             </ul>
         </nav>
     </header>
@@ -33,7 +55,40 @@
             <div class="hero-content">
                 <h2>Welcome to The Mountain Goat Farm</h2>
                 <p>Raising Kenya's Finest Meat Goats – Quality Breeding, Superior Genetics from the Heart of the Mountain</p>
-                <button class="cta-button">Explore Our Farm</button>
+                
+                <!-- Quick Stats Dashboard -->
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="hero-goat-count">25</div>
+                        <div class="stat-label">Premium Goats</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">Years Experience</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="hero-product-count">8</div>
+                        <div class="stat-label">Products Available</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Quality Genetics</div>
+                    </div>
+                </div>
+                
+                <div class="hero-actions">
+                    <button class="cta-button primary">Explore Our Farm</button>
+                    <button class="cta-button secondary" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">View Products</button>
+                </div>
+                
+                <!-- Live Weather Widget -->
+                <div class="weather-widget" id="weather-widget">
+                    <div class="weather-info">
+                        <span id="weather-temp">22°C</span>
+                        <span id="weather-desc">Perfect for grazing</span>
+                        <span id="weather-location">Kirinyaga County</span>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -43,8 +98,41 @@
         <section id="goats" class="goats-section">
             <div class="container">
                 <h2>Our Goats</h2>
+                
+                <!-- Goat Filtering Options -->
+                <div class="goat-filters">
+                    <button class="filter-btn active" data-filter="all">All Goats</button>
+                    <button class="filter-btn" data-filter="breeding">Breeding Stock</button>
+                    <button class="filter-btn" data-filter="young">Young Goats</button>
+                    <button class="filter-btn" data-filter="boer">Boer Breed</button>
+                    <button class="filter-btn" data-filter="kiko">Kiko Breed</button>
+                </div>
+                
                 <div class="goat-grid" id="goat-grid">
                     <!-- Goats will be populated by JavaScript -->
+                </div>
+                
+                <!-- Goat Care Tips -->
+                <div class="goat-care-tips">
+                    <h3>🐐 Expert Goat Care Tips</h3>
+                    <div class="tips-grid">
+                        <div class="tip-card">
+                            <h4>🌱 Nutrition</h4>
+                            <p>High-quality pasture and supplemental feed for optimal growth</p>
+                        </div>
+                        <div class="tip-card">
+                            <h4>🏥 Health</h4>
+                            <p>Regular vet checkups and vaccination schedules</p>
+                        </div>
+                        <div class="tip-card">
+                            <h4>🏠 Housing</h4>
+                            <p>Clean, dry shelter with proper ventilation</p>
+                        </div>
+                        <div class="tip-card">
+                            <h4>🧬 Breeding</h4>
+                            <p>Selective breeding for superior genetics and meat quality</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -138,7 +226,7 @@
                 </div>
                 <div class="about-content">
                     <div class="about-text">
-                        <p>The Mountain Goat Farm is a newly established farm in the foothills of Mount Kenya, founded by experienced professionals with over 10 years of expertise in goat breeding and livestock management. Our team's extensive knowledge ensures the highest standards in meat goat production from day one.</p>
+                        <p>The Mountain Goat Farm is a newly established farm located on Kimicha-Kangai Road in Kirinyaga County, in the foothills of Mount Kenya. Founded by experienced professionals with over 10 years of expertise in goat breeding and livestock management, our team's extensive knowledge ensures the highest standards in meat goat production from day one.</p>
                         <p>We pride ourselves on sustainable farming practices, superior genetics, and quality breeding programs that produce healthy, robust meat goats for both local and international markets. Our experienced staff brings proven expertise to deliver exceptional results. Raising Kenya's Finest Meat Goats – Quality Breeding, Superior Genetics from the Heart of the Mountain.</p>
                     </div>
                     <div class="farm-stats">
@@ -177,8 +265,8 @@
                 <div class="contact-content">
                     <div class="contact-info">
                         <h3>Visit Our Farm</h3>
-                        <p>📍 Kiambu Road, Near Kikuyu<br>
-                        Kiambu County, Kenya</p>
+                        <p>📍 Kimicha-Kangai Road<br>
+                        Kirinyaga County, Kenya</p>
                         <p id="contact-phone">📞 +254 722 123 456</p>
                         <p id="contact-email">📧 info@themountaingoat.co.ke</p>
                         <p id="contact-whatsapp"></p>
@@ -206,6 +294,57 @@
                         <textarea placeholder="Your Message" rows="5" required></textarea>
                         <button type="submit">Send Message</button>
                     </form>
+                </div>
+
+                <!-- Newsletter Signup -->
+                <div class="newsletter-section">
+                    <h3>📧 Stay Updated with Our Farm</h3>
+                    <p>Get the latest news about our goats, products, and farm updates!</p>
+                    <form class="newsletter-form" id="newsletter-form">
+                        <input type="email" placeholder="Enter your email address" required>
+                        <button type="submit">Subscribe</button>
+                    </form>
+                    <div class="newsletter-benefits">
+                        <div class="benefit">
+                            <span>🐐</span>
+                            <p>New goat arrivals</p>
+                        </div>
+                        <div class="benefit">
+                            <span>🛒</span>
+                            <p>Product updates</p>
+                        </div>
+                        <div class="benefit">
+                            <span>💰</span>
+                            <p>Special offers</p>
+                        </div>
+                        <div class="benefit">
+                            <span>📚</span>
+                            <p>Farm tips</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions for Visitors -->
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="actions-grid">
+                        <button class="action-btn" onclick="window.open('tel:+254722123456')">
+                            <span>📞</span>
+                            <p>Call Us</p>
+                        </button>
+                        <button class="action-btn" onclick="window.open('https://wa.me/254722123456')">
+                            <span>💬</span>
+                            <p>WhatsApp</p>
+                        </button>
+                        <button class="action-btn" onclick="requestQuote()">
+                            <span>💰</span>
+                            <p>Get Quote</p>
+                        </button>
+                        <button class="action-btn" onclick="scheduleVisit()">
+                            <span>📅</span>
+                            <p>Visit Farm</p>
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -316,6 +455,83 @@
                 <div style="margin-top:20px;">
                     <button type="submit" style="background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:5px; margin-right:10px;">Save Product</button>
                     <button type="button" id="product-cancel" style="background:#95a5a6; color:white; border:none; padding:10px 20px; border-radius:5px;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quote Request Modal -->
+    <div id="quote-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:30px; border-radius:15px; min-width:400px; max-width:90vw; max-height:80vh; overflow-y:auto;">
+            <h3>🐐 Request a Quote</h3>
+            <form id="quote-form">
+                <label>Your Name:<br><input type="text" required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;"></label><br>
+                
+                <label>Email:<br><input type="email" required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;"></label><br>
+                
+                <label>Phone:<br><input type="tel" style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;"></label><br>
+                
+                <label>Product/Service Interest:<br>
+                    <select required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;">
+                        <option value="">Select Option</option>
+                        <option value="meat">Premium Goat Meat</option>
+                        <option value="breeding">Breeding Stock</option>
+                        <option value="products">Farm Products</option>
+                        <option value="consultation">Farm Consultation</option>
+                        <option value="other">Other</option>
+                    </select>
+                </label><br>
+                
+                <label>Quantity/Details:<br><textarea placeholder="Please specify quantity, specific requirements, or additional details" style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px; height:80px;"></textarea></label><br>
+                
+                <div style="margin-top:20px;">
+                    <button type="submit" style="background:#27ae60; color:white; border:none; padding:12px 25px; border-radius:8px; margin-right:10px; cursor:pointer;">Send Quote Request</button>
+                    <button type="button" onclick="closeQuoteModal()" style="background:#95a5a6; color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Visit Scheduling Modal -->
+    <div id="visit-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:30px; border-radius:15px; min-width:400px; max-width:90vw; max-height:80vh; overflow-y:auto;">
+            <h3>📅 Schedule Farm Visit</h3>
+            <p>Come see our premium goats and learn about our breeding programs!</p>
+            <form id="visit-form">
+                <label>Your Name:<br><input type="text" required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;"></label><br>
+                
+                <label>Email:<br><input type="email" required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;"></label><br>
+                
+                <label>Phone:<br><input type="tel" required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;"></label><br>
+                
+                <label>Preferred Date:<br><input type="date" required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;"></label><br>
+                
+                <label>Preferred Time:<br>
+                    <select required style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;">
+                        <option value="">Select Time</option>
+                        <option value="morning">Morning (8:00 AM - 12:00 PM)</option>
+                        <option value="afternoon">Afternoon (1:00 PM - 5:00 PM)</option>
+                        <option value="flexible">Flexible</option>
+                    </select>
+                </label><br>
+                
+                <label>Number of Visitors:<br><input type="number" min="1" max="20" value="1" style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;"></label><br>
+                
+                <label>Purpose of Visit:<br>
+                    <select style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;">
+                        <option value="general">General Farm Tour</option>
+                        <option value="breeding">Breeding Program Information</option>
+                        <option value="purchasing">Interested in Purchasing</option>
+                        <option value="learning">Learning/Educational</option>
+                        <option value="other">Other</option>
+                    </select>
+                </label><br>
+                
+                <label>Special Requirements/Notes:<br><textarea placeholder="Any specific interests, accessibility needs, or other requirements" style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px; height:60px;"></textarea></label><br>
+                
+                <div style="margin-top:20px;">
+                    <button type="submit" style="background:#3498db; color:white; border:none; padding:12px 25px; border-radius:8px; margin-right:10px; cursor:pointer;">Schedule Visit</button>
+                    <button type="button" onclick="closeVisitModal()" style="background:#95a5a6; color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer;">Cancel</button>
                 </div>
             </form>
         </div>

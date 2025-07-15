@@ -83,12 +83,60 @@ class FarmRecordsManager {
         if (username === 'admin' && password === 'farm2024') {
             this.currentUser = { username, loginTime: new Date().toISOString() };
             localStorage.setItem('farmRecordsAuth', JSON.stringify(this.currentUser));
+            
+            // Hide login modal and show main content
             document.getElementById('login-modal').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
+            
+            // Show welcome message
+            this.showWelcomeMessage();
+            
             this.initializeApp();
             return true;
         }
         return false;
+    }
+
+    showWelcomeMessage() {
+        // Create welcome notification
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            z-index: 1001;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            max-width: 350px;
+            animation: slideIn 0.5s ease-out;
+        `;
+        
+        welcomeDiv.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 1.8rem;">🎉</span>
+                <div>
+                    <div style="font-size: 1.1rem; margin-bottom: 5px;">Welcome to Farm Records!</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Mountain Goat Farm Management System</div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(welcomeDiv);
+        
+        // Auto remove after 4 seconds
+        setTimeout(() => {
+            welcomeDiv.style.animation = 'slideOut 0.5s ease-out';
+            setTimeout(() => {
+                if (welcomeDiv.parentNode) {
+                    welcomeDiv.parentNode.removeChild(welcomeDiv);
+                }
+            }, 500);
+        }, 4000);
     }
 
     logout() {
@@ -100,6 +148,9 @@ class FarmRecordsManager {
 
     // Initialize the app
     initializeApp() {
+        // Close any open modals first
+        this.closeAllModals();
+        
         this.loadGoats();
         this.loadBreedingRecords();
         this.loadMeatRecords();
@@ -110,6 +161,24 @@ class FarmRecordsManager {
         this.loadContacts();
         this.updateDashboard();
         this.populateGoatDropdowns();
+    }
+
+    // Close all modals to prevent unexpected modal displays
+    closeAllModals() {
+        const modalIds = [
+            'goat-modal', 'breeding-modal', 'meat-modal', 'milk-modal', 
+            'feed-modal', 'health-modal', 'product-modal', 'contact-modal',
+            'task-modal', 'reminder-modal', 'transaction-modal', 'crop-modal'
+        ];
+        
+        modalIds.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        console.log('✅ All modals closed during initialization');
     }
 
     // Setup event listeners
@@ -137,6 +206,34 @@ class FarmRecordsManager {
                 document.getElementById('login-form').reset();
             } else {
                 alert('Invalid credentials. Use admin/farm2024');
+            }
+        });
+
+        // Quick demo access button
+        safeAddEventListener('demo-login', 'click', () => {
+            if (this.login('admin', 'farm2024')) {
+                console.log('✅ Demo access granted');
+            }
+        });
+
+        // Auto-fill credentials button
+        safeAddEventListener('auto-fill', 'click', () => {
+            const usernameField = document.getElementById('username');
+            const passwordField = document.getElementById('password');
+            
+            if (usernameField && passwordField) {
+                usernameField.value = 'admin';
+                passwordField.value = 'farm2024';
+                usernameField.focus();
+                
+                // Add visual feedback
+                usernameField.style.background = '#e8f5e8';
+                passwordField.style.background = '#e8f5e8';
+                
+                setTimeout(() => {
+                    usernameField.style.background = '';
+                    passwordField.style.background = '';
+                }, 1500);
             }
         });
 

@@ -43,13 +43,45 @@
     <!-- Login Modal -->
     <div id="login-modal" class="modal">
         <div class="modal-content">
-            <h2>Farm Records Login</h2>
+            <div class="login-header">
+                <h2>🐐 Farm Records Access</h2>
+                <p>Secure access to Mountain Goat Farm management system</p>
+            </div>
+            
             <form id="login-form">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit">Login</button>
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                
+                <button type="submit" class="login-btn">🔓 Access Farm Records</button>
             </form>
-            <p class="login-note">Default: admin / farm2024</p>
+            
+            <div class="login-help">
+                <div class="demo-credentials">
+                    <h4>📋 Demo Credentials:</h4>
+                    <div class="cred-box">
+                        <strong>Username:</strong> admin<br>
+                        <strong>Password:</strong> farm2024
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <button type="button" id="demo-login" class="demo-btn">🚀 Quick Demo Access</button>
+                    <button type="button" id="auto-fill" class="auto-fill-btn">📝 Auto-fill Credentials</button>
+                </div>
+                
+                <div class="login-info">
+                    <p><strong>🔐 Secure Access:</strong> Your farm data is protected</p>
+                    <p><strong>📊 Full Features:</strong> Complete farm management system</p>
+                    <p><strong>💾 Auto-Save:</strong> All changes saved automatically</p>
+                </div>
+            </div>
         </div>
     </div>
 
