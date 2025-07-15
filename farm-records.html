@@ -1440,6 +1440,308 @@
         </div>
     </div>
 
+    <!-- Add this section to your navigation menu -->
+    <nav class="sidebar">
+        <!-- ...existing menu items... -->
+        <button class="nav-btn" onclick="showSection('tax-section')">
+            <i class="icon">🇰🇪</i> Kenya Tax Filing
+        </button>
+        <!-- ...existing menu items... -->
+    </nav>
+
+    <!-- Add this section to your main content area -->
+    <section id="tax-section" class="content-section">
+        <div class="section-header">
+            <h2>🇰🇪 Kenya Tax Filing & Compliance</h2>
+            <p>Manage your farm's tax obligations according to Kenya Revenue Authority (KRA) requirements</p>
+        </div>
+
+        <!-- Tax Dashboard -->
+        <div class="tax-dashboard">
+            <div class="tax-summary-cards">
+                <div class="tax-card monthly">
+                    <h3>This Month Tax Due</h3>
+                    <p class="tax-amount" id="monthly-tax-due">KSh 0</p>
+                    <small>Current month obligation</small>
+                </div>
+                <div class="tax-card yearly">
+                    <h3>This Year Tax Paid</h3>
+                    <p class="tax-amount" id="yearly-tax-paid">KSh 0</p>
+                    <small>Year-to-date payments</small>
+                </div>
+                <div class="tax-card filing">
+                    <h3>Next Filing Due</h3>
+                    <p class="tax-date" id="next-filing-date">-</p>
+                    <small>20th of each month</small>
+                </div>
+                <div class="tax-card compliance">
+                    <h3>Compliance Status</h3>
+                    <p class="compliance-status compliant" id="compliance-status">COMPLIANT</p>
+                    <small>KRA compliance</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="tax-actions-bar">
+            <button class="btn btn-primary" onclick="farmRecords.showTaxFilingModal()">
+                📋 File Tax Return
+            </button>
+            <button class="btn btn-secondary" onclick="farmRecords.generateTaxReport('current-month')">
+                📊 Monthly Report
+            </button>
+            <button class="btn btn-secondary" onclick="farmRecords.generateTaxReport('current-year')">
+                📈 Annual Report
+            </button>
+            <button class="btn btn-info" onclick="farmRecords.showTaxCalendar()">
+                📅 Tax Calendar
+            </button>
+        </div>
+
+        <!-- Tax Information Tabs -->
+        <div class="tax-tabs">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTaxTab('obligations')">Tax Obligations</button>
+                <button class="tab-btn" onclick="showTaxTab('returns')">Filed Returns</button>
+                <button class="tab-btn" onclick="showTaxTab('calendar')">Tax Calendar</button>
+                <button class="tab-btn" onclick="showTaxTab('settings')">Tax Settings</button>
+            </div>
+
+            <!-- Tax Obligations Tab -->
+            <div id="tax-tab-obligations" class="tax-tab-content active">
+                <div class="tax-obligations-section">
+                    <h3>Current Tax Obligations</h3>
+                    <div class="obligation-cards">
+                        <div class="obligation-card turnover-tax">
+                            <h4>Turnover Tax (3%)</h4>
+                            <p class="obligation-amount" id="turnover-tax-amount">KSh 0</p>
+                            <p class="obligation-description">Applied to gross turnover for businesses with annual turnover between KSh 1M - 50M</p>
+                            <div class="obligation-details">
+                                <p><strong>Due Date:</strong> 20th of each month</p>
+                                <p><strong>Filing:</strong> iTax portal</p>
+                                <p><strong>Applicable:</strong> Agricultural businesses</p>
+                            </div>
+                        </div>
+                        
+                        <div class="obligation-card vat">
+                            <h4>Value Added Tax (16%)</h4>
+                            <p class="obligation-amount" id="vat-amount">KSh 0</p>
+                            <p class="obligation-description">Applied to taxable supplies (non-agricultural products/services)</p>
+                            <div class="obligation-details">
+                                <p><strong>Registration Threshold:</strong> KSh 5M annual turnover</p>
+                                <p><strong>Agricultural Exemption:</strong> Most farm produce is VAT exempt</p>
+                                <p><strong>Filing:</strong> Monthly VAT returns</p>
+                            </div>
+                        </div>
+                        
+                        <div class="obligation-card withholding">
+                            <h4>Withholding Tax (5%)</h4>
+                            <p class="obligation-amount" id="withholding-amount">KSh 0</p>
+                            <p class="obligation-description">May apply on sales to registered businesses above KSh 24,000</p>
+                            <div class="obligation-details">
+                                <p><strong>Rate:</strong> 5% for agricultural produce</p>
+                                <p><strong>Threshold:</strong> Transactions above KSh 24,000</p>
+                                <p><strong>Withheld by:</strong> Purchasing business</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tax-exemptions-info">
+                        <h4>🌾 Agricultural Tax Exemptions in Kenya</h4>
+                        <div class="exemption-list">
+                            <div class="exemption-item">
+                                <strong>VAT Exempt:</strong> Unprocessed agricultural produce, livestock, milk, eggs
+                            </div>
+                            <div class="exemption-item">
+                                <strong>Income Tax Relief:</strong> Agricultural income may qualify for certain reliefs
+                            </div>
+                            <div class="exemption-item">
+                                <strong>Zero Rating:</strong> Agricultural exports are zero-rated for VAT
+                            </div>
+                            <div class="exemption-item">
+                                <strong>Small Scale:</strong> Farmers with turnover below KSh 1M may be exempt from turnover tax
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filed Returns Tab -->
+            <div id="tax-tab-returns" class="tax-tab-content">
+                <div class="returns-section">
+                    <h3>Filed Tax Returns</h3>
+                    <div id="tax-records" class="tax-records-container">
+                        <!-- Tax records will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tax Calendar Tab -->
+            <div id="tax-tab-calendar" class="tax-tab-content">
+                <div class="calendar-section">
+                    <h3>Kenya Tax Calendar 2025</h3>
+                    <div id="tax-calendar" class="tax-calendar-container">
+                        <!-- Tax calendar will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tax Settings Tab -->
+            <div id="tax-tab-settings" class="tax-tab-content">
+                <div class="settings-section">
+                    <h3>Tax Configuration</h3>
+                    <form id="tax-settings-form" class="tax-settings-form">
+                        <div class="form-section">
+                            <h4>Business Information</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="kra-pin">KRA PIN *</label>
+                                    <input type="text" id="kra-pin" name="kra-pin" placeholder="P051234567B" required>
+                                    <small>Your Kenya Revenue Authority PIN</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="business-name">Business Name *</label>
+                                    <input type="text" id="business-name" name="business-name" value="The Mountain Goat Farm" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="business-type">Business Type</label>
+                                    <select id="business-type" name="business-type">
+                                        <option value="agricultural-production">Agricultural Production</option>
+                                        <option value="livestock-farming">Livestock Farming</option>
+                                        <option value="dairy-farming">Dairy Farming</option>
+                                        <option value="mixed-farming">Mixed Farming</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="registration-date">Business Registration Date</label>
+                                    <input type="date" id="registration-date" name="registration-date">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4>Tax Obligations</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="tax-obligation">Primary Tax Obligation</label>
+                                    <select id="tax-obligation" name="tax-obligation">
+                                        <option value="turnover-tax">Turnover Tax (3%)</option>
+                                        <option value="vat">VAT Registered (16%)</option>
+                                        <option value="income-tax">Income Tax</option>
+                                        <option value="exempt">Tax Exempt</option>
+                                    </select>
+                                    <small>Based on your annual turnover and business type</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="filing-frequency">Filing Frequency</label>
+                                    <select id="filing-frequency" name="filing-frequency">
+                                        <option value="monthly">Monthly</option>
+                                        <option value="quarterly">Quarterly</option>
+                                        <option value="annually">Annually</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4>Tax Agent (Optional)</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="agent-name">Tax Agent Name</label>
+                                    <input type="text" id="agent-name" name="agent-name" placeholder="Agent/Accountant name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="agent-pin">Agent PIN</label>
+                                    <input type="text" id="agent-pin" name="agent-pin" placeholder="Agent's KRA PIN">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="agent-contact">Agent Contact</label>
+                                    <input type="text" id="agent-contact" name="agent-contact" placeholder="Phone/Email">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">💾 Save Tax Settings</button>
+                            <button type="button" class="btn btn-secondary" onclick="farmRecords.resetTaxSettings()">🔄 Reset to Default</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tax Filing Modal -->
+    <div id="tax-filing-modal" class="modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>📋 File Tax Return</h3>
+                <span class="close" onclick="farmRecords.hideTaxFilingModal()">&times;</span>
+            </div>
+            <form id="tax-filing-form" onsubmit="event.preventDefault(); farmRecords.processTaxFiling();">
+                
+                <div class="form-section">
+                    <h4>Return Information</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="filing-tax-type">Tax Type *</label>
+                            <select id="filing-tax-type" name="tax-type" required>
+                                <option value="turnover-tax">Turnover Tax Return</option>
+                                <option value="vat">VAT Return</option>
+                                <option value="income-tax">Income Tax Return</option>
+                                <option value="withholding-tax">Withholding Tax Return</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filing-period">Tax Period *</label>
+                            <input type="text" id="filing-period" name="period" required readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="filing-amount">Tax Amount (KSh) *</label>
+                            <input type="number" id="filing-amount" name="amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="filing-status">Filing Status *</label>
+                            <select id="filing-status" name="status" required>
+                                <option value="filed">Filed</option>
+                                <option value="paid">Filed & Paid</option>
+                                <option value="pending">Pending Payment</option>
+                                <option value="nil">Nil Return</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4>Payment Details</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="filing-reference">Payment Reference</label>
+                            <input type="text" id="filing-reference" name="reference" placeholder="iTax reference or payment slip number">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="filing-notes">Notes</label>
+                            <textarea id="filing-notes" name="notes" rows="3" placeholder="Additional notes about this filing"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">📋 Record Filing</button>
+                    <button type="button" class="btn btn-secondary" onclick="farmRecords.hideTaxFilingModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="farm-records.js"></script>
 </body>
 </html>

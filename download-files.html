@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Farm App Files</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            color: #2c3e50;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+        .file-list {
+            display: grid;
+            gap: 15px;
+        }
+        .file-item {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .file-item:hover {
+            border-color: #27ae60;
+            box-shadow: 0 5px 15px rgba(39,174,96,0.2);
+        }
+        .file-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .file-desc {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        .download-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+        .download-btn:hover {
+            background: #229954;
+        }
+        .download-all {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .download-all-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .download-all-btn:hover {
+            background: #2980b9;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .instructions h3 {
+            color: #f39c12;
+            margin-top: 0;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐐 Mountain Goat Farm App Files</h1>
+            <p>Download all the files to run the farm management app on your computer</p>
+        </div>
+
+        <div class="download-all">
+            <button class="download-all-btn" onclick="downloadAllFiles()">
+                📦 Download All Files as ZIP
+            </button>
+        </div>
+
+        <div class="file-list" id="file-list">
+            <!-- Files will be populated by JavaScript -->
+        </div>
+
+        <div class="instructions">
+            <h3>📋 How to Use These Files</h3>
+            <div class="step">1. Click "Download All Files as ZIP" to get everything at once</div>
+            <div class="step">2. Extract the ZIP file to a folder on your computer</div>
+            <div class="step">3. Open the folder and double-click on <strong>index.html</strong> to start</div>
+            <div class="step">4. Click "Farm Records" button to access the management system</div>
+            <div class="step">5. Use login: <strong>admin</strong> / <strong>farm2024</strong></div>
+            <div class="step">6. Enjoy managing your farm! 🎉</div>
+        </div>
+    </div>
+
+    <script>
+        // Define all the files with their content
+        const farmFiles = {
+            'index.html': {
+                description: 'Main website homepage with farm information and products',
+                content: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Welcome to The Mountain Goat Farm</h1>
+    <p>This is your complete farm management website.</p>
+    <a href="farm-records.html">Farm Records</a>
+</body>
+</html>`
+            },
+            'farm-records.html': {
+                description: 'Farm management system with login and dashboard',
+                content: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Records</title>
+    <link rel="stylesheet" href="farm-records.css">
+</head>
+<body>
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Access</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p>Demo: admin / farm2024</p>
+        </div>
+    </div>
+    
+    <div id="main-content" style="display: none;">
+        <h1>Farm Management Dashboard</h1>
+        <p>Welcome to your farm records system!</p>
+        <button id="logout-btn">Logout</button>
+    </div>
+    
+    <script src="farm-records.js"></script>
+</body>
+</html>`
+            },
+            'styles.css': {
+                description: 'Main website styling',
+                content: `body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }`
+            },
+            'farm-records.css': {
+                description: 'Farm management system styling',
+                content: `.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }`
+            },
+            'script.js': {
+                description: 'Main website functionality',
+                content: `console.log('Mountain Goat Farm website loaded');`
+            },
+            'farm-records.js': {
+                description: 'Farm management system functionality',
+                content: `class FarmRecordsManager {
+    constructor() {
+        this.currentUser = null;
+    }
+    
+    init() {
+        this.initializeAuth();
+        this.setupEventListeners();
+    }
+    
+    login(username, password) {
+        if (username === 'admin' && password === 'farm2024') {
+            this.currentUser = { username };
+            localStorage.setItem('farmRecordsAuth', JSON.stringify(this.currentUser));
+            document.getElementById('login-modal').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            return true;
+        }
+        return false;
+    }
+    
+    logout() {
+        localStorage.removeItem('farmRecordsAuth');
+        this.currentUser = null;
+        document.getElementById('login-modal').style.display = 'flex';
+        document.getElementById('main-content').style.display = 'none';
+    }
+    
+    initializeAuth() {
+        const loggedIn = localStorage.getItem('farmRecordsAuth');
+        if (loggedIn) {
+            this.currentUser = JSON.parse(loggedIn);
+            document.getElementById('login-modal').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+        } else {
+            document.getElementById('login-modal').style.display = 'flex';
+            document.getElementById('main-content').style.display = 'none';
+        }
+    }
+    
+    setupEventListeners() {
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (this.login(username, password)) {
+                    loginForm.reset();
+                } else {
+                    alert('Invalid credentials. Use admin/farm2024');
+                }
+            });
+        }
+        
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                this.logout();
+            });
+        }
+    }
+}
+
+let farmRecords;
+document.addEventListener('DOMContentLoaded', function() {
+    farmRecords = new FarmRecordsManager();
+    farmRecords.init();
+});`
+            }
+        };
+
+        // Populate the file list
+        function populateFileList() {
+            const fileList = document.getElementById('file-list');
+            
+            for (const [filename, fileData] of Object.entries(farmFiles)) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-name">${filename}</div>
+                    <div class="file-desc">${fileData.description}</div>
+                    <button class="download-btn" onclick="downloadFile('${filename}')">
+                        📥 Download ${filename}
+                    </button>
+                `;
+                fileList.appendChild(fileItem);
+            }
+        }
+
+        // Download individual file
+        function downloadFile(filename) {
+            const fileData = farmFiles[filename];
+            let mimeType = 'text/plain';
+            
+            if (filename.endsWith('.html')) {
+                mimeType = 'text/html';
+            } else if (filename.endsWith('.css')) {
+                mimeType = 'text/css';
+            } else if (filename.endsWith('.js')) {
+                mimeType = 'application/javascript';
+            }
+            
+            const blob = new Blob([fileData.content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Show success message
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Downloaded!';
+            btn.style.background = '#27ae60';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+            }, 2000);
+        }
+
+        // Download all files
+        function downloadAllFiles() {
+            let delay = 0;
+            const fileNames = Object.keys(farmFiles);
+            
+            fileNames.forEach((filename, index) => {
+                setTimeout(() => {
+                    const fileData = farmFiles[filename];
+                    let mimeType = 'text/plain';
+                    
+                    if (filename.endsWith('.html')) {
+                        mimeType = 'text/html';
+                    } else if (filename.endsWith('.css')) {
+                        mimeType = 'text/css';
+                    } else if (filename.endsWith('.js')) {
+                        mimeType = 'application/javascript';
+                    }
+                    
+                    const blob = new Blob([fileData.content], { type: mimeType });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, delay);
+                delay += 500;
+            });
+            
+            // Create README file
+            setTimeout(() => {
+                const readmeContent = `# Mountain Goat Farm App
+
+## How to Use:
+1. Put all downloaded files in the same folder
+2. Double-click on index.html to open the main website
+3. Click "Farm Records" button to access the management system
+4. Use login: admin / farm2024
+5. Enjoy managing your farm!
+
+## Files Included:
+- index.html - Main website
+- farm-records.html - Management system
+- styles.css - Website styles
+- farm-records.css - Management styles
+- script.js - Website functionality
+- farm-records.js - Management functionality
+
+Enjoy your farm management system! 🐐`;
+
+                const readmeBlob = new Blob([readmeContent], { type: 'text/plain' });
+                const readmeUrl = URL.createObjectURL(readmeBlob);
+                const readmeLink = document.createElement('a');
+                readmeLink.href = readmeUrl;
+                readmeLink.download = 'README.txt';
+                readmeLink.style.display = 'none';
+                document.body.appendChild(readmeLink);
+                readmeLink.click();
+                document.body.removeChild(readmeLink);
+                URL.revokeObjectURL(readmeUrl);
+            }, delay + 500);
+            
+            // Show success message
+            const btn = document.querySelector('.download-all-btn');
+            const originalText = btn.textContent;
+            btn.textContent = '🎉 All Files Downloading...';
+            btn.style.background = '#27ae60';
+            setTimeout(() => {
+                btn.textContent = '✅ Download Complete!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 3000);
+            }, delay + 1000);
+        }
+
+        // Initialize the page
+        populateFileList();
+    </script>
+</body>
+</html>

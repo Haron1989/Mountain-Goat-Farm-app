@@ -148,7 +148,7 @@ class FarmRecordsManager {
 
     // Initialize the app
     initializeApp() {
-        // Close any open modals first
+        // Close any open modals first with extra security
         this.closeAllModals();
         
         this.loadGoats();
@@ -159,8 +159,14 @@ class FarmRecordsManager {
         this.loadHealthRecords();
         this.loadProducts();
         this.loadContacts();
+        this.loadCrops(); // Add missing loadCrops
         this.updateDashboard();
         this.populateGoatDropdowns();
+        
+        // Force close modals again after loading (emergency fix)
+        setTimeout(() => {
+            this.closeAllModals();
+        }, 100);
     }
 
     // Close all modals to prevent unexpected modal displays
@@ -175,10 +181,37 @@ class FarmRecordsManager {
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.style.display = 'none';
+                modal.classList.remove('show');
+                
+                // Extra security - force hide
+                modal.style.visibility = 'hidden';
+                setTimeout(() => {
+                    modal.style.visibility = '';
+                }, 50);
             }
         });
         
-        console.log('✅ All modals closed during initialization');
+        // Force focus back to main content
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) {
+            mainContent.focus();
+        }
+        
+        console.log('✅ All modals forcefully closed during initialization');
+    }
+
+    // Emergency modal closer function
+    forceCloseAllModals() {
+        const allModals = document.querySelectorAll('.modal');
+        allModals.forEach(modal => {
+            modal.style.display = 'none !important';
+            modal.style.visibility = 'hidden';
+            setTimeout(() => {
+                modal.style.visibility = '';
+            }, 100);
+        });
+        
+        console.log('🚨 Emergency: All modals force-closed');
     }
 
     // Setup event listeners
@@ -2707,7 +2740,24 @@ class FarmRecordsManager {
     }
 
     hideCropModal() {
-        document.getElementById('crop-modal').style.display = 'none';
+        const modal = document.getElementById('crop-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            
+            // Clear the form
+            const form = document.getElementById('crop-form');
+            if (form) {
+                form.reset();
+            }
+            
+            // Clear any stored crop ID
+            const cropIdField = document.getElementById('crop-id');
+            if (cropIdField) {
+                cropIdField.value = '';
+            }
+            
+            console.log('✅ Crop modal closed and form cleared');
+        }
     }
 
     filterCrops(type) {
@@ -3393,4 +3443,17 @@ document.addEventListener('DOMContentLoaded', function() {
     farmRecords.exportData = function() {
         this.createBackup(); // Same as backup for now
     };
+});
+
+// Initialize the app when DOM is loaded
+let farmRecords;
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Initializing Farm Records System...');
+    farmRecords = new FarmRecordsManager();
+    farmRecords.init();
+    
+    // Make it globally available for debugging
+    window.farmRecords = farmRecords;
+    
+    console.log('✅ Farm Records System initialized successfully!');
 });
