@@ -2120,9 +2120,95 @@ section {
     background: linear-gradient(135deg, #d5f4e6 0%, #ffffff 100%);
 }
 
+.compliance-card.agricultural {
+    border-color: var(--logo-green);
+    background: linear-gradient(135deg, var(--logo-beige) 0%, #ffffff 100%);
+}
+
 .compliance-card h4 {
     color: var(--logo-green);
     margin-bottom: 0.5rem;
+}
+
+/* Agricultural Benefits Section */
+.agricultural-benefits {
+    background: linear-gradient(135deg, var(--logo-beige) 0%, #ffffff 100%);
+    border: 2px solid var(--logo-green);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.agricultural-benefits h4 {
+    color: var(--logo-green);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.benefit-card {
+    background: white;
+    border: 2px solid var(--logo-green);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(56, 100, 58, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(56, 100, 58, 0.15);
+}
+
+.benefit-card h5 {
+    color: var(--logo-brown);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.benefit-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.benefit-card li {
+    padding: 0.3rem 0;
+    color: #555;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.benefit-card li:before {
+    content: "🌾";
+    position: absolute;
+    left: 0;
+    top: 0.3rem;
+}
+
+/* Agricultural Calendar Items */
+.calendar-item.agricultural {
+    background: linear-gradient(135deg, var(--logo-green) 0%, #ffffff 100%);
+    border: 2px solid var(--logo-green);
+    color: white;
+}
+
+.calendar-item.agricultural .date {
+    color: var(--logo-yellow);
+    font-weight: bold;
+}
+
+.calendar-item.agricultural .event {
+    color: white;
 }
 
 /* Tax Calendar */
@@ -2214,6 +2300,16 @@ section {
     border-radius: 10px;
 }
 
+.calc-section.agricultural-calc {
+    background: linear-gradient(135deg, var(--logo-green) 0%, var(--logo-beige) 100%);
+    border: 2px solid var(--logo-green);
+}
+
+.calc-section.agricultural-calc h3 {
+    color: white;
+    margin-bottom: 1rem;
+}
+
 .calc-section h3 {
     color: var(--logo-green);
     margin-bottom: 1rem;
@@ -2227,11 +2323,56 @@ section {
     border-radius: 6px;
 }
 
+.farm-info {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.farm-info p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5rem 0;
+    color: var(--logo-brown);
+}
+
+.farm-info input {
+    width: 150px;
+    margin: 0;
+    margin-left: 0.5rem;
+}
+
+.exemption-info {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.exemption-info label {
+    display: block;
+    margin: 0.5rem 0;
+    color: var(--logo-brown);
+    cursor: pointer;
+}
+
+.exemption-info input[type="checkbox"] {
+    width: auto;
+    margin: 0 0.5rem 0 0;
+}
+
 .calc-result {
     background: white;
     padding: 1.5rem;
     border-radius: 8px;
     border: 2px solid var(--logo-green);
+}
+
+.calc-result.agricultural-result {
+    background: linear-gradient(135deg, #f8f9fa 0%, var(--logo-beige) 100%);
+    border: 3px solid var(--logo-green);
 }
 
 .calc-result p {
@@ -2248,6 +2389,19 @@ section {
     padding-top: 0.5rem;
     margin-top: 1rem;
     color: var(--logo-green);
+}
+
+.tax-notes {
+    background: var(--logo-yellow);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border: 1px solid var(--logo-brown);
+}
+
+.tax-notes small {
+    color: var(--logo-brown);
+    line-height: 1.4;
 }
 
 /* Mobile Responsiveness for Tax Records */

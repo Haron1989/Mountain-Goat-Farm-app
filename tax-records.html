@@ -120,9 +120,13 @@
                             <option value="meat-sales">Meat Sales</option>
                             <option value="dairy-sales">Dairy Sales</option>
                             <option value="breeding-fees">Breeding Fees</option>
-                            <option value="consulting">Consulting Services</option>
-                            <option value="government-subsidies">Government Subsidies</option>
-                            <option value="other">Other Income</option>
+                            <option value="farm-consulting">Farm Consulting Services</option>
+                            <option value="government-subsidies">Agricultural Subsidies</option>
+                            <option value="crop-sales">Crop Sales</option>
+                            <option value="pasture-rental">Pasture Rental Income</option>
+                            <option value="organic-certification">Organic Premium</option>
+                            <option value="insurance-claims">Insurance Claims</option>
+                            <option value="other-farm">Other Farm Income</option>
                         </select>
                         <input type="date" id="income-date-from">
                         <input type="date" id="income-date-to">
@@ -158,16 +162,22 @@
                         <select id="expense-category-filter">
                             <option value="">All Categories</option>
                             <option value="feed-costs">Feed & Nutrition</option>
-                            <option value="veterinary">Veterinary Services</option>
-                            <option value="equipment">Equipment & Machinery</option>
-                            <option value="transportation">Transportation</option>
-                            <option value="utilities">Utilities</option>
-                            <option value="insurance">Insurance</option>
-                            <option value="professional-fees">Professional Fees</option>
-                            <option value="marketing">Marketing & Advertising</option>
-                            <option value="repairs-maintenance">Repairs & Maintenance</option>
-                            <option value="depreciation">Depreciation</option>
-                            <option value="other">Other Expenses</option>
+                            <option value="veterinary">Veterinary & Animal Health</option>
+                            <option value="breeding-costs">Breeding & Artificial Insemination</option>
+                            <option value="farm-equipment">Farm Equipment & Machinery</option>
+                            <option value="livestock-transport">Livestock Transportation</option>
+                            <option value="farm-utilities">Farm Utilities (Water, Power)</option>
+                            <option value="livestock-insurance">Livestock Insurance</option>
+                            <option value="agricultural-supplies">Agricultural Supplies</option>
+                            <option value="pasture-management">Pasture & Land Management</option>
+                            <option value="farm-labor">Farm Labor & Wages</option>
+                            <option value="professional-fees">Professional & Veterinary Fees</option>
+                            <option value="marketing-farm">Farm Marketing & Shows</option>
+                            <option value="farm-maintenance">Farm Infrastructure Maintenance</option>
+                            <option value="depreciation-farm">Farm Asset Depreciation</option>
+                            <option value="fuel-farm">Farm Fuel & Vehicle Costs</option>
+                            <option value="certification-costs">Organic/Quality Certification</option>
+                            <option value="other-farm-expense">Other Farm Expenses</option>
                         </select>
                         <input type="date" id="expense-date-from">
                         <input type="date" id="expense-date-to">
@@ -313,34 +323,86 @@
                 <!-- Compliance Tab -->
                 <div id="compliance-tab" class="tab-content">
                     <div class="tab-header">
-                        <h3>⚖️ Tax Compliance & Deadlines</h3>
+                        <h3>⚖️ Agricultural Tax Compliance & Farm Benefits</h3>
                     </div>
                     <div class="compliance-status">
                         <div class="compliance-card good">
-                            <h4>✅ Compliance Status</h4>
-                            <p>Good Standing</p>
+                            <h4>✅ Farm Tax Status</h4>
+                            <p>Registered Agricultural Business</p>
                         </div>
                         <div class="compliance-card">
                             <h4>📅 Next Deadline</h4>
                             <p>VAT Return: Dec 20, 2024</p>
                         </div>
+                        <div class="compliance-card agricultural">
+                            <h4>🌾 Agricultural Benefits</h4>
+                            <p>Tax Exemptions Applied</p>
+                        </div>
                     </div>
+                    
+                    <!-- Agricultural Tax Benefits Section -->
+                    <div class="agricultural-benefits">
+                        <h4>🌾 Kenya Agricultural Tax Benefits & Incentives</h4>
+                        <div class="benefits-grid">
+                            <div class="benefit-card">
+                                <h5>📋 Zero-Rated VAT Items</h5>
+                                <ul>
+                                    <li>Unprocessed agricultural products</li>
+                                    <li>Live animals (goats, cattle)</li>
+                                    <li>Animal feeds</li>
+                                    <li>Agricultural equipment</li>
+                                    <li>Fertilizers and seeds</li>
+                                </ul>
+                            </div>
+                            <div class="benefit-card">
+                                <h5>💰 Tax Deductions</h5>
+                                <ul>
+                                    <li>Veterinary services - 100%</li>
+                                    <li>Feed costs - 100%</li>
+                                    <li>Farm equipment depreciation</li>
+                                    <li>Land improvement costs</li>
+                                    <li>Irrigation system installation</li>
+                                </ul>
+                            </div>
+                            <div class="benefit-card">
+                                <h5>🏛️ Government Incentives</h5>
+                                <ul>
+                                    <li>Agricultural machinery import duty exemption</li>
+                                    <li>Fertilizer VAT exemption</li>
+                                    <li>Farm input subsidies</li>
+                                    <li>Youth and women farmer incentives</li>
+                                    <li>Export promotion incentives</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="tax-calendar">
-                        <h4>📅 Tax Calendar 2024/2025</h4>
+                        <h4>📅 Agricultural Tax Calendar 2024/2025</h4>
                         <div class="calendar-items">
-                            <div class="calendar-item">
+                            <div class="calendar-item agricultural">
                                 <span class="date">20th of each month</span>
-                                <span class="event">VAT Returns Due</span>
+                                <span class="event">VAT Returns (if applicable)</span>
                                 <span class="status upcoming">Upcoming</span>
                             </div>
-                            <div class="calendar-item">
+                            <div class="calendar-item agricultural">
                                 <span class="date">9th of each month</span>
-                                <span class="event">PAYE Returns Due</span>
+                                <span class="event">PAYE Returns (Farm Workers)</span>
                                 <span class="status upcoming">Upcoming</span>
                             </div>
-                            <div class="calendar-item">
+                            <div class="calendar-item agricultural">
                                 <span class="date">March 31, 2025</span>
-                                <span class="event">Income Tax Returns Due</span>
+                                <span class="event">Agricultural Income Tax Returns</span>
+                                <span class="status future">Future</span>
+                            </div>
+                            <div class="calendar-item agricultural">
+                                <span class="date">June 30, 2025</span>
+                                <span class="event">Agricultural Statistics Return</span>
+                                <span class="status future">Future</span>
+                            </div>
+                            <div class="calendar-item agricultural">
+                                <span class="date">December 31, 2024</span>
+                                <span class="event">Farm Asset Valuation</span>
                                 <span class="status future">Future</span>
                             </div>
                         </div>
@@ -375,9 +437,13 @@
                     <option value="meat-sales">Meat Sales</option>
                     <option value="dairy-sales">Dairy Sales</option>
                     <option value="breeding-fees">Breeding Fees</option>
-                    <option value="consulting">Consulting Services</option>
-                    <option value="government-subsidies">Government Subsidies</option>
-                    <option value="other">Other Income</option>
+                    <option value="farm-consulting">Farm Consulting Services</option>
+                    <option value="government-subsidies">Agricultural Subsidies</option>
+                    <option value="crop-sales">Crop Sales</option>
+                    <option value="pasture-rental">Pasture Rental Income</option>
+                    <option value="organic-certification">Organic Premium</option>
+                    <option value="insurance-claims">Insurance Claims</option>
+                    <option value="other-farm">Other Farm Income</option>
                 </select>
                 <input type="text" id="income-description" placeholder="Description" required>
                 <input type="number" id="gross-amount" placeholder="Gross Amount (KSh)" step="0.01" required>
@@ -408,16 +474,22 @@
                 <select id="expense-category" required>
                     <option value="">Select Category</option>
                     <option value="feed-costs">Feed & Nutrition</option>
-                    <option value="veterinary">Veterinary Services</option>
-                    <option value="equipment">Equipment & Machinery</option>
-                    <option value="transportation">Transportation</option>
-                    <option value="utilities">Utilities</option>
-                    <option value="insurance">Insurance</option>
-                    <option value="professional-fees">Professional Fees</option>
-                    <option value="marketing">Marketing & Advertising</option>
-                    <option value="repairs-maintenance">Repairs & Maintenance</option>
-                    <option value="depreciation">Depreciation</option>
-                    <option value="other">Other Expenses</option>
+                    <option value="veterinary">Veterinary & Animal Health</option>
+                    <option value="breeding-costs">Breeding & Artificial Insemination</option>
+                    <option value="farm-equipment">Farm Equipment & Machinery</option>
+                    <option value="livestock-transport">Livestock Transportation</option>
+                    <option value="farm-utilities">Farm Utilities (Water, Power)</option>
+                    <option value="livestock-insurance">Livestock Insurance</option>
+                    <option value="agricultural-supplies">Agricultural Supplies</option>
+                    <option value="pasture-management">Pasture & Land Management</option>
+                    <option value="farm-labor">Farm Labor & Wages</option>
+                    <option value="professional-fees">Professional & Veterinary Fees</option>
+                    <option value="marketing-farm">Farm Marketing & Shows</option>
+                    <option value="farm-maintenance">Farm Infrastructure Maintenance</option>
+                    <option value="depreciation-farm">Farm Asset Depreciation</option>
+                    <option value="fuel-farm">Farm Fuel & Vehicle Costs</option>
+                    <option value="certification-costs">Organic/Quality Certification</option>
+                    <option value="other-farm-expense">Other Farm Expenses</option>
                 </select>
                 <input type="text" id="expense-description" placeholder="Description" required>
                 <input type="number" id="expense-amount" placeholder="Amount (KSh)" step="0.01" required>
@@ -439,18 +511,45 @@
         <div class="modal-content">
             <h2>🧮 Tax Calculator</h2>
             <div class="calculator-form">
-                <div class="calc-section">
-                    <h3>Income Details</h3>
-                    <input type="number" id="calc-total-income" placeholder="Total Annual Income (KSh)" step="0.01">
-                    <input type="number" id="calc-deductions" placeholder="Total Deductions (KSh)" step="0.01">
+                <div class="calc-section agricultural-calc">
+                    <h3>🌾 Agricultural Income Details</h3>
+                    <input type="number" id="calc-livestock-income" placeholder="Livestock Sales Income (KSh)" step="0.01">
+                    <input type="number" id="calc-crop-income" placeholder="Crop Sales Income (KSh)" step="0.01">
+                    <input type="number" id="calc-other-farm-income" placeholder="Other Farm Income (KSh)" step="0.01">
+                    <div class="farm-info">
+                        <p><strong>🏞️ Farm Size:</strong> <input type="number" id="farm-size" placeholder="Acres"> acres</p>
+                        <p><strong>🐐 Livestock Count:</strong> <input type="number" id="livestock-count" placeholder="Number of animals"></p>
+                    </div>
+                </div>
+                <div class="calc-section agricultural-calc">
+                    <h3>📉 Agricultural Deductions</h3>
+                    <input type="number" id="calc-feed-costs" placeholder="Feed & Veterinary Costs (KSh)" step="0.01">
+                    <input type="number" id="calc-equipment-depreciation" placeholder="Equipment Depreciation (KSh)" step="0.01">
+                    <input type="number" id="calc-farm-labor" placeholder="Farm Labor Costs (KSh)" step="0.01">
+                    <input type="number" id="calc-other-deductions" placeholder="Other Farm Deductions (KSh)" step="0.01">
+                    <div class="exemption-info">
+                        <label><input type="checkbox" id="zero-rated-sales"> Zero-rated sales (live animals, unprocessed products)</label>
+                        <label><input type="checkbox" id="small-scale-farmer"> Small-scale farmer (under 10 acres)</label>
+                        <label><input type="checkbox" id="organic-certified"> Organic certified farm</label>
+                    </div>
                 </div>
                 <div class="calc-section">
-                    <h3>Tax Calculation</h3>
-                    <div class="calc-result">
-                        <p>Taxable Income: <span id="calc-taxable-income">KSh 0</span></p>
-                        <p>Income Tax: <span id="calc-income-tax">KSh 0</span></p>
-                        <p>VAT Payable: <span id="calc-vat-payable">KSh 0</span></p>
-                        <p class="total-tax">Total Tax Due: <span id="calc-total-tax">KSh 0</span></p>
+                    <h3>💰 Agricultural Tax Calculation</h3>
+                    <div class="calc-result agricultural-result">
+                        <p>Total Farm Income: <span id="calc-total-farm-income">KSh 0</span></p>
+                        <p>Zero-rated Income (VAT exempt): <span id="calc-exempt-income">KSh 0</span></p>
+                        <p>Taxable Farm Income: <span id="calc-taxable-farm-income">KSh 0</span></p>
+                        <p>Total Farm Deductions: <span id="calc-total-farm-deductions">KSh 0</span></p>
+                        <p>Net Taxable Income: <span id="calc-net-taxable">KSh 0</span></p>
+                        <p>Income Tax (Agricultural Rate): <span id="calc-ag-income-tax">KSh 0</span></p>
+                        <p>VAT on Taxable Sales: <span id="calc-ag-vat">KSh 0</span></p>
+                        <p class="total-tax">Total Agricultural Tax Due: <span id="calc-total-ag-tax">KSh 0</span></p>
+                        <div class="tax-notes">
+                            <small>
+                                <strong>Note:</strong> Agricultural income below KSh 2.4M annually may qualify for reduced tax rates.
+                                Live animals and unprocessed agricultural products are VAT zero-rated.
+                            </small>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-buttons">
