@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Records - The Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>The Mountain Goat Farm - Tax Records</h1>
+            </div>
+            <button class="hamburger" id="hamburger-btn" aria-label="Open navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Public Site</a></li>
+                <li><a href="farm-records.html">Dashboard</a></li>
+                <li><a href="goat-records.html">Goat Records</a></li>
+                <li><a href="breeding-records.html">Breeding Records</a></li>
+                <li><a href="meat-production.html">Meat Production</a></li>
+                <li><a href="products-management.html">Products</a></li>
+                <li><a href="feed-schedule.html">Feed Schedule</a></li>
+                <li><a href="health-records.html">Health Records</a></li>
+                <li><a href="contact-management.html">Contacts</a></li>
+                <li><a href="task-manager.html">Tasks</a></li>
+                <li><a href="reminders.html">Reminders</a></li>
+                <li><a href="financial-records.html">Financials</a></li>
+                <li><a href="sales-records.html">Sales</a></li>
+                <li><a href="crop-management.html">Crops</a></li>
+                <li><a href="land-lease-records.html">Land Lease</a></li>
+                <li><a href="machinery-equipment.html">Equipment</a></li>
+                <li><a href="casual-laborers.html">Laborers</a></li>
+                <li><a href="tax-records.html" class="active">Tax Records</a></li>
+                <li><button id="logout-btn">Logout</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Farm Records Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="login-note">Default: admin / farm2024</p>
+        </div>
+    </div>
+
+    <main id="main-content" style="display: none;">
+        <!-- Tax Records -->
+        <section id="tax-records" class="records-section">
+            <div class="container">
+                <h2>🧾 Tax Records & Compliance</h2>
+                
+                <!-- Tax Overview Dashboard -->
+                <div class="tax-overview">
+                    <div class="tax-summary">
+                        <div class="summary-card income">
+                            <h3>📈 Total Taxable Income</h3>
+                            <p class="summary-amount" id="total-taxable-income">KSh 0</p>
+                            <span class="period">Current Tax Year</span>
+                        </div>
+                        <div class="summary-card deductions">
+                            <h3>📉 Total Deductions</h3>
+                            <p class="summary-amount" id="total-deductions">KSh 0</p>
+                            <span class="period">Current Tax Year</span>
+                        </div>
+                        <div class="summary-card vat">
+                            <h3>🏛️ VAT Collected</h3>
+                            <p class="summary-amount" id="vat-collected">KSh 0</p>
+                            <span class="period">Current Quarter</span>
+                        </div>
+                        <div class="summary-card tax-due">
+                            <h3>💰 Estimated Tax Due</h3>
+                            <p class="summary-amount" id="estimated-tax">KSh 0</p>
+                            <span class="period">Current Tax Year</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Actions -->
+                <div class="tax-actions">
+                    <button id="add-tax-record-btn" class="btn-primary">📝 Add Tax Record</button>
+                    <button id="calculate-tax-btn" class="btn-secondary">🧮 Calculate Tax</button>
+                    <button id="generate-tax-report-btn" class="btn-secondary">📊 Tax Report</button>
+                    <button id="export-tax-data-btn" class="btn-secondary">📤 Export Tax Data</button>
+                </div>
+
+                <!-- Tax Tabs -->
+                <div class="tax-tabs">
+                    <button class="tab-btn active" data-tab="income">Income Records</button>
+                    <button class="tab-btn" data-tab="expenses">Deductible Expenses</button>
+                    <button class="tab-btn" data-tab="vat">VAT Records</button>
+                    <button class="tab-btn" data-tab="pay-as-you-earn">PAYE</button>
+                    <button class="tab-btn" data-tab="returns">Tax Returns</button>
+                    <button class="tab-btn" data-tab="compliance">Compliance</button>
+                </div>
+
+                <!-- Income Records Tab -->
+                <div id="income-tab" class="tab-content active">
+                    <div class="tab-header">
+                        <h3>💰 Taxable Income Records</h3>
+                        <button id="add-income-btn" class="btn-primary">Add Income</button>
+                    </div>
+                    <div class="income-filters">
+                        <select id="income-type-filter">
+                            <option value="">All Income Types</option>
+                            <option value="livestock-sales">Livestock Sales</option>
+                            <option value="meat-sales">Meat Sales</option>
+                            <option value="dairy-sales">Dairy Sales</option>
+                            <option value="breeding-fees">Breeding Fees</option>
+                            <option value="consulting">Consulting Services</option>
+                            <option value="government-subsidies">Government Subsidies</option>
+                            <option value="other">Other Income</option>
+                        </select>
+                        <input type="date" id="income-date-from">
+                        <input type="date" id="income-date-to">
+                    </div>
+                    <div class="records-table">
+                        <table id="income-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Income Type</th>
+                                    <th>Description</th>
+                                    <th>Gross Amount (KSh)</th>
+                                    <th>VAT (KSh)</th>
+                                    <th>Net Amount (KSh)</th>
+                                    <th>Tax Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="income-tbody">
+                                <!-- Income records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Deductible Expenses Tab -->
+                <div id="expenses-tab" class="tab-content">
+                    <div class="tab-header">
+                        <h3>📉 Deductible Business Expenses</h3>
+                        <button id="add-expense-btn" class="btn-primary">Add Expense</button>
+                    </div>
+                    <div class="expense-filters">
+                        <select id="expense-category-filter">
+                            <option value="">All Categories</option>
+                            <option value="feed-costs">Feed & Nutrition</option>
+                            <option value="veterinary">Veterinary Services</option>
+                            <option value="equipment">Equipment & Machinery</option>
+                            <option value="transportation">Transportation</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="insurance">Insurance</option>
+                            <option value="professional-fees">Professional Fees</option>
+                            <option value="marketing">Marketing & Advertising</option>
+                            <option value="repairs-maintenance">Repairs & Maintenance</option>
+                            <option value="depreciation">Depreciation</option>
+                            <option value="other">Other Expenses</option>
+                        </select>
+                        <input type="date" id="expense-date-from">
+                        <input type="date" id="expense-date-to">
+                    </div>
+                    <div class="records-table">
+                        <table id="expenses-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Amount (KSh)</th>
+                                    <th>VAT Paid (KSh)</th>
+                                    <th>Receipt/Invoice</th>
+                                    <th>Deductible %</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenses-tbody">
+                                <!-- Expense records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VAT Records Tab -->
+                <div id="vat-tab" class="tab-content">
+                    <div class="tab-header">
+                        <h3>🏛️ VAT Records & Returns</h3>
+                        <div class="vat-info">
+                            <span class="info-badge">VAT Rate: 16%</span>
+                            <span class="info-badge">Registration: VAT123456789</span>
+                        </div>
+                    </div>
+                    <div class="vat-summary">
+                        <div class="vat-card">
+                            <h4>VAT Collected (Output)</h4>
+                            <p class="vat-amount" id="vat-output">KSh 0</p>
+                        </div>
+                        <div class="vat-card">
+                            <h4>VAT Paid (Input)</h4>
+                            <p class="vat-amount" id="vat-input">KSh 0</p>
+                        </div>
+                        <div class="vat-card">
+                            <h4>VAT Payable</h4>
+                            <p class="vat-amount" id="vat-payable">KSh 0</p>
+                        </div>
+                    </div>
+                    <div class="vat-actions">
+                        <button id="generate-vat-return-btn" class="btn-primary">Generate VAT Return</button>
+                        <button id="submit-vat-return-btn" class="btn-secondary">Submit Return</button>
+                    </div>
+                    <div class="records-table">
+                        <table id="vat-table">
+                            <thead>
+                                <tr>
+                                    <th>Period</th>
+                                    <th>VAT Output (KSh)</th>
+                                    <th>VAT Input (KSh)</th>
+                                    <th>VAT Payable (KSh)</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vat-tbody">
+                                <!-- VAT records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAYE Tab -->
+                <div id="pay-as-you-earn-tab" class="tab-content">
+                    <div class="tab-header">
+                        <h3>👥 Pay As You Earn (PAYE)</h3>
+                        <button id="add-paye-btn" class="btn-primary">Add PAYE Record</button>
+                    </div>
+                    <div class="paye-summary">
+                        <div class="paye-card">
+                            <h4>Total Salaries Paid</h4>
+                            <p class="paye-amount" id="total-salaries">KSh 0</p>
+                        </div>
+                        <div class="paye-card">
+                            <h4>PAYE Deducted</h4>
+                            <p class="paye-amount" id="total-paye">KSh 0</p>
+                        </div>
+                        <div class="paye-card">
+                            <h4>NHIF Contributions</h4>
+                            <p class="paye-amount" id="total-nhif">KSh 0</p>
+                        </div>
+                        <div class="paye-card">
+                            <h4>NSSF Contributions</h4>
+                            <p class="paye-amount" id="total-nssf">KSh 0</p>
+                        </div>
+                    </div>
+                    <div class="records-table">
+                        <table id="paye-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Month</th>
+                                    <th>Gross Salary (KSh)</th>
+                                    <th>PAYE (KSh)</th>
+                                    <th>NHIF (KSh)</th>
+                                    <th>NSSF (KSh)</th>
+                                    <th>Net Salary (KSh)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paye-tbody">
+                                <!-- PAYE records will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tax Returns Tab -->
+                <div id="returns-tab" class="tab-content">
+                    <div class="tab-header">
+                        <h3>📋 Tax Returns</h3>
+                        <button id="prepare-return-btn" class="btn-primary">Prepare Tax Return</button>
+                    </div>
+                    <div class="returns-list">
+                        <div class="return-card">
+                            <div class="return-header">
+                                <h4>Income Tax Return 2024</h4>
+                                <span class="status-badge pending">Pending</span>
+                            </div>
+                            <div class="return-details">
+                                <p>Due Date: March 31, 2025</p>
+                                <p>Total Income: KSh 0</p>
+                                <p>Tax Due: KSh 0</p>
+                            </div>
+                            <div class="return-actions">
+                                <button class="btn-primary">Complete Return</button>
+                                <button class="btn-secondary">Download Form</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Tab -->
+                <div id="compliance-tab" class="tab-content">
+                    <div class="tab-header">
+                        <h3>⚖️ Tax Compliance & Deadlines</h3>
+                    </div>
+                    <div class="compliance-status">
+                        <div class="compliance-card good">
+                            <h4>✅ Compliance Status</h4>
+                            <p>Good Standing</p>
+                        </div>
+                        <div class="compliance-card">
+                            <h4>📅 Next Deadline</h4>
+                            <p>VAT Return: Dec 20, 2024</p>
+                        </div>
+                    </div>
+                    <div class="tax-calendar">
+                        <h4>📅 Tax Calendar 2024/2025</h4>
+                        <div class="calendar-items">
+                            <div class="calendar-item">
+                                <span class="date">20th of each month</span>
+                                <span class="event">VAT Returns Due</span>
+                                <span class="status upcoming">Upcoming</span>
+                            </div>
+                            <div class="calendar-item">
+                                <span class="date">9th of each month</span>
+                                <span class="event">PAYE Returns Due</span>
+                                <span class="status upcoming">Upcoming</span>
+                            </div>
+                            <div class="calendar-item">
+                                <span class="date">March 31, 2025</span>
+                                <span class="event">Income Tax Returns Due</span>
+                                <span class="status future">Future</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Charts -->
+                <div class="tax-analytics">
+                    <div class="chart-container">
+                        <h3>📊 Income vs Expenses</h3>
+                        <canvas id="income-expense-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>📈 Monthly Tax Obligations</h3>
+                        <canvas id="tax-obligations-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Income Modal -->
+    <div id="income-modal" class="modal">
+        <div class="modal-content">
+            <h2>Add Income Record</h2>
+            <form id="income-form">
+                <input type="hidden" id="income-id">
+                <input type="date" id="income-date" required>
+                <select id="income-type" required>
+                    <option value="">Select Income Type</option>
+                    <option value="livestock-sales">Livestock Sales</option>
+                    <option value="meat-sales">Meat Sales</option>
+                    <option value="dairy-sales">Dairy Sales</option>
+                    <option value="breeding-fees">Breeding Fees</option>
+                    <option value="consulting">Consulting Services</option>
+                    <option value="government-subsidies">Government Subsidies</option>
+                    <option value="other">Other Income</option>
+                </select>
+                <input type="text" id="income-description" placeholder="Description" required>
+                <input type="number" id="gross-amount" placeholder="Gross Amount (KSh)" step="0.01" required>
+                <input type="number" id="vat-amount" placeholder="VAT Amount (KSh)" step="0.01">
+                <input type="number" id="net-amount" placeholder="Net Amount (KSh)" step="0.01" readonly>
+                <select id="tax-status">
+                    <option value="taxable">Taxable</option>
+                    <option value="exempt">Tax Exempt</option>
+                    <option value="zero-rated">Zero Rated</option>
+                </select>
+                <input type="text" id="invoice-number" placeholder="Invoice/Receipt Number">
+                <textarea id="income-notes" placeholder="Additional Notes"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Save Income</button>
+                    <button type="button" id="income-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div id="expense-modal" class="modal">
+        <div class="modal-content">
+            <h2>Add Deductible Expense</h2>
+            <form id="expense-form">
+                <input type="hidden" id="expense-id">
+                <input type="date" id="expense-date" required>
+                <select id="expense-category" required>
+                    <option value="">Select Category</option>
+                    <option value="feed-costs">Feed & Nutrition</option>
+                    <option value="veterinary">Veterinary Services</option>
+                    <option value="equipment">Equipment & Machinery</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="insurance">Insurance</option>
+                    <option value="professional-fees">Professional Fees</option>
+                    <option value="marketing">Marketing & Advertising</option>
+                    <option value="repairs-maintenance">Repairs & Maintenance</option>
+                    <option value="depreciation">Depreciation</option>
+                    <option value="other">Other Expenses</option>
+                </select>
+                <input type="text" id="expense-description" placeholder="Description" required>
+                <input type="number" id="expense-amount" placeholder="Amount (KSh)" step="0.01" required>
+                <input type="number" id="expense-vat" placeholder="VAT Paid (KSh)" step="0.01">
+                <input type="text" id="receipt-number" placeholder="Receipt/Invoice Number">
+                <input type="number" id="deductible-percentage" placeholder="Deductible %" min="0" max="100" value="100">
+                <input type="file" id="expense-receipt" accept=".pdf,.jpg,.png">
+                <textarea id="expense-notes" placeholder="Additional Notes"></textarea>
+                <div class="modal-buttons">
+                    <button type="submit">Save Expense</button>
+                    <button type="button" id="expense-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tax Calculator Modal -->
+    <div id="tax-calculator-modal" class="modal">
+        <div class="modal-content">
+            <h2>🧮 Tax Calculator</h2>
+            <div class="calculator-form">
+                <div class="calc-section">
+                    <h3>Income Details</h3>
+                    <input type="number" id="calc-total-income" placeholder="Total Annual Income (KSh)" step="0.01">
+                    <input type="number" id="calc-deductions" placeholder="Total Deductions (KSh)" step="0.01">
+                </div>
+                <div class="calc-section">
+                    <h3>Tax Calculation</h3>
+                    <div class="calc-result">
+                        <p>Taxable Income: <span id="calc-taxable-income">KSh 0</span></p>
+                        <p>Income Tax: <span id="calc-income-tax">KSh 0</span></p>
+                        <p>VAT Payable: <span id="calc-vat-payable">KSh 0</span></p>
+                        <p class="total-tax">Total Tax Due: <span id="calc-total-tax">KSh 0</span></p>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" id="calculate-tax-btn-modal">Calculate</button>
+                    <button type="button" id="tax-calc-close">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="farm-records.js"></script>
+</body>
+</html>

@@ -1783,3 +1783,514 @@ section {
         padding: 15px;
     }
 }
+
+/* ===== TAX RECORDS STYLES ===== */
+
+/* Tax Overview Dashboard */
+.tax-overview {
+    margin: 2rem 0;
+}
+
+.tax-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.tax-summary .summary-card {
+    background: linear-gradient(135deg, var(--logo-white) 0%, var(--logo-beige) 100%);
+    border: 2px solid var(--logo-green);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(56, 100, 58, 0.1);
+    transition: all 0.3s ease;
+}
+
+.tax-summary .summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(56, 100, 58, 0.2);
+}
+
+.tax-summary .summary-card.income {
+    border-color: #27ae60;
+    background: linear-gradient(135deg, #d5f4e6 0%, #ffffff 100%);
+}
+
+.tax-summary .summary-card.deductions {
+    border-color: #e74c3c;
+    background: linear-gradient(135deg, #fdeaea 0%, #ffffff 100%);
+}
+
+.tax-summary .summary-card.vat {
+    border-color: #3498db;
+    background: linear-gradient(135deg, #eaf4fd 0%, #ffffff 100%);
+}
+
+.tax-summary .summary-card.tax-due {
+    border-color: #f39c12;
+    background: linear-gradient(135deg, #fef5e7 0%, #ffffff 100%);
+}
+
+.tax-summary .summary-card h3 {
+    color: var(--logo-green);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.tax-summary .summary-amount {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--logo-brown);
+    margin: 0.5rem 0;
+}
+
+.tax-summary .period {
+    font-size: 0.85rem;
+    color: #666;
+    opacity: 0.8;
+}
+
+/* Tax Actions */
+.tax-actions {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.tax-actions button {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Tax Tabs */
+.tax-tabs {
+    display: flex;
+    background: var(--logo-beige);
+    border-radius: 10px;
+    padding: 0.5rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+    gap: 0.5rem;
+}
+
+.tax-tabs .tab-btn {
+    background: transparent;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--logo-brown);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.tax-tabs .tab-btn.active {
+    background: var(--logo-green);
+    color: white;
+    box-shadow: 0 2px 8px rgba(56, 100, 58, 0.3);
+}
+
+.tax-tabs .tab-btn:hover:not(.active) {
+    background: rgba(56, 100, 58, 0.1);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.tab-header h3 {
+    color: var(--logo-green);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+/* VAT Summary Cards */
+.vat-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.vat-card {
+    background: linear-gradient(135deg, var(--logo-blue) 0%, #ffffff 100%);
+    border: 2px solid var(--logo-blue);
+    border-radius: 10px;
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(135, 181, 222, 0.2);
+}
+
+.vat-card h4 {
+    color: var(--logo-green);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.vat-amount {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--logo-brown);
+    margin: 0;
+}
+
+/* PAYE Summary Cards */
+.paye-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.paye-card {
+    background: linear-gradient(135deg, var(--logo-yellow) 0%, #ffffff 100%);
+    border: 2px solid var(--logo-yellow);
+    border-radius: 10px;
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(233, 201, 124, 0.2);
+}
+
+.paye-card h4 {
+    color: var(--logo-green);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.paye-amount {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--logo-brown);
+    margin: 0;
+}
+
+/* Filters */
+.income-filters,
+.expense-filters {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+.income-filters select,
+.expense-filters select,
+.income-filters input,
+.expense-filters input {
+    padding: 0.6rem;
+    border: 2px solid var(--logo-beige);
+    border-radius: 6px;
+    background: white;
+    color: var(--logo-brown);
+}
+
+.income-filters select:focus,
+.expense-filters select:focus,
+.income-filters input:focus,
+.expense-filters input:focus {
+    border-color: var(--logo-green);
+    outline: none;
+}
+
+/* VAT Info */
+.vat-info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.info-badge {
+    background: var(--logo-green);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* VAT Actions */
+.vat-actions {
+    display: flex;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+/* Returns Section */
+.returns-list {
+    display: grid;
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.return-card {
+    background: white;
+    border: 2px solid var(--logo-beige);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.return-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.return-header h4 {
+    color: var(--logo-green);
+    margin: 0;
+}
+
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-badge.pending {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-badge.completed {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #b8daff;
+}
+
+.return-details p {
+    margin: 0.3rem 0;
+    color: #666;
+}
+
+.return-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Compliance Section */
+.compliance-status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.compliance-card {
+    background: white;
+    border: 2px solid var(--logo-beige);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.compliance-card.good {
+    border-color: #27ae60;
+    background: linear-gradient(135deg, #d5f4e6 0%, #ffffff 100%);
+}
+
+.compliance-card h4 {
+    color: var(--logo-green);
+    margin-bottom: 0.5rem;
+}
+
+/* Tax Calendar */
+.tax-calendar {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border: 2px solid var(--logo-beige);
+}
+
+.tax-calendar h4 {
+    color: var(--logo-green);
+    margin-bottom: 1rem;
+}
+
+.calendar-items {
+    display: grid;
+    gap: 1rem;
+}
+
+.calendar-item {
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: var(--logo-beige);
+    border-radius: 8px;
+}
+
+.calendar-item .date {
+    font-weight: 600;
+    color: var(--logo-brown);
+}
+
+.calendar-item .event {
+    color: var(--logo-green);
+}
+
+.calendar-item .status {
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status.upcoming {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status.future {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Tax Analytics */
+.tax-analytics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.tax-analytics .chart-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 2px solid var(--logo-beige);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.tax-analytics h3 {
+    color: var(--logo-green);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Tax Calculator Modal */
+.calculator-form {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.calc-section {
+    background: var(--logo-beige);
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+
+.calc-section h3 {
+    color: var(--logo-green);
+    margin-bottom: 1rem;
+}
+
+.calc-section input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 2px solid var(--logo-green);
+    border-radius: 6px;
+}
+
+.calc-result {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 2px solid var(--logo-green);
+}
+
+.calc-result p {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.5rem 0;
+    color: var(--logo-brown);
+}
+
+.calc-result .total-tax {
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-top: 2px solid var(--logo-green);
+    padding-top: 0.5rem;
+    margin-top: 1rem;
+    color: var(--logo-green);
+}
+
+/* Mobile Responsiveness for Tax Records */
+@media (max-width: 768px) {
+    .tax-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .tax-actions {
+        flex-direction: column;
+    }
+    
+    .tax-tabs {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    
+    .tab-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .calendar-item {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .vat-summary,
+    .paye-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .compliance-status {
+        grid-template-columns: 1fr;
+    }
+    
+    .tax-analytics {
+        grid-template-columns: 1fr;
+    }
+    
+    .income-filters,
+    .expense-filters {
+        flex-direction: column;
+    }
+}
