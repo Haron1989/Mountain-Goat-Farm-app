@@ -891,12 +891,77 @@
         </div>
     </footer>
 
-    <!-- Load Scripts -->
+    <!-- Load Core Scripts -->
     <script src="script.js"></script>
     <script src="farm-records.js"></script>
     <script src="language-manager.js"></script>
     <script src="voice-commands.js"></script>
     <script src="mpesa-integration.js"></script>
+    <script src="genealogy.js"></script>
+    <script src="qr-scanner.js"></script>
+    <script src="ai-analytics.js"></script>
+    <script src="iot-sensors.js"></script>
+    
+    <!-- Revolutionary Next-Generation Features -->
+    <script src="farm-gpt-copilot.js"></script>
+    <script src="digital-twin-simulator.js"></script>
+    <script src="global-supply-chain.js"></script>
+    <script src="data-monetization-platform.js"></script>
+    <script src="world-class-dashboard.js"></script>
+    
+    <!-- Platform Initialization -->
+    <script>
+        // Add dashboard launcher to navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing World\'s Most Advanced Farm Management Platform...');
+            
+            // Add dashboard launcher button
+            const nav = document.querySelector('nav ul');
+            if (nav && !document.querySelector('.dashboard-launch-btn')) {
+                const dashboardLi = document.createElement('li');
+                dashboardLi.innerHTML = '<a href="#" onclick="openWorldClassDashboard()" class="dashboard-launch-btn" style="background: linear-gradient(45deg, #4CAF50, #45a049); color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">🚀 Launch World-Class Dashboard</a>';
+                nav.insertBefore(dashboardLi, nav.firstChild);
+            }
+            
+            console.log('✅ Platform ready with AI, IoT, Blockchain, and Global Integration!');
+        });
+
+        function openWorldClassDashboard() {
+            // Hide main content and show dashboard
+            document.querySelector('main').style.display = 'none';
+            document.querySelector('header').style.display = 'none';
+            document.querySelector('nav').style.display = 'none';
+            document.querySelector('footer').style.display = 'none';
+            
+            // Create dashboard container if it doesn't exist
+            if (!document.getElementById('worldClassDashboard')) {
+                window.worldClassDashboard = new WorldClassFarmDashboard();
+            } else {
+                document.getElementById('worldClassDashboard').style.display = 'block';
+            }
+        }
+
+        function closeDashboard() {
+            // Show main content and hide dashboard
+            document.querySelector('main').style.display = 'block';
+            document.querySelector('header').style.display = 'block';
+            document.querySelector('nav').style.display = 'block';
+            document.querySelector('footer').style.display = 'block';
+            
+            const dashboard = document.getElementById('worldClassDashboard');
+            if (dashboard) {
+                dashboard.style.display = 'none';
+            }
+        }
+
+        // Add keyboard shortcut for dashboard (Ctrl+Shift+D)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                e.preventDefault();
+                openWorldClassDashboard();
+            }
+        });
+    </script>
     
     <!-- PWA Service Worker Registration -->
     <script>
