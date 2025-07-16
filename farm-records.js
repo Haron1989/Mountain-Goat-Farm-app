@@ -3235,6 +3235,12 @@ class FarmRecordsManager {
         this.closeBulkVaccinationModal();
         
         this.showBulkSuccessMessage(`Successfully vaccinated ${selectedIds.length} goats with ${vaccineType}`);
+        
+        // Log activity to enterprise feed
+        if (window.enterpriseFeatures) {
+            window.enterpriseFeatures.logBulkOperation('vaccination', selectedIds.length, vaccineType);
+        }
+        
         this.clearSelections();
     }
 
@@ -3298,6 +3304,12 @@ class FarmRecordsManager {
         this.closeBulkTreatmentModal();
         
         this.showBulkSuccessMessage(`Successfully treated ${selectedIds.length} goats with ${treatmentType}`);
+        
+        // Log activity to enterprise feed
+        if (window.enterpriseFeatures) {
+            window.enterpriseFeatures.logBulkOperation('treatment', selectedIds.length, treatmentType);
+        }
+        
         this.clearSelections();
     }
 
@@ -3336,6 +3348,12 @@ class FarmRecordsManager {
             localStorage.setItem('farmGoats', JSON.stringify(this.goats));
             this.loadGoats();
             this.showBulkSuccessMessage(`Successfully updated status to "${newStatus}" for ${selectedGoatData.length} goats`);
+            
+            // Log activity to enterprise feed
+            if (window.enterpriseFeatures) {
+                window.enterpriseFeatures.logBulkOperation('statusChange', selectedGoatData.length, `Status changed to ${newStatus}`);
+            }
+            
             this.clearSelections();
         }
     }

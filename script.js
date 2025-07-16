@@ -1789,3 +1789,574 @@ document.addEventListener('DOMContentLoaded', () => {
         if (toggle) toggle.textContent = '☀️ Light Mode';
     }
 });
+
+// ===============================================
+// ENTERPRISE FEATURES MANAGER
+// ===============================================
+
+class EnterpriseFeatures {
+    constructor() {
+        this.activities = JSON.parse(localStorage.getItem('farmActivities') || '[]');
+        this.alerts = JSON.parse(localStorage.getItem('farmAlerts') || '[]');
+        this.notices = JSON.parse(localStorage.getItem('farmNotices') || '[]');
+        this.financialData = JSON.parse(localStorage.getItem('farmFinancials') || '{}');
+        
+        this.init();
+    }
+
+    init() {
+        this.setupActivityFeed();
+        this.setupFinancialDashboard();
+        this.setupAlertsSystem();
+        this.setupNoticeBoard();
+        this.generateSampleData();
+        console.log('🚀 Enterprise Features initialized!');
+    }
+
+    // ===============================================
+    // ACTIVITY FEED SYSTEM
+    // ===============================================
+
+    setupActivityFeed() {
+        const filterSelect = document.getElementById('activityFilter');
+        const clearButton = document.getElementById('clearActivities');
+
+        if (filterSelect) {
+            filterSelect.addEventListener('change', () => this.filterActivities());
+        }
+
+        if (clearButton) {
+            clearButton.addEventListener('click', () => this.clearAllActivities());
+        }
+
+        this.renderActivityFeed();
+    }
+
+    addActivity(type, title, description, user = 'System') {
+        const activity = {
+            id: Date.now(),
+            type: type,
+            title: title,
+            description: description,
+            user: user,
+            timestamp: new Date().toISOString(),
+            date: new Date().toLocaleDateString(),
+            time: new Date().toLocaleTimeString()
+        };
+
+        this.activities.unshift(activity); // Add to beginning
+        if (this.activities.length > 100) {
+            this.activities = this.activities.slice(0, 100); // Keep only last 100
+        }
+
+        localStorage.setItem('farmActivities', JSON.stringify(this.activities));
+        this.renderActivityFeed();
+    }
+
+    renderActivityFeed() {
+        const container = document.getElementById('activityFeed');
+        const emptyState = document.getElementById('activityEmpty');
+        const filter = document.getElementById('activityFilter')?.value || 'all';
+
+        if (!container) return;
+
+        const filteredActivities = filter === 'all' 
+            ? this.activities 
+            : this.activities.filter(activity => activity.type === filter);
+
+        if (filteredActivities.length === 0) {
+            container.innerHTML = '';
+            if (emptyState) emptyState.style.display = 'block';
+            return;
+        }
+
+        if (emptyState) emptyState.style.display = 'none';
+
+        container.innerHTML = filteredActivities.map(activity => `
+            <div class="activity-item" data-type="${activity.type}">
+                <div class="activity-icon ${activity.type}">
+                    ${this.getActivityIcon(activity.type)}
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">${activity.title}</div>
+                    <div class="activity-description">${activity.description}</div>
+                    <div class="activity-meta">
+                        <span>👤 ${activity.user}</span>
+                        <span>📅 ${activity.date}</span>
+                        <span>🕒 ${activity.time}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    getActivityIcon(type) {
+        const icons = {
+            livestock: '🐐',
+            health: '💊',
+            breeding: '🍼',
+            sales: '💰',
+            feed: '🌾',
+            maintenance: '🔧'
+        };
+        return icons[type] || '📋';
+    }
+
+    filterActivities() {
+        this.renderActivityFeed();
+    }
+
+    clearAllActivities() {
+        if (confirm('Are you sure you want to clear all activities?')) {
+            this.activities = [];
+            localStorage.setItem('farmActivities', JSON.stringify(this.activities));
+            this.renderActivityFeed();
+        }
+    }
+
+    // ===============================================
+    // FINANCIAL DASHBOARD
+    // ===============================================
+
+    setupFinancialDashboard() {
+        const periodSelect = document.getElementById('financialPeriod');
+        
+        if (periodSelect) {
+            periodSelect.addEventListener('change', () => this.updateFinancialDashboard());
+        }
+
+        this.updateFinancialDashboard();
+        this.initializeCharts();
+    }
+
+    updateFinancialDashboard() {
+        const period = document.getElementById('financialPeriod')?.value || 'month';
+        const data = this.calculateFinancialData(period);
+
+        // Update financial cards
+        this.updateElement('totalRevenue', `KSh ${data.revenue.toLocaleString()}`);
+        this.updateElement('totalExpenses', `KSh ${data.expenses.toLocaleString()}`);
+        this.updateElement('netProfit', `KSh ${data.profit.toLocaleString()}`);
+        this.updateElement('totalTransactions', data.transactions);
+
+        // Update trends
+        this.updateTrend('revenueTrend', data.revenueTrend);
+        this.updateTrend('expensesTrend', data.expensesTrend);
+        this.updateTrend('profitTrend', data.profitTrend);
+        this.updateTrend('transactionsTrend', data.transactionsTrend);
+    }
+
+    calculateFinancialData(period) {
+        // Simulate financial data based on period
+        const baseRevenue = 150000;
+        const baseExpenses = 80000;
+        
+        const multipliers = {
+            week: 0.25,
+            month: 1,
+            quarter: 3,
+            year: 12
+        };
+
+        const multiplier = multipliers[period] || 1;
+        const revenue = baseRevenue * multiplier;
+        const expenses = baseExpenses * multiplier;
+
+        return {
+            revenue: revenue,
+            expenses: expenses,
+            profit: revenue - expenses,
+            transactions: Math.floor(45 * multiplier),
+            revenueTrend: this.getRandomTrend(),
+            expensesTrend: this.getRandomTrend(),
+            profitTrend: this.getRandomTrend(),
+            transactionsTrend: this.getRandomTrend()
+        };
+    }
+
+    getRandomTrend() {
+        const change = (Math.random() - 0.5) * 30; // -15% to +15%
+        const direction = change > 0 ? '↗' : change < 0 ? '↘' : '→';
+        return `${direction} ${Math.abs(change).toFixed(1)}%`;
+    }
+
+    updateElement(id, content) {
+        const element = document.getElementById(id);
+        if (element) element.textContent = content;
+    }
+
+    updateTrend(id, trend) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = trend;
+            element.className = `trend ${trend.includes('↗') ? 'positive' : trend.includes('↘') ? 'negative' : ''}`;
+        }
+    }
+
+    initializeCharts() {
+        this.initializeRevenueChart();
+        this.initializeCashflowChart();
+    }
+
+    initializeRevenueChart() {
+        const canvas = document.getElementById('revenueChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const data = [120000, 135000, 128000, 150000, 145000, 160000];
+        const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+        this.drawLineChart(ctx, data, labels, canvas.width, canvas.height, 
+            ['#4CAF50', '#F44336'], ['Revenue', 'Expenses']);
+    }
+
+    initializeCashflowChart() {
+        const canvas = document.getElementById('cashflowChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const data = [70000, 85000, 68000, 95000, 88000, 105000];
+        const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+        this.drawBarChart(ctx, data, labels, canvas.width, canvas.height);
+    }
+
+    drawLineChart(ctx, data, labels, width, height, colors, legends) {
+        ctx.clearRect(0, 0, width, height);
+        
+        const padding = 40;
+        const chartWidth = width - padding * 2;
+        const chartHeight = height - padding * 2;
+        
+        const max = Math.max(...data) * 1.1;
+        const stepX = chartWidth / (data.length - 1);
+        const stepY = chartHeight / max;
+
+        // Draw grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 5; i++) {
+            const y = padding + (chartHeight / 5) * i;
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(width - padding, y);
+            ctx.stroke();
+        }
+
+        // Draw line
+        ctx.strokeStyle = colors[0];
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        
+        data.forEach((value, index) => {
+            const x = padding + stepX * index;
+            const y = height - padding - (value * stepY);
+            
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        
+        ctx.stroke();
+
+        // Draw points
+        ctx.fillStyle = colors[0];
+        data.forEach((value, index) => {
+            const x = padding + stepX * index;
+            const y = height - padding - (value * stepY);
+            
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Draw labels
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        
+        labels.forEach((label, index) => {
+            const x = padding + stepX * index;
+            ctx.fillText(label, x, height - 10);
+        });
+    }
+
+    drawBarChart(ctx, data, labels, width, height) {
+        ctx.clearRect(0, 0, width, height);
+        
+        const padding = 40;
+        const chartWidth = width - padding * 2;
+        const chartHeight = height - padding * 2;
+        
+        const max = Math.max(...data) * 1.1;
+        const barWidth = chartWidth / data.length * 0.8;
+        const barSpacing = chartWidth / data.length * 0.2;
+
+        data.forEach((value, index) => {
+            const barHeight = (value / max) * chartHeight;
+            const x = padding + (index * (barWidth + barSpacing));
+            const y = height - padding - barHeight;
+
+            // Draw bar
+            const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
+            gradient.addColorStop(0, '#4CAF50');
+            gradient.addColorStop(1, '#81C784');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            // Draw value on top
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${(value/1000).toFixed(0)}k`, x + barWidth/2, y - 5);
+
+            // Draw label
+            ctx.fillText(labels[index], x + barWidth/2, height - 10);
+        });
+    }
+
+    // ===============================================
+    // ALERTS SYSTEM
+    // ===============================================
+
+    setupAlertsSystem() {
+        this.generateSmartAlerts();
+        this.renderAlerts();
+    }
+
+    generateSmartAlerts() {
+        const currentDate = new Date();
+        
+        // Clear existing alerts to avoid duplicates
+        this.alerts = [];
+        
+        // Generate urgent alerts
+        this.addAlert('urgent', 'Vaccination Overdue', 
+            'Goat #A123 vaccination is 5 days overdue', 'high', 'health');
+        
+        this.addAlert('urgent', 'Feed Stock Low', 
+            'Hay inventory below 10% threshold', 'high', 'feed');
+
+        // Generate upcoming tasks
+        this.addAlert('upcoming', 'Breeding Schedule', 
+            'Doe #B456 ready for breeding in 2 days', 'medium', 'breeding');
+        
+        this.addAlert('upcoming', 'Health Check', 
+            'Monthly health inspection due next week', 'medium', 'health');
+
+        // Generate recommendations
+        this.addAlert('recommendations', 'Genetic Diversity', 
+            'Consider breeding Doe #B324 with Buck #A123 for optimal genetics', 'low', 'breeding');
+        
+        this.addAlert('recommendations', 'Market Opportunity', 
+            'Goat prices up 15% - good time to sell mature stock', 'medium', 'sales');
+    }
+
+    addAlert(category, title, description, priority, type) {
+        const alert = {
+            id: Date.now() + Math.random(),
+            category: category,
+            title: title,
+            description: description,
+            priority: priority,
+            type: type,
+            timestamp: new Date().toISOString(),
+            date: new Date().toLocaleDateString()
+        };
+
+        this.alerts.push(alert);
+        localStorage.setItem('farmAlerts', JSON.stringify(this.alerts));
+    }
+
+    renderAlerts() {
+        this.renderAlertCategory('urgentAlerts', 'urgent');
+        this.renderAlertCategory('upcomingTasks', 'upcoming');
+        this.renderAlertCategory('smartRecommendations', 'recommendations');
+    }
+
+    renderAlertCategory(containerId, category) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const categoryAlerts = this.alerts.filter(alert => alert.category === category);
+
+        if (categoryAlerts.length === 0) {
+            container.innerHTML = '<div class="alert-item"><div class="alert-title">No alerts</div><div class="alert-description">All clear!</div></div>';
+            return;
+        }
+
+        container.innerHTML = categoryAlerts.map(alert => `
+            <div class="alert-item">
+                <div class="alert-title">${alert.title}</div>
+                <div class="alert-description">${alert.description}</div>
+                <div class="alert-meta">
+                    <span>${alert.date}</span>
+                    <span class="alert-priority ${alert.priority}">${alert.priority.toUpperCase()}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ===============================================
+    // DIGITAL NOTICE BOARD
+    // ===============================================
+
+    setupNoticeBoard() {
+        this.setupNoticeFilters();
+        this.setupAddNoticeButton();
+        this.generateSampleNotices();
+        this.renderNotices();
+    }
+
+    setupNoticeFilters() {
+        const filterButtons = document.querySelectorAll('.notice-filters .filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                // Filter notices
+                this.filterNotices(button.dataset.filter);
+            });
+        });
+    }
+
+    setupAddNoticeButton() {
+        const addButton = document.getElementById('addNotice');
+        if (addButton) {
+            addButton.addEventListener('click', () => {
+                const title = prompt('Notice Title:');
+                const content = prompt('Notice Content:');
+                const type = prompt('Type (announcement/task/event/alert):') || 'announcement';
+                
+                if (title && content) {
+                    this.addNotice(type, title, content, 'Farm Manager');
+                }
+            });
+        }
+    }
+
+    generateSampleNotices() {
+        if (this.notices.length === 0) {
+            this.addNotice('announcement', 'Farm Upgrade Complete', 
+                'New water system installation completed successfully. All paddocks now have automatic waterers.',
+                'Farm Manager');
+            
+            this.addNotice('task', 'Fence Maintenance', 
+                'Quarterly fence inspection and repair scheduled for next week. Please report any damages.',
+                'Maintenance Team');
+            
+            this.addNotice('event', 'Veterinary Visit', 
+                'Dr. Sarah Johnson will be visiting for routine health checks on Friday, July 18th.',
+                'Health Coordinator');
+            
+            this.addNotice('alert', 'Weather Warning', 
+                'Heavy rains expected this weekend. Ensure all animals have adequate shelter.',
+                'Weather Monitor');
+        }
+    }
+
+    addNotice(type, title, content, author) {
+        const notice = {
+            id: Date.now(),
+            type: type,
+            title: title,
+            content: content,
+            author: author,
+            timestamp: new Date().toISOString(),
+            date: new Date().toLocaleDateString()
+        };
+
+        this.notices.unshift(notice);
+        localStorage.setItem('farmNotices', JSON.stringify(this.notices));
+        this.renderNotices();
+    }
+
+    renderNotices() {
+        const container = document.getElementById('noticeBoard');
+        if (!container) return;
+
+        const activeFilter = document.querySelector('.notice-filters .filter-btn.active')?.dataset.filter || 'all';
+        const filteredNotices = activeFilter === 'all' 
+            ? this.notices 
+            : this.notices.filter(notice => notice.type === activeFilter);
+
+        container.innerHTML = filteredNotices.map(notice => `
+            <div class="notice-card ${notice.type}">
+                <div class="notice-header-content">
+                    <h3 class="notice-title">${notice.title}</h3>
+                    <span class="notice-type ${notice.type}">${this.getNoticeTypeIcon(notice.type)}</span>
+                </div>
+                <div class="notice-content">${notice.content}</div>
+                <div class="notice-footer">
+                    <div class="notice-author">
+                        <div class="notice-avatar">${notice.author.charAt(0)}</div>
+                        <span>${notice.author}</span>
+                    </div>
+                    <span>${notice.date}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    getNoticeTypeIcon(type) {
+        const icons = {
+            announcement: '📢',
+            task: '📋',
+            event: '📅',
+            alert: '⚠️'
+        };
+        return icons[type] || '📌';
+    }
+
+    filterNotices(filter) {
+        this.renderNotices();
+    }
+
+    // ===============================================
+    // SAMPLE DATA GENERATION
+    // ===============================================
+
+    generateSampleData() {
+        // Generate some sample activities if none exist
+        if (this.activities.length === 0) {
+            this.addActivity('livestock', 'New Goat Registered', 'Boer buck #G789 added to herd', 'John Kamau');
+            this.addActivity('health', 'Vaccination Complete', 'Administered CDT vaccine to 15 goats', 'Dr. Mary');
+            this.addActivity('breeding', 'Kid Born', 'Doe #D456 delivered twin kids successfully', 'Sarah Wanjiku');
+            this.addActivity('sales', 'Sale Completed', 'Sold 3 mature bucks for KSh 45,000', 'Sales Team');
+            this.addActivity('feed', 'Feed Delivery', 'Received 20 bags of goat pellets', 'Store Keeper');
+            this.addActivity('maintenance', 'Water System Repair', 'Fixed broken pipe in paddock 3', 'Maintenance');
+        }
+    }
+
+    // ===============================================
+    // INTEGRATION WITH EXISTING FARM SYSTEM
+    // ===============================================
+
+    // Hook into existing farm operations to automatically generate activities
+    logBulkOperation(operation, count, details) {
+        const activities = {
+            vaccination: () => this.addActivity('health', 'Bulk Vaccination', `Vaccinated ${count} goats - ${details}`, 'Farm Staff'),
+            treatment: () => this.addActivity('health', 'Bulk Treatment', `Treated ${count} goats - ${details}`, 'Vet Team'),
+            statusChange: () => this.addActivity('livestock', 'Status Update', `Updated status for ${count} goats - ${details}`, 'Manager'),
+            locationMove: () => this.addActivity('livestock', 'Location Change', `Moved ${count} goats - ${details}`, 'Farm Staff'),
+            weightRecord: () => this.addActivity('livestock', 'Weight Recording', `Recorded weights for ${count} goats`, 'Farm Staff')
+        };
+
+        if (activities[operation]) {
+            activities[operation]();
+        }
+    }
+}
+
+// Initialize Enterprise Features when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize enterprise features
+    window.enterpriseFeatures = new EnterpriseFeatures();
+    
+    console.log('🎯 All enterprise features initialized successfully!');
+});

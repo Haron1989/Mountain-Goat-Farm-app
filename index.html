@@ -232,6 +232,164 @@
         <!-- Mountain Divider -->
         <div class="mountain-divider"></div>
 
+        <!-- Dynamic Farm Activity Feed Section -->
+        <section class="activity-feed-section">
+            <div class="container">
+                <div class="activity-feed-header">
+                    <h2>🚜 Live Farm Activity Feed</h2>
+                    <div class="activity-controls">
+                        <select id="activityFilter">
+                            <option value="all">All Activities</option>
+                            <option value="livestock">🐐 Livestock</option>
+                            <option value="health">💊 Health & Treatment</option>
+                            <option value="breeding">🍼 Breeding</option>
+                            <option value="sales">💰 Sales & Finance</option>
+                            <option value="feed">🌾 Feed & Nutrition</option>
+                            <option value="maintenance">🔧 Maintenance</option>
+                        </select>
+                        <button id="clearActivities" class="btn-secondary">Clear All</button>
+                    </div>
+                </div>
+                
+                <div class="activity-feed-container">
+                    <div id="activityFeed" class="activity-feed">
+                        <!-- Activities will be populated dynamically -->
+                    </div>
+                    <div class="activity-feed-empty" id="activityEmpty" style="display: none;">
+                        <div class="empty-icon">📋</div>
+                        <h3>No Activities Yet</h3>
+                        <p>Farm activities will appear here as they happen</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Smart Financial Dashboard Section -->
+        <section class="financial-dashboard-section">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h2>📊 Financial Dashboard</h2>
+                    <div class="dashboard-period">
+                        <select id="financialPeriod">
+                            <option value="week">This Week</option>
+                            <option value="month" selected>This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="financial-grid">
+                    <div class="financial-card revenue">
+                        <div class="card-icon">💰</div>
+                        <div class="card-content">
+                            <h3>Total Revenue</h3>
+                            <div class="amount" id="totalRevenue">KSh 0</div>
+                            <div class="trend positive" id="revenueTrend">↗ +0%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="financial-card expenses">
+                        <div class="card-icon">💸</div>
+                        <div class="card-content">
+                            <h3>Total Expenses</h3>
+                            <div class="amount" id="totalExpenses">KSh 0</div>
+                            <div class="trend negative" id="expensesTrend">↗ +0%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="financial-card profit">
+                        <div class="card-icon">📈</div>
+                        <div class="card-content">
+                            <h3>Net Profit</h3>
+                            <div class="amount" id="netProfit">KSh 0</div>
+                            <div class="trend" id="profitTrend">→ 0%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="financial-card transactions">
+                        <div class="card-icon">🔄</div>
+                        <div class="card-content">
+                            <h3>Transactions</h3>
+                            <div class="amount" id="totalTransactions">0</div>
+                            <div class="trend" id="transactionsTrend">→ 0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="financial-charts">
+                    <div class="chart-container">
+                        <h3>Revenue vs Expenses</h3>
+                        <canvas id="revenueChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Cash Flow Timeline</h3>
+                        <canvas id="cashflowChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Smart Alerts & Recommendations Section -->
+        <section class="alerts-section">
+            <div class="container">
+                <div class="alerts-header">
+                    <h2>🔔 Smart Alerts & Recommendations</h2>
+                    <button id="alertSettings" class="btn-secondary">Settings</button>
+                </div>
+                
+                <div class="alerts-grid">
+                    <div class="alerts-column urgent">
+                        <h3>🚨 Urgent Alerts</h3>
+                        <div id="urgentAlerts" class="alerts-list">
+                            <!-- Urgent alerts will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="alerts-column upcoming">
+                        <h3>⏰ Upcoming Tasks</h3>
+                        <div id="upcomingTasks" class="alerts-list">
+                            <!-- Upcoming tasks will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="alerts-column recommendations">
+                        <h3>💡 Smart Recommendations</h3>
+                        <div id="smartRecommendations" class="alerts-list">
+                            <!-- Smart recommendations will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Digital Notice Board Section -->
+        <section class="notice-board-section">
+            <div class="container">
+                <div class="notice-header">
+                    <h2>📌 Digital Notice Board</h2>
+                    <button id="addNotice" class="btn-primary">+ Add Notice</button>
+                </div>
+                
+                <div class="notice-board">
+                    <div class="notice-filters">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="announcement">📢 Announcements</button>
+                        <button class="filter-btn" data-filter="task">📋 Tasks</button>
+                        <button class="filter-btn" data-filter="event">📅 Events</button>
+                        <button class="filter-btn" data-filter="alert">⚠️ Alerts</button>
+                    </div>
+                    
+                    <div id="noticeBoard" class="notices-grid">
+                        <!-- Notices will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mountain Divider -->
+        <div class="mountain-divider"></div>
+
         <section id="goats" class="goats-section">
             <div class="container">
                 <h2>Our Goats</h2>
