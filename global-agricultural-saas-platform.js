@@ -9,7 +9,11 @@
  * - Policy leadership dashboard for government collaboration
  * - Global expansion tools and international market access
  * - Enterprise-grade security and compliance
+ * - AI-driven regional early warning system
  */
+
+// Import early warning system
+const { AIRegionalEarlyWarningSystem } = require('./ai-regional-early-warning-system.js');
 
 class GlobalAgriculturalSaaSPlatform {
     constructor() {
@@ -20,6 +24,7 @@ class GlobalAgriculturalSaaSPlatform {
         this.apiGateway = new APIGateway();
         this.complianceEngine = new ComplianceEngine();
         this.globalAnalytics = new GlobalAnalyticsEngine();
+        this.earlyWarningSystem = new AIRegionalEarlyWarningSystem();
         
         this.initializeGlobalPlatform();
     }
@@ -32,6 +37,7 @@ class GlobalAgriculturalSaaSPlatform {
         await this.setupPolicyLeadershipDashboard();
         await this.initializeWhiteLabelEngine();
         await this.setupGlobalExpansionTools();
+        await this.setupEarlyWarningSystem();
         
         console.log('✅ Global Agricultural Platform Ready for World Domination!');
     }
@@ -259,6 +265,140 @@ class GlobalAgriculturalSaaSPlatform {
         };
     }
 
+    // 🚨 EARLY WARNING SYSTEM INTEGRATION
+    async setupEarlyWarningSystem() {
+        this.earlyWarningIntegration = {
+            // Tenant data contribution to early warning
+            contributeToEarlyWarning: async (tenantId) => {
+                const tenant = this.tenants.get(tenantId);
+                if (!tenant) return null;
+
+                // Anonymize and contribute tenant data to regional analysis
+                const anonymizedData = await this.anonymizeTenantData(tenant);
+                await this.earlyWarningSystem.dataAggregator.contributeRegionalData(
+                    tenant.region, 
+                    anonymizedData
+                );
+
+                return {
+                    contributed: true,
+                    dataPoints: anonymizedData.dataPoints,
+                    privacyCompliant: true
+                };
+            },
+
+            // Subscribe tenant to regional warnings
+            subscribeToWarnings: async (tenantId, preferences) => {
+                const tenant = this.tenants.get(tenantId);
+                const subscription = {
+                    tenantId,
+                    region: tenant.region,
+                    warningTypes: preferences.warningTypes || ['drought', 'disease', 'market', 'climate'],
+                    deliveryMethods: preferences.deliveryMethods || ['sms', 'push', 'email'],
+                    languages: preferences.languages || [tenant.preferences?.language || 'English'],
+                    urgencyLevel: preferences.urgencyLevel || 'medium',
+                    customCriteria: preferences.customCriteria || {}
+                };
+
+                await this.earlyWarningSystem.subscribeToWarnings(subscription);
+                return subscription;
+            },
+
+            // Get early warning dashboard for tenant
+            getWarningDashboard: (tenantId) => {
+                const tenant = this.tenants.get(tenantId);
+                return {
+                    currentRiskLevels: this.earlyWarningSystem.getCurrentRiskLevels(tenant.region),
+                    activeWarnings: this.earlyWarningSystem.getActiveWarnings(tenant.region),
+                    riskTrends: this.earlyWarningSystem.getRiskTrends(tenant.region),
+                    recommendations: this.earlyWarningSystem.getPersonalizedRecommendations(tenantId),
+                    preparednessScore: this.calculatePreparednessScore(tenantId),
+                    warningHistory: this.getWarningHistory(tenantId)
+                };
+            },
+
+            // Government policy dashboard integration
+            governmentWarningDashboard: () => {
+                return {
+                    nationalRiskAssessment: this.earlyWarningSystem.getNationalRiskAssessment(),
+                    regionalhотspots: this.earlyWarningSystem.identifyRiskHotspots(),
+                    resourceAllocation: this.earlyWarningSystem.getResourceNeeds(),
+                    internationalCoordination: this.earlyWarningSystem.getInternationalAlerts(),
+                    policyRecommendations: this.earlyWarningSystem.getPolicyRecommendations(),
+                    emergencyResponse: this.earlyWarningSystem.getEmergencyResponse()
+                };
+            },
+
+            // Market integration with early warning
+            marketWarningIntegration: {
+                priceVolatilityAlerts: (marketConditions) => {
+                    return this.earlyWarningSystem.analyzeMarketVolatility(marketConditions);
+                },
+
+                supplyChainDisruptions: (supplyData) => {
+                    return this.earlyWarningSystem.predictSupplyDisruptions(supplyData);
+                },
+
+                tradeImpactAnalysis: (warningData) => {
+                    return this.earlyWarningSystem.analyzeTradeImpacts(warningData);
+                }
+            },
+
+            // Climate adaptation planning
+            climateAdaptation: {
+                generateAdaptationPlan: (tenantId, climateRisks) => {
+                    const tenant = this.tenants.get(tenantId);
+                    return {
+                        shortTermActions: this.generateShortTermAdaptation(tenant, climateRisks),
+                        longTermStrategy: this.generateLongTermAdaptation(tenant, climateRisks),
+                        investmentNeeds: this.calculateAdaptationInvestment(tenant, climateRisks),
+                        governmentSupport: this.identifyGovernmentSupport(tenant, climateRisks),
+                        partnerResources: this.identifyPartnerResources(tenant, climateRisks)
+                    };
+                },
+
+                trackAdaptationProgress: (tenantId) => {
+                    return {
+                        implementedMeasures: this.getImplementedAdaptation(tenantId),
+                        effectiveness: this.measureAdaptationEffectiveness(tenantId),
+                        remainingVulnerabilities: this.assessRemainingVulnerabilities(tenantId),
+                        nextSteps: this.recommendNextAdaptationSteps(tenantId)
+                    };
+                }
+            }
+        };
+
+        // Set up automatic data contribution from all tenants
+        setInterval(async () => {
+            await this.contributeAllTenantData();
+        }, 60 * 60 * 1000); // Hourly contribution
+
+        console.log('🚨 Early Warning System Integration Complete!');
+    }
+
+    async contributeAllTenantData() {
+        for (const [tenantId, tenant] of this.tenants) {
+            if (tenant.status === 'active' && tenant.dataSharing?.earlyWarning !== false) {
+                await this.earlyWarningIntegration.contributeToEarlyWarning(tenantId);
+            }
+        }
+    }
+
+    async anonymizeTenantData(tenant) {
+        return {
+            region: tenant.region,
+            animalCount: tenant.metrics?.totalAnimals || 0,
+            animalTypes: tenant.animalTypes,
+            healthIncidents: this.anonymizeHealthData(tenant.healthRecords),
+            productionMetrics: this.anonymizeProductionData(tenant.productionRecords),
+            environmentalData: this.anonymizeEnvironmentalData(tenant.environmentalMetrics),
+            feedConsumption: this.anonymizeFeedData(tenant.feedRecords),
+            mortalityRates: this.anonymizeMortalityData(tenant.mortalityRecords),
+            dataPoints: this.countDataPoints(tenant),
+            timestamp: new Date()
+        };
+    }
+
     // 🌍 GLOBAL EXPANSION TOOLS
     async setupGlobalExpansionTools() {
         this.expansionTools = {
@@ -438,7 +578,8 @@ class GlobalAgriculturalSaaSPlatform {
             expansionTools: this.getExpansionTools(),
             revenueAnalytics: this.getRevenueAnalytics(),
             systemHealth: this.getSystemHealth(),
-            supportMetrics: this.getSupportMetrics()
+            supportMetrics: this.getSupportMetrics(),
+            earlyWarningSystem: this.earlyWarningSystem.getWarningSystemDashboard()
         };
     }
 
@@ -520,6 +661,28 @@ class APIGateway {
             authentication: 'required',
             roles: ['government', 'policy']
         });
+
+        // Early warning system endpoints
+        this.endpoints.set('/api/v1/warnings', {
+            methods: ['GET', 'POST', 'PUT'],
+            rateLimit: '500/hour',
+            authentication: 'required',
+            roles: ['admin', 'farmer', 'agency']
+        });
+
+        this.endpoints.set('/api/v1/warnings/subscribe', {
+            methods: ['POST', 'PUT', 'DELETE'],
+            rateLimit: '100/hour',
+            authentication: 'required',
+            roles: ['farmer', 'admin']
+        });
+
+        this.endpoints.set('/api/v1/warnings/broadcast', {
+            methods: ['POST'],
+            rateLimit: '50/hour',
+            authentication: 'required',
+            roles: ['admin', 'agency']
+        });
     }
 }
 
@@ -580,6 +743,8 @@ console.log(`
    ✅ Global expansion tools
    ✅ Enterprise compliance
    ✅ International market access
+   ✅ AI-driven early warning system
+   ✅ Real-time risk prediction & alerts
 
 🌍 Target Markets Ready:
    🌍 Africa: 54 countries
