@@ -304,11 +304,57 @@
                     </div>
                 </div>
 
+                <!-- Bulk Operations Panel -->
+                <div class="bulk-operations-panel">
+                    <h3>📋 Bulk Operations</h3>
+                    <div class="bulk-controls">
+                        <div class="bulk-selection">
+                            <button id="select-all-goats" class="btn-secondary">Select All</button>
+                            <button id="clear-selection" class="btn-secondary">Clear Selection</button>
+                            <span id="selection-count" class="selection-counter">0 selected</span>
+                        </div>
+                        
+                        <div class="bulk-actions">
+                            <div class="bulk-action-group">
+                                <label>Health Actions:</label>
+                                <button id="bulk-vaccinate" class="bulk-btn health">💉 Vaccinate</button>
+                                <button id="bulk-treat" class="bulk-btn health">🏥 Treat</button>
+                                <button id="bulk-quarantine" class="bulk-btn health">🚨 Quarantine</button>
+                                <button id="bulk-health-check" class="bulk-btn health">✅ Health Check</button>
+                            </div>
+                            
+                            <div class="bulk-action-group">
+                                <label>Status Actions:</label>
+                                <button id="bulk-for-sale" class="bulk-btn status">💰 Mark for Sale</button>
+                                <button id="bulk-breeding" class="bulk-btn status">🐐 Mark for Breeding</button>
+                                <button id="bulk-retired" class="bulk-btn status">🏖️ Mark Retired</button>
+                                <button id="bulk-active" class="bulk-btn status">⭐ Mark Active</button>
+                            </div>
+                            
+                            <div class="bulk-action-group">
+                                <label>Location Actions:</label>
+                                <button id="bulk-move-pasture" class="bulk-btn location">🌱 Move to Pasture</button>
+                                <button id="bulk-move-barn" class="bulk-btn location">🏠 Move to Barn</button>
+                                <button id="bulk-move-quarantine" class="bulk-btn location">🚨 Move to Quarantine</button>
+                            </div>
+                            
+                            <div class="bulk-action-group">
+                                <label>Record Actions:</label>
+                                <button id="bulk-weight-update" class="bulk-btn record">⚖️ Update Weight</button>
+                                <button id="bulk-feed-schedule" class="bulk-btn record">🌾 Feed Schedule</button>
+                                <button id="bulk-export" class="bulk-btn record">📤 Export Selected</button>
+                                <button id="bulk-delete" class="bulk-btn danger">🗑️ Delete Selected</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Goat Records Table -->
                 <div class="records-table">
                     <table id="goats-table">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" id="select-all-checkbox" title="Select All"></th>
                                 <th>Photo</th>
                                 <th>ID/Tag</th>
                                 <th>Name</th>
@@ -1753,6 +1799,221 @@
                 <div class="modal-actions">
                     <button type="submit" class="btn btn-primary">📋 Record Filing</button>
                     <button type="button" class="btn btn-secondary" onclick="farmRecords.hideTaxFilingModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Operations Modals -->
+    
+    <!-- Bulk Vaccination Modal -->
+    <div id="bulk-vaccination-modal" class="modal">
+        <div class="modal-content">
+            <h2>💉 Bulk Vaccination</h2>
+            <p>Apply vaccination to <span id="vaccination-count">0</span> selected goats</p>
+            <form id="bulk-vaccination-form">
+                <label for="vaccine-type">Vaccine Type:</label>
+                <select id="vaccine-type" required>
+                    <option value="">Select Vaccine</option>
+                    <option value="CDT">CDT (Clostridium & Tetanus)</option>
+                    <option value="Pneumonia">Pneumonia Vaccine</option>
+                    <option value="Rabies">Rabies Vaccine</option>
+                    <option value="Foot Rot">Foot Rot Prevention</option>
+                    <option value="Deworming">Deworming Treatment</option>
+                    <option value="Custom">Custom/Other</option>
+                </select>
+                
+                <label for="vaccine-batch">Batch Number:</label>
+                <input type="text" id="vaccine-batch" placeholder="Enter batch number">
+                
+                <label for="vaccine-date">Vaccination Date:</label>
+                <input type="date" id="vaccine-date" required>
+                
+                <label for="next-vaccine-date">Next Due Date:</label>
+                <input type="date" id="next-vaccine-date">
+                
+                <label for="vaccine-notes">Notes:</label>
+                <textarea id="vaccine-notes" placeholder="Additional notes about the vaccination"></textarea>
+                
+                <div class="modal-buttons">
+                    <button type="submit">Apply Vaccination</button>
+                    <button type="button" class="modal-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Treatment Modal -->
+    <div id="bulk-treatment-modal" class="modal">
+        <div class="modal-content">
+            <h2>🏥 Bulk Treatment</h2>
+            <p>Apply treatment to <span id="treatment-count">0</span> selected goats</p>
+            <form id="bulk-treatment-form">
+                <label for="treatment-type">Treatment Type:</label>
+                <select id="treatment-type" required>
+                    <option value="">Select Treatment</option>
+                    <option value="Antibiotic">Antibiotic Treatment</option>
+                    <option value="Anti-inflammatory">Anti-inflammatory</option>
+                    <option value="Hoof Care">Hoof Care Treatment</option>
+                    <option value="Skin Treatment">Skin Treatment</option>
+                    <option value="Eye Treatment">Eye Treatment</option>
+                    <option value="Respiratory">Respiratory Treatment</option>
+                    <option value="Custom">Custom Treatment</option>
+                </select>
+                
+                <label for="medication-name">Medication/Product:</label>
+                <input type="text" id="medication-name" placeholder="Enter medication name" required>
+                
+                <label for="dosage">Dosage per animal:</label>
+                <input type="text" id="dosage" placeholder="e.g., 5ml, 1 tablet" required>
+                
+                <label for="treatment-date">Treatment Date:</label>
+                <input type="date" id="treatment-date" required>
+                
+                <label for="treatment-duration">Duration (days):</label>
+                <input type="number" id="treatment-duration" placeholder="Number of days" min="1">
+                
+                <label for="treatment-notes">Treatment Notes:</label>
+                <textarea id="treatment-notes" placeholder="Reason for treatment, symptoms, etc."></textarea>
+                
+                <div class="modal-buttons">
+                    <button type="submit">Apply Treatment</button>
+                    <button type="button" class="modal-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Status Change Modal -->
+    <div id="bulk-status-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="status-modal-title">📊 Bulk Status Change</h2>
+            <p>Change status for <span id="status-count">0</span> selected goats</p>
+            <form id="bulk-status-form">
+                <input type="hidden" id="new-status-value">
+                
+                <label for="status-reason">Reason for Status Change:</label>
+                <textarea id="status-reason" placeholder="Enter reason for this status change" required></textarea>
+                
+                <label for="status-date">Effective Date:</label>
+                <input type="date" id="status-date" required>
+                
+                <label for="status-notes">Additional Notes:</label>
+                <textarea id="status-notes" placeholder="Any additional information"></textarea>
+                
+                <div class="modal-buttons">
+                    <button type="submit">Update Status</button>
+                    <button type="button" class="modal-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Location Change Modal -->
+    <div id="bulk-location-modal" class="modal">
+        <div class="modal-content">
+            <h2>📍 Bulk Location Change</h2>
+            <p>Move <span id="location-count">0</span> selected goats</p>
+            <form id="bulk-location-form">
+                <input type="hidden" id="new-location-value">
+                
+                <label for="location-reason">Reason for Move:</label>
+                <select id="location-reason" required>
+                    <option value="">Select Reason</option>
+                    <option value="Pasture Rotation">Pasture Rotation</option>
+                    <option value="Health Monitoring">Health Monitoring</option>
+                    <option value="Breeding Program">Breeding Program</option>
+                    <option value="Quarantine">Quarantine Protocol</option>
+                    <option value="Maintenance">Area Maintenance</option>
+                    <option value="Weather">Weather Conditions</option>
+                    <option value="Other">Other</option>
+                </select>
+                
+                <label for="move-date">Move Date:</label>
+                <input type="date" id="move-date" required>
+                
+                <label for="location-notes">Move Notes:</label>
+                <textarea id="location-notes" placeholder="Additional details about the move"></textarea>
+                
+                <div class="modal-buttons">
+                    <button type="submit">Move Goats</button>
+                    <button type="button" class="modal-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Weight Update Modal -->
+    <div id="bulk-weight-modal" class="modal">
+        <div class="modal-content">
+            <h2>⚖️ Bulk Weight Update</h2>
+            <p>Update weight for <span id="weight-count">0</span> selected goats</p>
+            <form id="bulk-weight-form">
+                <label for="weight-method">Weight Update Method:</label>
+                <select id="weight-method" required>
+                    <option value="">Select Method</option>
+                    <option value="individual">Enter Individual Weights</option>
+                    <option value="average">Apply Average Weight</option>
+                    <option value="percentage">Apply Percentage Change</option>
+                </select>
+                
+                <div id="average-weight-section" style="display:none;">
+                    <label for="average-weight">Average Weight (kg):</label>
+                    <input type="number" id="average-weight" step="0.1" placeholder="Enter average weight">
+                </div>
+                
+                <div id="percentage-change-section" style="display:none;">
+                    <label for="weight-percentage">Weight Change (%):</label>
+                    <input type="number" id="weight-percentage" step="0.1" placeholder="e.g., +5 for 5% increase">
+                </div>
+                
+                <div id="individual-weights-section" style="display:none;">
+                    <div id="individual-weight-inputs"></div>
+                </div>
+                
+                <label for="weigh-date">Weigh Date:</label>
+                <input type="date" id="weigh-date" required>
+                
+                <label for="weight-notes">Weight Notes:</label>
+                <textarea id="weight-notes" placeholder="Notes about weighing conditions, etc."></textarea>
+                
+                <div class="modal-buttons">
+                    <button type="submit">Update Weights</button>
+                    <button type="button" class="modal-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Export Modal -->
+    <div id="bulk-export-modal" class="modal">
+        <div class="modal-content">
+            <h2>📤 Export Selected Goats</h2>
+            <p>Export data for <span id="export-count">0</span> selected goats</p>
+            <form id="bulk-export-form">
+                <label for="export-format">Export Format:</label>
+                <select id="export-format" required>
+                    <option value="csv">CSV (Excel Compatible)</option>
+                    <option value="pdf">PDF Report</option>
+                    <option value="json">JSON Data</option>
+                </select>
+                
+                <label>Include Fields:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="export-fields" value="basic" checked> Basic Info (ID, Name, Breed)</label>
+                    <label><input type="checkbox" name="export-fields" value="health"> Health Records</label>
+                    <label><input type="checkbox" name="export-fields" value="breeding"> Breeding Records</label>
+                    <label><input type="checkbox" name="export-fields" value="weight"> Weight History</label>
+                    <label><input type="checkbox" name="export-fields" value="location"> Location History</label>
+                    <label><input type="checkbox" name="export-fields" value="financial"> Financial Data</label>
+                </div>
+                
+                <label for="export-notes">Export Notes:</label>
+                <textarea id="export-notes" placeholder="Purpose of export, recipient, etc."></textarea>
+                
+                <div class="modal-buttons">
+                    <button type="submit">Generate Export</button>
+                    <button type="button" class="modal-cancel">Cancel</button>
                 </div>
             </form>
         </div>

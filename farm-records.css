@@ -2751,3 +2751,379 @@ header {
         justify-content: center;
     }
 }
+
+/* ===============================================
+   BULK OPERATIONS STYLING
+   =============================================== */
+
+.bulk-operations-panel {
+    background: linear-gradient(135deg, rgba(56, 100, 58, 0.05), rgba(99, 82, 64, 0.05));
+    border: 2px solid var(--logo-green);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 15px rgba(56, 100, 58, 0.1);
+}
+
+.bulk-operations-panel h3 {
+    color: var(--logo-green);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.bulk-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.bulk-selection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(56, 100, 58, 0.2);
+}
+
+.selection-counter {
+    background: var(--logo-green);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+}
+
+.bulk-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.bulk-action-group {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 4px solid var(--logo-green);
+}
+
+.bulk-action-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--logo-brown);
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bulk-btn {
+    background: white;
+    border: 2px solid;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin: 0.3rem 0.3rem 0.3rem 0;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.bulk-btn.health {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.bulk-btn.health:hover {
+    background: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.bulk-btn.status {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.bulk-btn.status:hover {
+    background: #3498db;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.bulk-btn.location {
+    border-color: #f39c12;
+    color: #f39c12;
+}
+
+.bulk-btn.location:hover {
+    background: #f39c12;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+}
+
+.bulk-btn.record {
+    border-color: var(--logo-green);
+    color: var(--logo-green);
+}
+
+.bulk-btn.record:hover {
+    background: var(--logo-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(56, 100, 58, 0.3);
+}
+
+.bulk-btn.danger {
+    border-color: #c0392b;
+    color: #c0392b;
+}
+
+.bulk-btn.danger:hover {
+    background: #c0392b;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
+}
+
+.bulk-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Enhanced Table with Checkboxes */
+.records-table table th:first-child,
+.records-table table td:first-child {
+    width: 40px;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.records-table input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--logo-green);
+}
+
+.records-table tr.selected {
+    background-color: rgba(56, 100, 58, 0.1);
+    border-left: 4px solid var(--logo-green);
+}
+
+.records-table tr.selected td {
+    border-color: rgba(56, 100, 58, 0.2);
+}
+
+/* Bulk Modal Enhancements */
+.modal .checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.modal .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: normal;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.modal .checkbox-group label:hover {
+    background-color: rgba(56, 100, 58, 0.05);
+}
+
+.modal .checkbox-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--logo-green);
+}
+
+/* Individual Weight Inputs */
+.individual-weight-inputs {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 1rem;
+    background: #f9f9f9;
+}
+
+.weight-input-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.weight-input-row label {
+    flex: 1;
+    font-weight: 500;
+    color: var(--logo-brown);
+}
+
+.weight-input-row input {
+    width: 80px;
+    padding: 0.4rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Progress Indicators for Bulk Operations */
+.bulk-progress {
+    background: white;
+    border: 2px solid var(--logo-green);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    display: none;
+}
+
+.bulk-progress.active {
+    display: block;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--logo-green), #4CAF50);
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.progress-text {
+    text-align: center;
+    font-weight: 500;
+    color: var(--logo-brown);
+    margin-top: 0.5rem;
+}
+
+/* Mobile Responsiveness for Bulk Operations */
+@media (max-width: 768px) {
+    .bulk-operations-panel {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .bulk-selection {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .bulk-actions {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .bulk-action-group {
+        padding: 0.8rem;
+    }
+    
+    .bulk-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+        margin: 0.2rem;
+    }
+    
+    .modal .checkbox-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .weight-input-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .weight-input-row input {
+        width: 100%;
+    }
+}
+
+/* Animation for Bulk Operations */
+@keyframes bulkSuccess {
+    0% { background-color: transparent; }
+    50% { background-color: rgba(76, 175, 80, 0.2); }
+    100% { background-color: transparent; }
+}
+
+.bulk-operation-success {
+    animation: bulkSuccess 1s ease-in-out;
+}
+
+/* Bulk Operation Confirmation */
+.bulk-confirmation {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #856404;
+}
+
+.bulk-confirmation strong {
+    color: #721c24;
+}
+
+.bulk-confirmation ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.bulk-confirmation li {
+    margin-bottom: 0.3rem;
+}
+
+/* Success Message Animations */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}

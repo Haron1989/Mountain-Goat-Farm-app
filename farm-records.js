@@ -27,6 +27,9 @@ class FarmRecordsManager {
         this.users = JSON.parse(localStorage.getItem('farmUsers') || '[{"id": 1, "name": "System Administrator", "username": "admin", "email": "admin@mountaingoatfarm.com", "role": "administrator", "status": "active", "dateCreated": "2024-01-01"}]');
         this.systemSettings = JSON.parse(localStorage.getItem('farmSystemSettings') || '{}');
         
+        // Bulk operations state
+        this.selectedGoats = new Set();
+        
         // Don't initialize immediately - wait for DOM
     }
 
@@ -34,6 +37,7 @@ class FarmRecordsManager {
     init() {
         this.initializeAuth();
         this.setupEventListeners();
+        this.setupBulkOperations();
     }
 
     // Utility function to calculate age from date of birth
@@ -3000,6 +3004,636 @@ class FarmRecordsManager {
         if (statusFilter) statusFilter.addEventListener('change', () => this.filterGoats());
         if (genderFilter) genderFilter.addEventListener('change', () => this.filterGoats());
         if (locationFilter) locationFilter.addEventListener('change', () => this.filterGoats());
+    }
+
+    // ===============================================
+    // BULK OPERATIONS FUNCTIONALITY
+    // ===============================================
+    
+    setupBulkOperations() {
+        // Master checkbox for select all/none
+        const masterCheckbox = document.getElementById('masterCheckbox');
+        if (masterCheckbox) {
+            masterCheckbox.addEventListener('change', (e) => {
+                const checkboxes = document.querySelectorAll('.goat-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = e.target.checked;
+                    const goatId = checkbox.dataset.goatId;
+                    if (e.target.checked) {
+                        this.selectedGoats.add(goatId);
+                    } else {
+                        this.selectedGoats.delete(goatId);
+                    }
+                    this.updateRowSelection(checkbox);
+                });
+                this.updateSelectionCounter();
+            });
+        }
+
+        // Individual checkboxes
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('goat-checkbox')) {
+                const goatId = e.target.dataset.goatId;
+                if (e.target.checked) {
+                    this.selectedGoats.add(goatId);
+                } else {
+                    this.selectedGoats.delete(goatId);
+                }
+                this.updateRowSelection(e.target);
+                this.updateSelectionCounter();
+                this.updateMasterCheckbox();
+            }
+        });
+
+        // Bulk action buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('bulk-btn')) {
+                e.preventDefault();
+                const action = e.target.dataset.action;
+                if (this.selectedGoats.size === 0) {
+                    alert('Please select at least one goat before performing bulk operations.');
+                    return;
+                }
+                this.handleBulkAction(action);
+            }
+        });
+
+        // Bulk modal form submissions
+        const bulkVaccinationForm = document.getElementById('bulkVaccinationForm');
+        if (bulkVaccinationForm) {
+            bulkVaccinationForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.applyBulkVaccination();
+            });
+        }
+
+        const bulkTreatmentForm = document.getElementById('bulkTreatmentForm');
+        if (bulkTreatmentForm) {
+            bulkTreatmentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.applyBulkTreatment();
+            });
+        }
+
+        const bulkLocationForm = document.getElementById('bulkLocationForm');
+        if (bulkLocationForm) {
+            bulkLocationForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.applyBulkLocation();
+            });
+        }
+
+        const bulkWeightForm = document.getElementById('bulkWeightForm');
+        if (bulkWeightForm) {
+            bulkWeightForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.applyBulkWeight();
+            });
+        }
+
+        // Close modal buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-bulk-modal')) {
+                const modalId = e.target.dataset.modal;
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+
+        console.log('✅ Bulk operations setup complete');
+    }
+
+    updateRowSelection(checkbox) {
+        const row = checkbox.closest('tr');
+        if (checkbox.checked) {
+            row.classList.add('selected');
+        } else {
+            row.classList.remove('selected');
+        }
+    }
+
+    updateSelectionCounter() {
+        const counter = document.getElementById('selectionCounter');
+        if (counter) {
+            counter.textContent = this.selectedGoats.size;
+        }
+        
+        // Enable/disable bulk operation buttons
+        const bulkButtons = document.querySelectorAll('.bulk-btn');
+        bulkButtons.forEach(btn => {
+            btn.disabled = this.selectedGoats.size === 0;
+        });
+    }
+
+    updateMasterCheckbox() {
+        const masterCheckbox = document.getElementById('masterCheckbox');
+        const checkboxes = document.querySelectorAll('.goat-checkbox');
+        const checkedCheckboxes = document.querySelectorAll('.goat-checkbox:checked');
+        
+        if (masterCheckbox) {
+            if (checkedCheckboxes.length === 0) {
+                masterCheckbox.indeterminate = false;
+                masterCheckbox.checked = false;
+            } else if (checkedCheckboxes.length === checkboxes.length) {
+                masterCheckbox.indeterminate = false;
+                masterCheckbox.checked = true;
+            } else {
+                masterCheckbox.indeterminate = true;
+            }
+        }
+    }
+
+    handleBulkAction(action) {
+        const selectedGoatData = this.getSelectedGoatData();
+        
+        switch(action) {
+            case 'vaccinate':
+                this.openBulkVaccinationModal(selectedGoatData);
+                break;
+            case 'treat':
+                this.openBulkTreatmentModal(selectedGoatData);
+                break;
+            case 'quarantine':
+                this.setBulkStatus(selectedGoatData, 'Quarantine');
+                break;
+            case 'active':
+                this.setBulkStatus(selectedGoatData, 'Active');
+                break;
+            case 'sold':
+                this.setBulkStatus(selectedGoatData, 'Sold');
+                break;
+            case 'move':
+                this.openBulkLocationModal(selectedGoatData);
+                break;
+            case 'weight':
+                this.openBulkWeightModal(selectedGoatData);
+                break;
+            case 'export':
+                this.exportSelectedGoats(selectedGoatData);
+                break;
+            default:
+                console.log('Unknown bulk action:', action);
+        }
+    }
+
+    getSelectedGoatData() {
+        return this.goats.filter(goat => this.selectedGoats.has(goat.id.toString()));
+    }
+
+    // ===============================================
+    // BULK VACCINATION MODAL
+    // ===============================================
+    
+    openBulkVaccinationModal(selectedGoatData) {
+        const modal = document.getElementById('bulkVaccinationModal');
+        
+        // Populate with selected goat names
+        const goatsList = document.getElementById('selectedGoatsVaccination');
+        if (goatsList) {
+            goatsList.innerHTML = selectedGoatData.map(goat => 
+                `<label><input type="checkbox" checked value="${goat.id}"> ${goat.name} (ID: ${goat.id})</label>`
+            ).join('');
+        }
+        
+        if (modal) modal.style.display = 'block';
+    }
+
+    applyBulkVaccination() {
+        const selectedIds = Array.from(document.querySelectorAll('#selectedGoatsVaccination input:checked'))
+            .map(cb => cb.value);
+        
+        const vaccineType = document.getElementById('bulkVaccineType')?.value;
+        const vaccinationDate = document.getElementById('bulkVaccinationDate')?.value;
+        const veterinarian = document.getElementById('bulkVeterinarian')?.value;
+        const notes = document.getElementById('bulkVaccinationNotes')?.value;
+        
+        if (!vaccineType || !vaccinationDate) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        // Update goats with vaccination record
+        this.goats.forEach(goat => {
+            if (selectedIds.includes(goat.id.toString())) {
+                if (!goat.healthRecords) goat.healthRecords = [];
+                goat.healthRecords.push({
+                    type: 'Vaccination',
+                    treatment: vaccineType,
+                    date: vaccinationDate,
+                    veterinarian: veterinarian,
+                    notes: notes,
+                    timestamp: new Date().toISOString()
+                });
+                goat.lastVaccination = vaccinationDate;
+            }
+        });
+
+        localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+        this.loadGoats();
+        this.closeBulkVaccinationModal();
+        
+        this.showBulkSuccessMessage(`Successfully vaccinated ${selectedIds.length} goats with ${vaccineType}`);
+        this.clearSelections();
+    }
+
+    closeBulkVaccinationModal() {
+        const modal = document.getElementById('bulkVaccinationModal');
+        if (modal) modal.style.display = 'none';
+        const form = document.getElementById('bulkVaccinationForm');
+        if (form) form.reset();
+    }
+
+    // ===============================================
+    // BULK TREATMENT MODAL
+    // ===============================================
+    
+    openBulkTreatmentModal(selectedGoatData) {
+        const modal = document.getElementById('bulkTreatmentModal');
+        
+        const goatsList = document.getElementById('selectedGoatsTreatment');
+        if (goatsList) {
+            goatsList.innerHTML = selectedGoatData.map(goat => 
+                `<label><input type="checkbox" checked value="${goat.id}"> ${goat.name} (ID: ${goat.id})</label>`
+            ).join('');
+        }
+        
+        if (modal) modal.style.display = 'block';
+    }
+
+    applyBulkTreatment() {
+        const selectedIds = Array.from(document.querySelectorAll('#selectedGoatsTreatment input:checked'))
+            .map(cb => cb.value);
+        
+        const treatmentType = document.getElementById('bulkTreatmentType')?.value;
+        const treatmentDate = document.getElementById('bulkTreatmentDate')?.value;
+        const veterinarian = document.getElementById('bulkTreatmentVeterinarian')?.value;
+        const dosage = document.getElementById('bulkDosage')?.value;
+        const notes = document.getElementById('bulkTreatmentNotes')?.value;
+        
+        if (!treatmentType || !treatmentDate) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        this.goats.forEach(goat => {
+            if (selectedIds.includes(goat.id.toString())) {
+                if (!goat.healthRecords) goat.healthRecords = [];
+                goat.healthRecords.push({
+                    type: 'Treatment',
+                    treatment: treatmentType,
+                    date: treatmentDate,
+                    veterinarian: veterinarian,
+                    dosage: dosage,
+                    notes: notes,
+                    timestamp: new Date().toISOString()
+                });
+                goat.lastTreatment = treatmentDate;
+            }
+        });
+
+        localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+        this.loadGoats();
+        this.closeBulkTreatmentModal();
+        
+        this.showBulkSuccessMessage(`Successfully treated ${selectedIds.length} goats with ${treatmentType}`);
+        this.clearSelections();
+    }
+
+    closeBulkTreatmentModal() {
+        const modal = document.getElementById('bulkTreatmentModal');
+        if (modal) modal.style.display = 'none';
+        const form = document.getElementById('bulkTreatmentForm');
+        if (form) form.reset();
+    }
+
+    // ===============================================
+    // BULK STATUS UPDATES
+    // ===============================================
+    
+    setBulkStatus(selectedGoatData, newStatus) {
+        const goatNames = selectedGoatData.map(g => g.name).join(', ');
+        const confirmation = confirm(`Are you sure you want to set status to "${newStatus}" for ${selectedGoatData.length} goats?\n\nGoats: ${goatNames}`);
+        
+        if (confirmation) {
+            this.goats.forEach(goat => {
+                if (this.selectedGoats.has(goat.id.toString())) {
+                    goat.status = newStatus;
+                    goat.healthStatus = newStatus; // Update both fields for compatibility
+                    // Add status change to health records
+                    if (!goat.healthRecords) goat.healthRecords = [];
+                    goat.healthRecords.push({
+                        type: 'Status Change',
+                        treatment: `Status changed to ${newStatus}`,
+                        date: new Date().toISOString().split('T')[0],
+                        notes: `Bulk status update`,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            });
+
+            localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+            this.loadGoats();
+            this.showBulkSuccessMessage(`Successfully updated status to "${newStatus}" for ${selectedGoatData.length} goats`);
+            this.clearSelections();
+        }
+    }
+
+    // ===============================================
+    // BULK LOCATION MODAL
+    // ===============================================
+    
+    openBulkLocationModal(selectedGoatData) {
+        const modal = document.getElementById('bulkLocationModal');
+        
+        const goatsList = document.getElementById('selectedGoatsLocation');
+        if (goatsList) {
+            goatsList.innerHTML = selectedGoatData.map(goat => 
+                `<label><input type="checkbox" checked value="${goat.id}"> ${goat.name} (Current: ${goat.location || 'Not set'})</label>`
+            ).join('');
+        }
+        
+        if (modal) modal.style.display = 'block';
+    }
+
+    applyBulkLocation() {
+        const selectedIds = Array.from(document.querySelectorAll('#selectedGoatsLocation input:checked'))
+            .map(cb => cb.value);
+        
+        const newLocation = document.getElementById('bulkNewLocation')?.value;
+        const moveDate = document.getElementById('bulkMoveDate')?.value;
+        const reason = document.getElementById('bulkMoveReason')?.value;
+        
+        if (!newLocation || !moveDate) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        this.goats.forEach(goat => {
+            if (selectedIds.includes(goat.id.toString())) {
+                const oldLocation = goat.location || 'Unknown';
+                goat.location = newLocation;
+                
+                // Add location change to health records
+                if (!goat.healthRecords) goat.healthRecords = [];
+                goat.healthRecords.push({
+                    type: 'Location Change',
+                    treatment: `Moved from ${oldLocation} to ${newLocation}`,
+                    date: moveDate,
+                    notes: reason,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        });
+
+        localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+        this.loadGoats();
+        this.closeBulkLocationModal();
+        
+        this.showBulkSuccessMessage(`Successfully moved ${selectedIds.length} goats to ${newLocation}`);
+        this.clearSelections();
+    }
+
+    closeBulkLocationModal() {
+        const modal = document.getElementById('bulkLocationModal');
+        if (modal) modal.style.display = 'none';
+        const form = document.getElementById('bulkLocationForm');
+        if (form) form.reset();
+    }
+
+    // ===============================================
+    // BULK WEIGHT MODAL
+    // ===============================================
+    
+    openBulkWeightModal(selectedGoatData) {
+        const modal = document.getElementById('bulkWeightModal');
+        
+        const weightsContainer = document.getElementById('individualWeightInputs');
+        if (weightsContainer) {
+            weightsContainer.innerHTML = selectedGoatData.map(goat => `
+                <div class="weight-input-row">
+                    <label for="weight_${goat.id}">${goat.name} (ID: ${goat.id})</label>
+                    <input type="number" id="weight_${goat.id}" step="0.1" min="0" 
+                           placeholder="kg" value="${goat.weight || ''}" required>
+                </div>
+            `).join('');
+        }
+        
+        if (modal) modal.style.display = 'block';
+    }
+
+    applyBulkWeight() {
+        const weightDate = document.getElementById('bulkWeightDate')?.value;
+        const weighingMethod = document.getElementById('bulkWeighingMethod')?.value;
+        const notes = document.getElementById('bulkWeightNotes')?.value;
+        
+        if (!weightDate) {
+            alert('Please select a weighing date.');
+            return;
+        }
+
+        let updatedCount = 0;
+        const selectedGoatData = this.getSelectedGoatData();
+        
+        selectedGoatData.forEach(goat => {
+            const weightInput = document.getElementById(`weight_${goat.id}`);
+            if (weightInput) {
+                const newWeight = parseFloat(weightInput.value);
+                
+                if (!isNaN(newWeight) && newWeight > 0) {
+                    const oldWeight = goat.weight || 0;
+                    goat.weight = newWeight;
+                    
+                    // Add weight record to health records
+                    if (!goat.healthRecords) goat.healthRecords = [];
+                    goat.healthRecords.push({
+                        type: 'Weight Record',
+                        treatment: `Weight: ${newWeight}kg (${oldWeight ? `Previous: ${oldWeight}kg` : 'First record'})`,
+                        date: weightDate,
+                        notes: `Method: ${weighingMethod}. ${notes}`,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    updatedCount++;
+                }
+            }
+        });
+
+        if (updatedCount > 0) {
+            localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+            this.loadGoats();
+            this.closeBulkWeightModal();
+            
+            this.showBulkSuccessMessage(`Successfully updated weight for ${updatedCount} goats`);
+            this.clearSelections();
+        } else {
+            alert('Please enter valid weights for at least one goat.');
+        }
+    }
+
+    closeBulkWeightModal() {
+        const modal = document.getElementById('bulkWeightModal');
+        if (modal) modal.style.display = 'none';
+        const form = document.getElementById('bulkWeightForm');
+        if (form) form.reset();
+    }
+
+    // ===============================================
+    // BULK EXPORT FUNCTIONALITY
+    // ===============================================
+    
+    exportSelectedGoats(selectedGoatData) {
+        if (selectedGoatData.length === 0) {
+            alert('No goats selected for export.');
+            return;
+        }
+
+        const csvContent = this.generateCSV(selectedGoatData);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `selected_goats_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        this.showBulkSuccessMessage(`Successfully exported ${selectedGoatData.length} goat records`);
+        this.clearSelections();
+    }
+
+    generateCSV(goats) {
+        const headers = ['ID', 'Name', 'Breed', 'Gender', 'Date of Birth', 'Weight', 'Location', 'Status', 'Last Vaccination', 'Health Records Count'];
+        
+        const rows = goats.map(goat => [
+            goat.id,
+            goat.name,
+            goat.breed,
+            goat.gender,
+            goat.dateOfBirth || goat.dob,
+            goat.weight || '',
+            goat.location || '',
+            goat.status || goat.healthStatus || '',
+            goat.lastVaccination || '',
+            (goat.healthRecords || []).length
+        ]);
+        
+        const csvContent = [headers, ...rows]
+            .map(row => row.map(field => `"${field}"`).join(','))
+            .join('\n');
+            
+        return csvContent;
+    }
+
+    // ===============================================
+    // UTILITY FUNCTIONS
+    // ===============================================
+    
+    showBulkSuccessMessage(message) {
+        // Create or update success message
+        let successDiv = document.getElementById('bulkSuccessMessage');
+        if (!successDiv) {
+            successDiv = document.createElement('div');
+            successDiv.id = 'bulkSuccessMessage';
+            successDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 1000;
+                animation: slideInRight 0.3s ease-out;
+                max-width: 300px;
+                font-weight: 500;
+            `;
+            document.body.appendChild(successDiv);
+        }
+        
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+        
+        // Auto hide after 4 seconds
+        setTimeout(() => {
+            successDiv.style.animation = 'slideOutRight 0.3s ease-in';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 300);
+        }, 4000);
+    }
+
+    clearSelections() {
+        this.selectedGoats.clear();
+        this.updateSelectionCounter();
+        
+        // Uncheck all checkboxes
+        const checkboxes = document.querySelectorAll('.goat-checkbox, #masterCheckbox');
+        checkboxes.forEach(cb => {
+            cb.checked = false;
+            cb.indeterminate = false;
+        });
+        
+        // Remove selected styling from rows
+        document.querySelectorAll('tr.selected').forEach(row => {
+            row.classList.remove('selected');
+        });
+    }
+
+    // Enhanced loadGoats method to include bulk operations support
+    loadGoats() {
+        const tbody = document.getElementById('goats-tbody');
+        if (!tbody) return; // Skip if not on goats page
+        
+        tbody.innerHTML = '';
+        
+        if (this.goats.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No goats registered yet</td></tr>';
+            return;
+        }
+        
+        this.goats.forEach(goat => {
+            const row = document.createElement('tr');
+            
+            // Handle both legacy and new field formats
+            const displayData = {
+                id: goat.id || goat.tag || 'N/A',
+                name: goat.name || 'N/A',
+                breed: goat.breed || 'N/A',
+                age: goat.age || (goat.dob ? this.calculateAge(goat.dob) : 'N/A'),
+                color: goat.color || 'N/A',
+                gender: goat.gender || 'N/A',
+                milkProduction: goat.milkProduction || 'N/A',
+                healthStatus: goat.healthStatus || goat.status || 'Unknown',
+                location: goat.location || 'N/A'
+            };
+            
+            row.innerHTML = `
+                <td><input type="checkbox" class="goat-checkbox" data-goat-id="${goat.id}"></td>
+                <td>${displayData.id}</td>
+                <td>${displayData.name}</td>
+                <td>${displayData.breed}</td>
+                <td>${displayData.age}</td>
+                <td>${displayData.color}</td>
+                <td>${displayData.milkProduction}</td>
+                <td class="status-${displayData.healthStatus.toLowerCase().replace(' ', '-')}">${displayData.healthStatus}</td>
+                <td>
+                    <button class="action-btn edit" onclick="farmRecords.editGoat('${goat.id}')">Edit</button>
+                    <button class="action-btn delete" onclick="farmRecords.deleteGoat('${goat.id}')">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        // Update selection state if goats were previously selected
+        this.updateSelectionCounter();
+        this.updateMasterCheckbox();
     }
 }
 
