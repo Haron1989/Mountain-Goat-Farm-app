@@ -51,13 +51,50 @@
     </header>
 
     <main>
-        <section id="home" class="hero">
+        <section id="home" class="hero parallax-container">
+            <!-- Parallax Background Layers -->
+            <div class="parallax-layer parallax-mountains" data-speed="0.2">
+                <div class="mount-kenya-silhouette"></div>
+            </div>
+            <div class="parallax-layer parallax-clouds" data-speed="0.5">
+                <div class="cloud cloud-1"></div>
+                <div class="cloud cloud-2"></div>
+                <div class="cloud cloud-3"></div>
+            </div>
+            <div class="parallax-layer parallax-trees" data-speed="0.8">
+                <div class="acacia-tree tree-1"></div>
+                <div class="acacia-tree tree-2"></div>
+            </div>
+            
+            <!-- Animated Sunrise Effect -->
+            <div class="sunrise-animation">
+                <div class="sun"></div>
+                <div class="sun-rays"></div>
+            </div>
+            
             <div class="hero-content">
-                <h2>Welcome to The Mountain Goat Farm</h2>
-                <p>Raising Kenya's Finest Meat Goats – Quality Breeding, Superior Genetics from the Heart of the Mountain</p>
+                <div class="hero-branding">
+                    <h2 class="farm-title animate-fade-up">The Mountain Goat Farm</h2>
+                    <p class="farm-slogan animate-fade-up delay-1">
+                        "Raising Kenya's Finest Meat Goats – Quality Breeding, Superior Genetics"
+                    </p>
+                    <p class="farm-location animate-fade-up delay-2">
+                        🏔️ Nestled in the pristine highlands of Kirinyaga County, Mount Kenya
+                    </p>
+                </div>
+                
+                <!-- Live Weather Widget -->
+                <div class="weather-widget animate-slide-right">
+                    <div class="weather-icon">☀️</div>
+                    <div class="weather-info">
+                        <span class="weather-temp">22°C</span>
+                        <span class="weather-desc">Clear Skies</span>
+                        <span class="weather-location">Mount Kenya Region</span>
+                    </div>
+                </div>
                 
                 <!-- Quick Stats Dashboard -->
-                <div class="hero-stats">
+                <div class="hero-stats animate-fade-up delay-3">
                     <div class="stat-card">
                         <div class="stat-number" id="hero-goat-count">25</div>
                         <div class="stat-label">Premium Goats</div>
@@ -87,6 +124,106 @@
                         <span id="weather-temp">22°C</span>
                         <span id="weather-desc">Perfect for grazing</span>
                         <span id="weather-location">Kirinyaga County</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Meet the Herd Gallery Section -->
+        <section class="meet-the-herd">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Meet Our Champion Herd</h2>
+                    <p class="section-subtitle">Discover the stars of The Mountain Goat Farm - each with their own story of excellence</p>
+                </div>
+                
+                <div class="herd-carousel">
+                    <div class="carousel-container">
+                        <div class="carousel-track" id="herd-carousel-track">
+                            <!-- Champion Goat Cards -->
+                            <div class="champion-card">
+                                <div class="champion-image">
+                                    <img src="https://images.unsplash.com/photo-1518717758536-85ae29035b6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Bella - Boer Champion">
+                                    <div class="champion-badge">🏆 Champion</div>
+                                </div>
+                                <div class="champion-info">
+                                    <h3>Bella</h3>
+                                    <p class="breed">Premium Boer Doe</p>
+                                    <p class="genetics">Superior bloodline - Champion sire genetics</p>
+                                    <div class="stats">
+                                        <span>Weight: 68kg</span>
+                                        <span>Age: 3 years</span>
+                                        <span>Grade: A+</span>
+                                    </div>
+                                    <button class="view-details-btn" data-goat="bella">View Profile</button>
+                                </div>
+                            </div>
+                            
+                            <div class="champion-card">
+                                <div class="champion-image">
+                                    <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Rocky - Premier Buck">
+                                    <div class="champion-badge">👑 Premier Buck</div>
+                                </div>
+                                <div class="champion-info">
+                                    <h3>Rocky</h3>
+                                    <p class="breed">Elite Boer Buck</p>
+                                    <p class="genetics">Premium breeding buck - Superior genetics</p>
+                                    <div class="stats">
+                                        <span>Weight: 85kg</span>
+                                        <span>Age: 5 years</span>
+                                        <span>Grade: A+</span>
+                                    </div>
+                                    <button class="view-details-btn" data-goat="rocky">View Profile</button>
+                                </div>
+                            </div>
+                            
+                            <div class="champion-card">
+                                <div class="champion-image">
+                                    <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Charlie - Kiko Excellence">
+                                    <div class="champion-badge">🌟 Hardy Genetics</div>
+                                </div>
+                                <div class="champion-info">
+                                    <h3>Charlie</h3>
+                                    <p class="breed">Pure Kiko Buck</p>
+                                    <p class="genetics">Hardy New Zealand genetics - Disease resistant</p>
+                                    <div class="stats">
+                                        <span>Weight: 72kg</span>
+                                        <span>Age: 2 years</span>
+                                        <span>Grade: A</span>
+                                    </div>
+                                    <button class="view-details-btn" data-goat="charlie">View Profile</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Farm Team Card -->
+                            <div class="champion-card team-card">
+                                <div class="champion-image">
+                                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Farm Team">
+                                    <div class="champion-badge">👥 Our Team</div>
+                                </div>
+                                <div class="champion-info">
+                                    <h3>Expert Care Team</h3>
+                                    <p class="breed">Professional Farm Staff</p>
+                                    <p class="genetics">Dedicated professionals ensuring the highest standards of animal welfare</p>
+                                    <div class="stats">
+                                        <span>Experience: 10+ years</span>
+                                        <span>Certification: Animal Husbandry</span>
+                                        <span>Specialization: Breeding</span>
+                                    </div>
+                                    <button class="view-details-btn" data-goat="team">Meet the Team</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="carousel-btn prev" id="herd-prev">‹</button>
+                        <button class="carousel-btn next" id="herd-next">›</button>
+                    </div>
+                    
+                    <div class="carousel-indicators" id="herd-indicators">
+                        <span class="indicator active" data-slide="0"></span>
+                        <span class="indicator" data-slide="1"></span>
+                        <span class="indicator" data-slide="2"></span>
+                        <span class="indicator" data-slide="3"></span>
                     </div>
                 </div>
             </div>
@@ -536,6 +673,53 @@
             </form>
         </div>
     </div>
+
+    <!-- Investor & Partner Section -->
+    <section class="investor-section">
+        <div class="container">
+            <div class="investor-content">
+                <div class="investor-text">
+                    <h2>For Investors & Partners</h2>
+                    <p>Discover why The Mountain Goat Farm represents Kenya's most promising agricultural investment opportunity. Download our comprehensive business overview and explore partnership possibilities.</p>
+                    <div class="investor-stats">
+                        <div class="investor-stat">
+                            <span class="stat-number">300%</span>
+                            <span class="stat-label">ROI Growth</span>
+                        </div>
+                        <div class="investor-stat">
+                            <span class="stat-number">25+</span>
+                            <span class="stat-label">Premium Goats</span>
+                        </div>
+                        <div class="investor-stat">
+                            <span class="stat-number">10+</span>
+                            <span class="stat-label">Years Experience</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="investor-actions">
+                    <a class="btn-primary investor-btn" href="#" onclick="downloadPitchDeck()">
+                        📊 Download Pitch Deck
+                    </a>
+                    <a class="btn-secondary investor-btn" href="#" onclick="requestMeeting()">
+                        🤝 Request Meeting
+                    </a>
+                    <a class="btn-tertiary investor-btn" href="farm-records.html">
+                        📈 View Farm Analytics
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WhatsApp Contact Button -->
+    <button class="whatsapp-contact" onclick="openWhatsApp()" title="Contact us on WhatsApp">
+        💬
+    </button>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        🌙 Dark Mode
+    </button>
 
     <footer>
         <div class="container">

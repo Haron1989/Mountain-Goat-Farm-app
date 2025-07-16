@@ -1210,3 +1210,582 @@ function trackUserInteraction(action, details = {}) {
     
     localStorage.setItem('farmAnalytics', JSON.stringify(analytics));
 }
+
+// ===============================================
+// PREMIUM PARALLAX & INTERACTIVE EFFECTS
+// ===============================================
+
+class MountainGoatFarmEffects {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.initParallaxEffect();
+        this.initWeatherWidget();
+        this.initNotificationPanel();
+        this.initInteractiveMountainMap();
+        this.initPersonalizedGreeting();
+    }
+
+    // Parallax Scroll Effect
+    initParallaxEffect() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return; // Respect user preference for reduced motion
+        }
+
+        const parallaxLayers = document.querySelectorAll('.parallax-layer');
+        let ticking = false;
+
+        const updateParallax = () => {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+
+            parallaxLayers.forEach(layer => {
+                const speed = layer.dataset.speed || 0.5;
+                const yPos = -(scrolled * speed);
+                layer.style.transform = `translateY(${yPos}px)`;
+            });
+
+            ticking = false;
+        };
+
+        const requestTick = () => {
+            if (!ticking) {
+                requestAnimationFrame(updateParallax);
+                ticking = true;
+            }
+        };
+
+        window.addEventListener('scroll', requestTick);
+    }
+
+    // Live Weather Widget
+    initWeatherWidget() {
+        const weatherWidget = document.querySelector('.weather-widget');
+        if (!weatherWidget) return;
+
+        // Simulate weather data for Mount Kenya region
+        const weatherConditions = [
+            { temp: '22°C', desc: 'Clear Skies', icon: '☀️' },
+            { temp: '19°C', desc: 'Partly Cloudy', icon: '⛅' },
+            { temp: '16°C', desc: 'Mountain Mist', icon: '🌫️' },
+            { temp: '24°C', desc: 'Sunny & Warm', icon: '🌞' },
+            { temp: '18°C', desc: 'Cool Breeze', icon: '🌬️' }
+        ];
+
+        const currentWeather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+        
+        const weatherIcon = weatherWidget.querySelector('.weather-icon');
+        const weatherTemp = weatherWidget.querySelector('.weather-temp');
+        const weatherDesc = weatherWidget.querySelector('.weather-desc');
+
+        if (weatherIcon) weatherIcon.textContent = currentWeather.icon;
+        if (weatherTemp) weatherTemp.textContent = currentWeather.temp;
+        if (weatherDesc) weatherDesc.textContent = currentWeather.desc;
+
+        // Update weather every 5 minutes
+        setInterval(() => {
+            const newWeather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+            if (weatherIcon) weatherIcon.textContent = newWeather.icon;
+            if (weatherTemp) weatherTemp.textContent = newWeather.temp;
+            if (weatherDesc) weatherDesc.textContent = newWeather.desc;
+        }, 300000);
+    }
+
+    // Notification Panel
+    initNotificationPanel() {
+        this.createNotificationPanel();
+        this.addFarmNotifications();
+    }
+
+    createNotificationPanel() {
+        const notificationHTML = `
+            <div id="notification-panel" class="notification-panel">
+                <button class="notification-bell" id="notification-bell">
+                    🔔
+                    <span class="notification-count">3</span>
+                </button>
+                <div class="notification-dropdown" id="notification-dropdown">
+                    <div class="notification-header">
+                        <h3>Farm Alerts</h3>
+                        <button class="mark-all-read">Mark All Read</button>
+                    </div>
+                    <div class="notification-list" id="notification-list">
+                        <!-- Notifications will be added here -->
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Add to header if it exists
+        const header = document.querySelector('header nav');
+        if (header) {
+            header.insertAdjacentHTML('beforeend', notificationHTML);
+        }
+
+        // Add event listeners
+        const notificationBell = document.getElementById('notification-bell');
+        const notificationDropdown = document.getElementById('notification-dropdown');
+
+        if (notificationBell && notificationDropdown) {
+            notificationBell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('show');
+            });
+
+            document.addEventListener('click', () => {
+                notificationDropdown.classList.remove('show');
+            });
+        }
+    }
+
+    addFarmNotifications() {
+        const notifications = [
+            {
+                id: 1,
+                type: 'urgent',
+                title: 'Breeding Due',
+                message: 'Bella is ready for breeding cycle',
+                time: '2 hours ago',
+                icon: '🐐'
+            },
+            {
+                id: 2,
+                type: 'warning',
+                title: 'Health Check',
+                message: 'Monthly vaccination due for 5 goats',
+                time: '1 day ago',
+                icon: '🏥'
+            },
+            {
+                id: 3,
+                type: 'info',
+                title: 'Sales Opportunity',
+                message: 'New buyer inquiry for premium meat',
+                time: '2 days ago',
+                icon: '💰'
+            }
+        ];
+
+        const notificationList = document.getElementById('notification-list');
+        if (!notificationList) return;
+
+        notificationList.innerHTML = notifications.map(notification => `
+            <div class="notification-item ${notification.type}">
+                <div class="notification-icon">${notification.icon}</div>
+                <div class="notification-content">
+                    <div class="notification-title">${notification.title}</div>
+                    <div class="notification-message">${notification.message}</div>
+                    <div class="notification-time">${notification.time}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Interactive Farm Map (Placeholder)
+    initInteractiveMountainMap() {
+        const mapContainer = document.querySelector('.farm-map-container');
+        if (!mapContainer) return;
+
+        // This would integrate with actual farm layout data
+        const farmSections = {
+            'pasture-1': { goats: 8, status: 'active' },
+            'pasture-2': { goats: 6, status: 'resting' },
+            'breeding-area': { goats: 4, status: 'breeding' },
+            'quarantine': { goats: 2, status: 'health-check' }
+        };
+
+        // Add interactive tooltips to map sections
+        Object.keys(farmSections).forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.addEventListener('mouseenter', (e) => {
+                    this.showMapTooltip(e, farmSections[sectionId]);
+                });
+                section.addEventListener('mouseleave', () => {
+                    this.hideMapTooltip();
+                });
+            }
+        });
+    }
+
+    showMapTooltip(event, data) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'map-tooltip';
+        tooltip.innerHTML = `
+            <strong>Goats: ${data.goats}</strong><br>
+            Status: ${data.status}
+        `;
+        
+        tooltip.style.position = 'absolute';
+        tooltip.style.left = event.pageX + 10 + 'px';
+        tooltip.style.top = event.pageY + 10 + 'px';
+        tooltip.style.backgroundColor = 'rgba(0,0,0,0.8)';
+        tooltip.style.color = 'white';
+        tooltip.style.padding = '8px';
+        tooltip.style.borderRadius = '4px';
+        tooltip.style.zIndex = '1000';
+        
+        document.body.appendChild(tooltip);
+        this.currentTooltip = tooltip;
+    }
+
+    hideMapTooltip() {
+        if (this.currentTooltip) {
+            this.currentTooltip.remove();
+            this.currentTooltip = null;
+        }
+    }
+
+    // Personalized Greeting
+    initPersonalizedGreeting() {
+        const greetingElement = document.querySelector('.personalized-greeting');
+        if (!greetingElement) return;
+
+        const userName = localStorage.getItem('farmUserName') || 'Farm Manager';
+        const currentHour = new Date().getHours();
+        let greeting = 'Good day';
+
+        if (currentHour < 12) greeting = 'Good morning';
+        else if (currentHour < 17) greeting = 'Good afternoon';
+        else greeting = 'Good evening';
+
+        // Get today's KPIs
+        const todayKPIs = this.getTodayKPIs();
+
+        greetingElement.innerHTML = `
+            <div class="greeting-message">
+                <h2>${greeting}, ${userName}!</h2>
+                <p>Here's today's farm overview:</p>
+            </div>
+            <div class="daily-kpis">
+                <div class="kpi-item">
+                    <span class="kpi-icon">🐐</span>
+                    <span class="kpi-value">${todayKPIs.totalGoats}</span>
+                    <span class="kpi-label">Total Goats</span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-icon">🥛</span>
+                    <span class="kpi-value">${todayKPIs.milkProduction}L</span>
+                    <span class="kpi-label">Milk Today</span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-icon">💰</span>
+                    <span class="kpi-value">KES ${todayKPIs.revenue}</span>
+                    <span class="kpi-label">Revenue</span>
+                </div>
+            </div>
+        `;
+    }
+
+    getTodayKPIs() {
+        // This would normally fetch from your data source
+        return {
+            totalGoats: 25,
+            milkProduction: (Math.random() * 50 + 30).toFixed(1),
+            revenue: (Math.random() * 10000 + 5000).toFixed(0)
+        };
+    }
+}
+
+// Mount Kenya Watermark utility
+class MountKenyaWatermark {
+    static addToElement(element) {
+        const watermark = document.createElement('div');
+        watermark.className = 'mount-kenya-watermark';
+        watermark.innerHTML = `
+            <svg viewBox="0 0 100 50" class="mountain-silhouette">
+                <path d="M0,50 L10,40 L20,45 L30,35 L40,40 L50,25 L60,40 L70,35 L80,45 L90,40 L100,50 Z" 
+                      fill="rgba(56, 100, 58, 0.1)"/>
+            </svg>
+        `;
+        
+        watermark.style.position = 'absolute';
+        watermark.style.top = '50%';
+        watermark.style.left = '50%';
+        watermark.style.transform = 'translate(-50%, -50%)';
+        watermark.style.width = '80%';
+        watermark.style.height = '60%';
+        watermark.style.pointerEvents = 'none';
+        watermark.style.zIndex = '1';
+        
+        element.style.position = 'relative';
+        element.appendChild(watermark);
+    }
+}
+
+// Initialize premium effects when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new MountainGoatFarmEffects();
+    
+    // Add Mount Kenya watermarks to dashboard cards
+    const dashboardCards = document.querySelectorAll('.dashboard-card, .kpi-card, .hero-stats .stat-card');
+    dashboardCards.forEach(card => {
+        MountKenyaWatermark.addToElement(card);
+    });
+    
+    // Initialize herd carousel
+    initHerdCarousel();
+});
+
+// ===============================================
+// ENHANCED BUSINESS FEATURES
+// ===============================================
+
+// Herd Carousel Functionality
+function initHerdCarousel() {
+    const track = document.getElementById('herd-carousel-track');
+    const prevBtn = document.getElementById('herd-prev');
+    const nextBtn = document.getElementById('herd-next');
+    const indicators = document.querySelectorAll('#herd-indicators .indicator');
+    
+    if (!track) return;
+    
+    let currentSlide = 0;
+    const cards = track.querySelectorAll('.champion-card');
+    const totalCards = cards.length;
+    const cardsPerView = window.innerWidth > 768 ? 3 : 1;
+    const maxSlide = Math.max(0, totalCards - cardsPerView);
+    
+    const updateCarousel = () => {
+        const cardWidth = cards[0].offsetWidth + 32; // 32px gap
+        const translateX = -(currentSlide * cardWidth);
+        track.style.transform = `translateX(${translateX}px)`;
+        
+        // Update indicators
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === currentSlide);
+        });
+    };
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            currentSlide = Math.max(0, currentSlide - 1);
+            updateCarousel();
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            currentSlide = Math.min(maxSlide, currentSlide + 1);
+            updateCarousel();
+        });
+    }
+    
+    // Indicator clicks
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            currentSlide = Math.min(index, maxSlide);
+            updateCarousel();
+        });
+    });
+    
+    // Auto-scroll every 5 seconds
+    setInterval(() => {
+        currentSlide = currentSlide >= maxSlide ? 0 : currentSlide + 1;
+        updateCarousel();
+    }, 5000);
+    
+    // Initialize
+    updateCarousel();
+}
+
+// WhatsApp Integration
+function openWhatsApp() {
+    const phoneNumber = '+254722123456'; // Farm phone number
+    const message = encodeURIComponent(
+        'Hello! I\'m interested in The Mountain Goat Farm. Could you please provide more information about your premium goats and breeding programs?'
+    );
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${message}`;
+    window.open(whatsappURL, '_blank');
+    
+    // Track interaction
+    logUserInteraction('whatsapp_contact', 'Contact via WhatsApp initiated');
+}
+
+// Investor Functions
+function downloadPitchDeck() {
+    // Simulate pitch deck download
+    const pitchDeckData = generatePitchDeckData();
+    
+    // Create downloadable content
+    const content = `
+THE MOUNTAIN GOAT FARM - INVESTMENT OPPORTUNITY
+
+🏔️ EXECUTIVE SUMMARY
+Location: Kirinyaga County, Mount Kenya Region
+Founded: 2014
+Current Livestock: 25+ Premium Goats
+Specialty: Boer & Kiko Meat Goat Breeding
+
+📊 FINANCIAL HIGHLIGHTS
+• Revenue Growth: 300% over 3 years
+• Profit Margin: 45%
+• Current Valuation: KES 2.5M
+• Seeking Investment: KES 1M for expansion
+
+🐐 COMPETITIVE ADVANTAGES
+• Superior genetics from champion bloodlines
+• Disease-resistant breeding programs
+• Strategic location in Mount Kenya region
+• Expert animal husbandry team
+• Established customer base
+
+🎯 GROWTH STRATEGY
+1. Expand herd to 50+ premium goats
+2. Develop meat processing facility
+3. Establish breeding program partnerships
+4. Implement organic certification
+5. Export opportunities to East Africa
+
+💰 INVESTMENT RETURNS
+Year 1: 15% ROI
+Year 2: 25% ROI
+Year 3: 35% ROI
+5-Year Projection: 300% total return
+
+📧 CONTACT
+Email: investors@mountaingoatfarm.co.ke
+Phone: +254 722 123 456
+Website: www.mountaingoatfarm.co.ke
+
+Generated: ${new Date().toLocaleDateString()}
+    `;
+    
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Mountain_Goat_Farm_Pitch_Deck.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    // Track interaction
+    logUserInteraction('pitch_deck_download', 'Investment pitch deck downloaded');
+    
+    // Show success message
+    showNotification('📊 Pitch deck downloaded successfully!', 'success');
+}
+
+function requestMeeting() {
+    const meetingForm = `
+        <div class="meeting-modal">
+            <div class="modal-content">
+                <h3>Request Investor Meeting</h3>
+                <form id="meeting-form">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <input type="tel" placeholder="Phone Number" required>
+                    <select required>
+                        <option value="">Investment Interest Level</option>
+                        <option value="exploring">Exploring Opportunities</option>
+                        <option value="serious">Serious Investor</option>
+                        <option value="partnership">Partnership Interest</option>
+                    </select>
+                    <textarea placeholder="Tell us about your investment goals..." required></textarea>
+                    <div class="modal-buttons">
+                        <button type="submit">Send Request</button>
+                        <button type="button" onclick="closeMeetingModal()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', meetingForm);
+    
+    // Handle form submission
+    document.getElementById('meeting-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        showNotification('🤝 Meeting request sent! We\'ll contact you within 24 hours.', 'success');
+        closeMeetingModal();
+        logUserInteraction('meeting_request', 'Investor meeting requested');
+    });
+}
+
+function closeMeetingModal() {
+    const modal = document.querySelector('.meeting-modal');
+    if (modal) modal.remove();
+}
+
+// Dark Mode Toggle
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    
+    // Save preference
+    localStorage.setItem('darkMode', isDarkMode);
+    
+    // Update button text
+    const toggle = document.querySelector('.dark-mode-toggle');
+    if (toggle) {
+        toggle.textContent = isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+    
+    // Track interaction
+    logUserInteraction('dark_mode_toggle', `Dark mode ${isDarkMode ? 'enabled' : 'disabled'}`);
+}
+
+// Notification System
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#38643A' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Generate pitch deck data
+function generatePitchDeckData() {
+    return {
+        farmStats: {
+            totalGoats: 25,
+            breeds: ['Boer', 'Kiko', 'Spanish'],
+            yearlyRevenue: 'KES 1.2M',
+            profitMargin: '45%'
+        },
+        marketPosition: {
+            region: 'Kirinyaga County',
+            competitors: 3,
+            marketShare: '15%',
+            growth: '300%'
+        },
+        financials: {
+            currentValuation: 'KES 2.5M',
+            seekingInvestment: 'KES 1M',
+            projectedROI: '35%',
+            breakeven: '18 months'
+        }
+    };
+}
+
+// Initialize dark mode on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (savedDarkMode) {
+        document.body.classList.add('dark-mode');
+        const toggle = document.querySelector('.dark-mode-toggle');
+        if (toggle) toggle.textContent = '☀️ Light Mode';
+    }
+});
