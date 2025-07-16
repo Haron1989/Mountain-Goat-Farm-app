@@ -1,0 +1,710 @@
+/* ===============================================
+   QR SCANNER SYSTEM STYLES
+   =============================================== */
+
+.scanner-header {
+    background: linear-gradient(135deg, var(--logo-green), var(--logo-brown));
+    color: white;
+    padding: 3rem 0;
+    text-align: center;
+}
+
+.scanner-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.scanner-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* Scanner Controls */
+.scanner-controls {
+    background: #f8f9fa;
+    padding: 2rem 0;
+    border-bottom: 2px solid var(--logo-green);
+}
+
+.control-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.tab-btn {
+    background: white;
+    border: 2px solid var(--logo-green);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--logo-green);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-btn:hover {
+    background: var(--logo-green);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: var(--logo-green);
+    color: white;
+    box-shadow: 0 4px 15px rgba(56, 100, 58, 0.3);
+}
+
+.tab-content {
+    display: none;
+    padding: 3rem 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Scanner Main */
+.scanner-main {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.scanner-area {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.camera-container {
+    position: relative;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    margin-bottom: 2rem;
+}
+
+#camera-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.scan-frame {
+    width: 200px;
+    height: 200px;
+    border: 3px solid #00ff00;
+    border-radius: 12px;
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+.scan-frame::before,
+.scan-frame::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 4px solid #00ff00;
+}
+
+.scan-frame::before {
+    top: -4px;
+    left: -4px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.scan-frame::after {
+    bottom: -4px;
+    right: -4px;
+    border-left: none;
+    border-top: none;
+}
+
+.scan-instructions {
+    margin-top: 2rem;
+    text-align: center;
+    color: white;
+    background: rgba(0,0,0,0.7);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.scanner-controls-panel {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.scanner-controls-panel button {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Scan Results */
+.scan-results {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    height: fit-content;
+}
+
+.scan-results h3 {
+    color: var(--logo-brown);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.result-container {
+    min-height: 300px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.no-result {
+    text-align: center;
+    color: #666;
+}
+
+.no-result i {
+    font-size: 3rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+.scan-success {
+    background: #f8f9fa;
+    border: 2px solid var(--logo-green);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.scanned-goat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.goat-avatar {
+    width: 80px;
+    height: 80px;
+    background: var(--logo-green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+}
+
+.goat-info h4 {
+    color: var(--logo-brown);
+    margin-bottom: 0.5rem;
+}
+
+.goat-details {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Generator Main */
+.generator-main {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.generation-options {
+    margin-bottom: 4rem;
+}
+
+.generation-options h3 {
+    text-align: center;
+    color: var(--logo-brown);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.option-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.option-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.option-card:hover {
+    border-color: var(--logo-green);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.option-card i {
+    font-size: 3rem;
+    color: var(--logo-green);
+    margin-bottom: 1rem;
+}
+
+.option-card h4 {
+    color: var(--logo-brown);
+    margin-bottom: 1rem;
+}
+
+.option-card p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.custom-qr-generator {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.custom-qr-generator h3 {
+    color: var(--logo-brown);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.custom-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--logo-brown);
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.8rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--logo-green);
+    outline: none;
+}
+
+.qr-result {
+    text-align: center;
+    padding: 2rem;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.generated-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.qr-code-container {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.qr-label {
+    font-weight: 600;
+    color: var(--logo-brown);
+}
+
+.qr-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Batch Print */
+.batch-print-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+
+.print-options {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    height: fit-content;
+}
+
+.print-format h4,
+.print-selection h4 {
+    color: var(--logo-brown);
+    margin-bottom: 1.5rem;
+}
+
+.format-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.format-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.8rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.format-option:hover {
+    border-color: var(--logo-green);
+    background: #f8f9fa;
+}
+
+.format-option input[type="radio"]:checked + span {
+    color: var(--logo-green);
+    font-weight: 600;
+}
+
+.selection-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.selection-filters select {
+    flex: 1;
+    padding: 0.8rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}
+
+.print-items {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.print-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.print-item:hover {
+    background: #f8f9fa;
+}
+
+.print-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+.print-item-info {
+    flex: 1;
+}
+
+.print-item-name {
+    font-weight: 600;
+    color: var(--logo-brown);
+}
+
+.print-item-details {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.print-preview {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.print-preview h4 {
+    color: var(--logo-brown);
+    margin-bottom: 1.5rem;
+}
+
+.preview-area {
+    min-height: 400px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    overflow-y: auto;
+}
+
+.preview-placeholder {
+    text-align: center;
+    color: #666;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-placeholder i {
+    font-size: 3rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.preview-qr-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.preview-qr-code {
+    width: 80px;
+    height: 80px;
+    background: #f0f0f0;
+    margin: 0 auto 0.5rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.preview-qr-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--logo-brown);
+}
+
+.print-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Quick Actions */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+.quick-action-btn {
+    background: white;
+    border: 2px solid var(--logo-green);
+    border-radius: 12px;
+    padding: 2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--logo-green);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.quick-action-btn:hover {
+    background: var(--logo-green);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(56, 100, 58, 0.3);
+}
+
+.quick-action-btn i {
+    font-size: 2rem;
+}
+
+.quick-action-btn span {
+    font-weight: 600;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 255, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+}
+
+@keyframes scan-line {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+.scan-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ff00, transparent);
+    animation: scan-line 2s linear infinite;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .scanner-main {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .batch-print-main {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .control-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab-btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .option-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .custom-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .scanner-controls-panel {
+        justify-content: center;
+    }
+    
+    .scanner-controls-panel button {
+        flex: 1;
+        min-width: 140px;
+    }
+    
+    .scan-frame {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .qr-actions {
+        flex-direction: column;
+    }
+    
+    .print-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .scanner-header h1 {
+        font-size: 2rem;
+    }
+    
+    .tab-btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .scanner-area,
+    .scan-results,
+    .print-options,
+    .print-preview {
+        padding: 1rem;
+    }
+    
+    .option-card {
+        padding: 1.5rem;
+    }
+    
+    .quick-action-btn {
+        padding: 1.5rem 0.8rem;
+    }
+    
+    .selection-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

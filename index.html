@@ -16,6 +16,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="farm-records.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c5530">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Mountain Goat Farm">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 </head>
 <body>
     <header>
@@ -885,6 +891,49 @@
         </div>
     </footer>
 
+    <!-- Load Scripts -->
     <script src="script.js"></script>
+    <script src="farm-records.js"></script>
+    <script src="language-manager.js"></script>
+    <script src="voice-commands.js"></script>
+    <script src="mpesa-integration.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button
+            const installBtn = document.createElement('button');
+            installBtn.className = 'install-pwa-btn';
+            installBtn.innerHTML = '📱 Install App';
+            installBtn.onclick = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const choiceResult = await deferredPrompt.userChoice;
+                    console.log('PWA install choice:', choiceResult);
+                    deferredPrompt = null;
+                    installBtn.remove();
+                }
+            };
+            
+            document.body.appendChild(installBtn);
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner - Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="qr-scanner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="The_Mountain_Goat_Farm_Logo_Media (2).png" alt="Mountain Goat Farm" class="nav-logo">
+                <span class="nav-title">Mountain Goat Farm</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="farm-records.html" class="nav-link">
+                    <i class="fas fa-clipboard-list"></i> Records
+                </a>
+                <a href="qr-scanner.html" class="nav-link active">
+                    <i class="fas fa-qrcode"></i> QR Scanner
+                </a>
+                <a href="#" class="nav-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+            
+            <button class="hamburger" id="hamburger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header Section -->
+        <section class="scanner-header">
+            <div class="container">
+                <h1><i class="fas fa-qrcode"></i> QR Code Scanner & Generator</h1>
+                <p>Instantly access and update goat records with QR codes</p>
+            </div>
+        </section>
+
+        <!-- Scanner Controls -->
+        <section class="scanner-controls">
+            <div class="container">
+                <div class="control-tabs">
+                    <button class="tab-btn active" data-tab="scanner">
+                        <i class="fas fa-camera"></i> Scan QR Code
+                    </button>
+                    <button class="tab-btn" data-tab="generator">
+                        <i class="fas fa-qrcode"></i> Generate QR Codes
+                    </button>
+                    <button class="tab-btn" data-tab="batch-print">
+                        <i class="fas fa-print"></i> Batch Print
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- QR Scanner Tab -->
+        <section class="tab-content active" id="scanner">
+            <div class="container">
+                <div class="scanner-main">
+                    <div class="scanner-area">
+                        <div class="camera-container">
+                            <video id="camera-feed" autoplay playsinline></video>
+                            <div class="scanner-overlay">
+                                <div class="scan-frame"></div>
+                                <div class="scan-instructions">
+                                    <p>Position QR code within the frame</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="scanner-controls-panel">
+                            <button id="start-camera" class="btn-primary">
+                                <i class="fas fa-video"></i> Start Camera
+                            </button>
+                            <button id="stop-camera" class="btn-secondary">
+                                <i class="fas fa-video-slash"></i> Stop Camera
+                            </button>
+                            <button id="toggle-flash" class="btn-secondary">
+                                <i class="fas fa-flashlight"></i> Flash
+                            </button>
+                            <input type="file" id="file-input" accept="image/*" style="display: none;">
+                            <button id="upload-image" class="btn-secondary">
+                                <i class="fas fa-upload"></i> Upload Image
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="scan-results">
+                        <h3>Scan Results</h3>
+                        <div id="scan-result" class="result-container">
+                            <div class="no-result">
+                                <i class="fas fa-qrcode"></i>
+                                <p>No QR code scanned yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QR Generator Tab -->
+        <section class="tab-content" id="generator">
+            <div class="container">
+                <div class="generator-main">
+                    <div class="generation-options">
+                        <h3>Generate QR Codes</h3>
+                        
+                        <div class="option-cards">
+                            <div class="option-card" onclick="generateGoatQRs()">
+                                <i class="fas fa-sheep"></i>
+                                <h4>All Goats</h4>
+                                <p>Generate QR codes for all goats in the farm</p>
+                                <button class="btn-primary">Generate</button>
+                            </div>
+                            
+                            <div class="option-card" onclick="generatePenQRs()">
+                                <i class="fas fa-home"></i>
+                                <h4>Pen Locations</h4>
+                                <p>QR codes for different pen and grazing areas</p>
+                                <button class="btn-primary">Generate</button>
+                            </div>
+                            
+                            <div class="option-card" onclick="generateFeedQRs()">
+                                <i class="fas fa-seedling"></i>
+                                <h4>Feed Inventory</h4>
+                                <p>QR codes for feed types and storage bins</p>
+                                <button class="btn-primary">Generate</button>
+                            </div>
+                            
+                            <div class="option-card" onclick="generateStaffQRs()">
+                                <i class="fas fa-users"></i>
+                                <h4>Staff Cards</h4>
+                                <p>QR codes for staff identification and logging</p>
+                                <button class="btn-primary">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="custom-qr-generator">
+                        <h3>Custom QR Code</h3>
+                        <div class="custom-form">
+                            <div class="form-group">
+                                <label>QR Code Type:</label>
+                                <select id="qr-type">
+                                    <option value="goat">Goat Record</option>
+                                    <option value="location">Location</option>
+                                    <option value="feed">Feed Inventory</option>
+                                    <option value="task">Task/Activity</option>
+                                    <option value="staff">Staff Member</option>
+                                    <option value="custom">Custom URL</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Content/ID:</label>
+                                <input type="text" id="qr-content" placeholder="Enter goat ID, location name, etc.">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Label (optional):</label>
+                                <input type="text" id="qr-label" placeholder="Display label for QR code">
+                            </div>
+                            
+                            <button onclick="generateCustomQR()" class="btn-primary">
+                                <i class="fas fa-qrcode"></i> Generate QR Code
+                            </button>
+                        </div>
+                        
+                        <div id="custom-qr-result" class="qr-result">
+                            <!-- Generated QR code will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Batch Print Tab -->
+        <section class="tab-content" id="batch-print">
+            <div class="container">
+                <div class="batch-print-main">
+                    <h3>Batch Print QR Codes</h3>
+                    
+                    <div class="print-options">
+                        <div class="print-format">
+                            <h4>Print Format</h4>
+                            <div class="format-options">
+                                <label class="format-option">
+                                    <input type="radio" name="print-format" value="labels" checked>
+                                    <span>Adhesive Labels (30mm x 30mm)</span>
+                                </label>
+                                <label class="format-option">
+                                    <input type="radio" name="print-format" value="cards">
+                                    <span>ID Cards (85mm x 54mm)</span>
+                                </label>
+                                <label class="format-option">
+                                    <input type="radio" name="print-format" value="tags">
+                                    <span>Ear Tags (40mm x 20mm)</span>
+                                </label>
+                                <label class="format-option">
+                                    <input type="radio" name="print-format" value="signs">
+                                    <span>Pen Signs (100mm x 100mm)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="print-selection">
+                            <h4>Select Items to Print</h4>
+                            <div class="selection-filters">
+                                <select id="print-category">
+                                    <option value="all-goats">All Goats</option>
+                                    <option value="active-goats">Active Goats Only</option>
+                                    <option value="new-goats">New Goats (Last 30 days)</option>
+                                    <option value="locations">All Locations</option>
+                                    <option value="feed-bins">Feed Storage</option>
+                                    <option value="staff">Staff Members</option>
+                                </select>
+                                
+                                <button onclick="loadPrintItems()" class="btn-secondary">
+                                    <i class="fas fa-filter"></i> Load Items
+                                </button>
+                            </div>
+                            
+                            <div id="print-items-list" class="print-items">
+                                <!-- Print items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="print-preview">
+                        <h4>Print Preview</h4>
+                        <div id="print-preview-area" class="preview-area">
+                            <div class="preview-placeholder">
+                                <i class="fas fa-print"></i>
+                                <p>Select items to see print preview</p>
+                            </div>
+                        </div>
+                        
+                        <div class="print-actions">
+                            <button onclick="generatePrintSheet()" class="btn-primary">
+                                <i class="fas fa-file-pdf"></i> Generate PDF
+                            </button>
+                            <button onclick="printQRCodes()" class="btn-success">
+                                <i class="fas fa-print"></i> Print Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QR Code Detail Modal -->
+        <div id="qr-detail-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="qr-detail-title">QR Code Details</h3>
+                    <span class="close" onclick="closeQRDetailModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div id="qr-detail-content" class="qr-detail-content">
+                        <!-- QR code details will be populated here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary" onclick="updateRecord()">Update Record</button>
+                    <button class="btn-secondary" onclick="printSingleQR()">Print QR</button>
+                    <button class="btn-secondary" onclick="closeQRDetailModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Modal -->
+        <div id="quick-action-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Quick Actions</h3>
+                    <span class="close" onclick="closeQuickActionModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="quick-actions-grid">
+                        <button class="quick-action-btn" onclick="quickAction('health')">
+                            <i class="fas fa-heartbeat"></i>
+                            <span>Health Check</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="quickAction('weight')">
+                            <i class="fas fa-weight"></i>
+                            <span>Record Weight</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="quickAction('location')">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Change Location</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="quickAction('feed')">
+                            <i class="fas fa-seedling"></i>
+                            <span>Feeding Log</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="quickAction('breeding')">
+                            <i class="fas fa-heart"></i>
+                            <span>Breeding Record</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="quickAction('notes')">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>Add Notes</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>QR Code System</h4>
+                    <p>Instant access to farm records in the field</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul>
+                        <li>Real-time scanning</li>
+                        <li>Batch QR generation</li>
+                        <li>Mobile-optimized</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Mountain Goat Farm. QR Scanner System.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Include QR.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <!-- Include ZXing library for QR scanning -->
+    <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
+    
+    <script src="farm-records.js"></script>
+    <script src="qr-scanner.js"></script>
+</body>
+</html>

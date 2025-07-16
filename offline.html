@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .offline-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .offline-icon {
+            font-size: 4rem;
+            color: #ff6b6b;
+            margin-bottom: 1rem;
+        }
+
+        .offline-title {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .offline-message {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .offline-features {
+            text-align: left;
+            margin: 2rem 0;
+        }
+
+        .offline-features h3 {
+            color: var(--logo-green);
+            margin-bottom: 1rem;
+        }
+
+        .offline-features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .offline-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .offline-features li:before {
+            content: "✓";
+            color: var(--logo-green);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .retry-btn {
+            background: var(--logo-green);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: var(--logo-green-dark);
+        }
+
+        .sync-status {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid var(--logo-green);
+        }
+
+        .sync-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            background: #ffc107;
+            animation: pulse 2s infinite;
+        }
+
+        .sync-indicator.online {
+            background: #28a745;
+            animation: none;
+        }
+
+        .sync-indicator.offline {
+            background: #dc3545;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .offline-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <img src="The_Mountain_Goat_Farm_Logo_Media (2).png" alt="Mountain Goat Farm Logo" class="logo-img">
+                    <span class="logo-text" data-translate="farm_name">Mountain Goat Farm</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="offline-container">
+            <div class="offline-icon">📡</div>
+            <h1 class="offline-title" data-translate="offline_title">You're Currently Offline</h1>
+            <p class="offline-message" data-translate="offline_message">
+                Don't worry! You can still access many features of the Mountain Goat Farm app while offline. 
+                Your data will be automatically synced when you reconnect to the internet.
+            </p>
+
+            <div class="sync-status">
+                <span class="sync-indicator" id="connectionIndicator"></span>
+                <span id="connectionStatus" data-translate="checking_connection">Checking connection...</span>
+            </div>
+
+            <div class="offline-features">
+                <h3 data-translate="available_offline">Available Offline:</h3>
+                <ul>
+                    <li data-translate="view_goat_records">View previously loaded goat records</li>
+                    <li data-translate="add_new_records">Add new health and breeding records</li>
+                    <li data-translate="qr_scanning">QR code scanning and generation</li>
+                    <li data-translate="view_genealogy">View genealogy charts</li>
+                    <li data-translate="access_cached_data">Access all cached farm data</li>
+                    <li data-translate="offline_forms">Fill out forms and reports</li>
+                </ul>
+            </div>
+
+            <button class="retry-btn" onclick="checkConnection()" data-translate="retry_connection">
+                Retry Connection
+            </button>
+
+            <div style="margin-top: 2rem;">
+                <a href="javascript:history.back()" style="color: var(--logo-green); text-decoration: none;">
+                    ← <span data-translate="go_back">Go Back</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="language-manager.js"></script>
+    <script>
+        // Connection monitoring
+        function updateConnectionStatus() {
+            const indicator = document.getElementById('connectionIndicator');
+            const status = document.getElementById('connectionStatus');
+            
+            if (navigator.onLine) {
+                indicator.className = 'sync-indicator online';
+                status.textContent = 'Connected - Your data will sync automatically';
+                
+                // Try to reload the original page after a delay
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                indicator.className = 'sync-indicator offline';
+                status.textContent = 'Offline - Working in offline mode';
+            }
+        }
+
+        function checkConnection() {
+            const indicator = document.getElementById('connectionIndicator');
+            const status = document.getElementById('connectionStatus');
+            
+            indicator.className = 'sync-indicator';
+            status.textContent = 'Checking connection...';
+            
+            // Simulate checking connection
+            setTimeout(() => {
+                if (navigator.onLine) {
+                    // Try to fetch a small resource to verify connection
+                    fetch('/manifest.json', { 
+                        method: 'HEAD',
+                        cache: 'no-cache'
+                    })
+                    .then(() => {
+                        updateConnectionStatus();
+                    })
+                    .catch(() => {
+                        indicator.className = 'sync-indicator offline';
+                        status.textContent = 'Connection failed - Please check your internet';
+                    });
+                } else {
+                    updateConnectionStatus();
+                }
+            }, 1000);
+        }
+
+        // Listen for online/offline events
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // Check connection on load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateConnectionStatus();
+            
+            // Add additional offline translations
+            if (window.languageManager) {
+                languageManager.addTranslations({
+                    en: {
+                        offline_title: "You're Currently Offline",
+                        offline_message: "Don't worry! You can still access many features while offline.",
+                        checking_connection: "Checking connection...",
+                        available_offline: "Available Offline:",
+                        view_goat_records: "View previously loaded goat records",
+                        add_new_records: "Add new health and breeding records",
+                        qr_scanning: "QR code scanning and generation",
+                        view_genealogy: "View genealogy charts",
+                        access_cached_data: "Access all cached farm data",
+                        offline_forms: "Fill out forms and reports",
+                        retry_connection: "Retry Connection",
+                        go_back: "Go Back"
+                    },
+                    sw: {
+                        offline_title: "Huna Mtandao Kwa Sasa",
+                        offline_message: "Usijali! Bado unaweza kutumia vipengele vingi wakati huna mtandao.",
+                        checking_connection: "Inaangalia muunganisho...",
+                        available_offline: "Vinavyopatikana Bila Mtandao:",
+                        view_goat_records: "Ona rekodi za mbuzi zilizopakiwa",
+                        add_new_records: "Ongeza rekodi mpya za afya na uzazi",
+                        qr_scanning: "Kusoma na kutengeneza misimbo ya QR",
+                        view_genealogy: "Ona chati za ukoo",
+                        access_cached_data: "Fikia data zote zilizohifadhiwa",
+                        offline_forms: "Jaza fomu na ripoti",
+                        retry_connection: "Jaribu Kuunganisha Tena",
+                        go_back: "Rudi Nyuma"
+                    }
+                });
+            }
+        });
+
+        // Service Worker messaging
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data.type === 'SYNC_SUCCESS') {
+                    const status = document.getElementById('connectionStatus');
+                    status.textContent = 'Data synced successfully!';
+                    
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

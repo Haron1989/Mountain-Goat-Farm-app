@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goat Genealogy - Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="genealogy.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="The_Mountain_Goat_Farm_Logo_Media (2).png" alt="Mountain Goat Farm" class="nav-logo">
+                <span class="nav-title">Mountain Goat Farm</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="farm-records.html" class="nav-link">
+                    <i class="fas fa-clipboard-list"></i> Records
+                </a>
+                <a href="genealogy.html" class="nav-link active">
+                    <i class="fas fa-sitemap"></i> Genealogy
+                </a>
+                <a href="#" class="nav-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+            
+            <button class="hamburger" id="hamburger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header Section -->
+        <section class="genealogy-header">
+            <div class="container">
+                <h1><i class="fas fa-sitemap"></i> Goat Genealogy & Family Trees</h1>
+                <p>Visualize your breeding program across generations and track genetic lineage</p>
+            </div>
+        </section>
+
+        <!-- Search & Filters -->
+        <section class="genealogy-controls">
+            <div class="container">
+                <div class="control-grid">
+                    <div class="search-box">
+                        <input type="text" id="genealogy-search" placeholder="Search goat by name or ID...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <select id="generation-filter">
+                        <option value="">All Generations</option>
+                        <option value="1">Generation 1</option>
+                        <option value="2">Generation 2</option>
+                        <option value="3">Generation 3</option>
+                        <option value="4">Generation 4+</option>
+                    </select>
+                    <select id="breeding-status-filter">
+                        <option value="">All Status</option>
+                        <option value="active">Active Breeding</option>
+                        <option value="retired">Retired</option>
+                        <option value="young">Too Young</option>
+                    </select>
+                    <button class="btn-primary" onclick="generateFamilyTree()">
+                        <i class="fas fa-project-diagram"></i> Generate Tree
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Genealogy Visualization -->
+        <section class="genealogy-main">
+            <div class="container">
+                <div class="genealogy-tabs">
+                    <button class="tab-btn active" data-tab="tree-view">
+                        <i class="fas fa-sitemap"></i> Tree View
+                    </button>
+                    <button class="tab-btn" data-tab="pedigree-view">
+                        <i class="fas fa-share-alt"></i> Pedigree Chart
+                    </button>
+                    <button class="tab-btn" data-tab="breeding-matrix">
+                        <i class="fas fa-table"></i> Breeding Matrix
+                    </button>
+                    <button class="tab-btn" data-tab="genetic-stats">
+                        <i class="fas fa-chart-bar"></i> Genetic Stats
+                    </button>
+                </div>
+
+                <!-- Tree View Tab -->
+                <div class="tab-content active" id="tree-view">
+                    <div class="family-tree-container">
+                        <div class="tree-controls">
+                            <button class="btn-secondary" onclick="expandAll()">
+                                <i class="fas fa-expand-arrows-alt"></i> Expand All
+                            </button>
+                            <button class="btn-secondary" onclick="collapseAll()">
+                                <i class="fas fa-compress-arrows-alt"></i> Collapse All
+                            </button>
+                            <button class="btn-secondary" onclick="exportTree()">
+                                <i class="fas fa-download"></i> Export Tree
+                            </button>
+                        </div>
+                        <div id="family-tree" class="family-tree">
+                            <!-- Family tree will be generated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pedigree Chart Tab -->
+                <div class="tab-content" id="pedigree-view">
+                    <div class="pedigree-container">
+                        <div class="pedigree-search">
+                            <input type="text" id="pedigree-search" placeholder="Enter goat name or ID to view pedigree">
+                            <button onclick="generatePedigree()">Generate Pedigree</button>
+                        </div>
+                        <div id="pedigree-chart" class="pedigree-chart">
+                            <!-- Pedigree chart will be generated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breeding Matrix Tab -->
+                <div class="tab-content" id="breeding-matrix">
+                    <div class="breeding-matrix-container">
+                        <h3>Breeding Compatibility Matrix</h3>
+                        <div class="matrix-filters">
+                            <label>
+                                <input type="checkbox" checked> Active Breeders Only
+                            </label>
+                            <label>
+                                <input type="checkbox" checked> Genetic Diversity Score
+                            </label>
+                        </div>
+                        <div id="breeding-matrix-table" class="breeding-matrix">
+                            <!-- Breeding matrix will be generated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Genetic Statistics Tab -->
+                <div class="tab-content" id="genetic-stats">
+                    <div class="genetic-stats-container">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h4>Genetic Diversity Index</h4>
+                                <div class="stat-value" id="genetic-diversity">85%</div>
+                                <p>Excellent genetic diversity in herd</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Inbreeding Coefficient</h4>
+                                <div class="stat-value" id="inbreeding-coeff">0.12</div>
+                                <p>Low inbreeding risk</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Average Generation</h4>
+                                <div class="stat-value" id="avg-generation">2.3</div>
+                                <p>Generations in current herd</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Breeding Lines</h4>
+                                <div class="stat-value" id="breeding-lines">7</div>
+                                <p>Distinct genetic lines</p>
+                            </div>
+                        </div>
+
+                        <div class="breeding-recommendations">
+                            <h3>Smart Breeding Recommendations</h3>
+                            <div id="breeding-suggestions" class="suggestion-list">
+                                <!-- Breeding suggestions will be generated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Goat Detail Modal -->
+        <div id="goat-detail-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="goat-detail-name">Goat Details</h3>
+                    <span class="close" onclick="closeGoatDetailModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="goat-detail-content">
+                        <div class="goat-info-section">
+                            <h4>Basic Information</h4>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Name:</label>
+                                    <span id="detail-name"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>ID:</label>
+                                    <span id="detail-id"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Breed:</label>
+                                    <span id="detail-breed"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Gender:</label>
+                                    <span id="detail-gender"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Birth Date:</label>
+                                    <span id="detail-birth"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Age:</label>
+                                    <span id="detail-age"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="breeding-history-section">
+                            <h4>Breeding History</h4>
+                            <div id="breeding-history-list" class="breeding-list">
+                                <!-- Breeding history will be populated here -->
+                            </div>
+                        </div>
+
+                        <div class="offspring-section">
+                            <h4>Offspring</h4>
+                            <div id="offspring-list" class="offspring-grid">
+                                <!-- Offspring will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary" onclick="viewFullRecord()">View Full Record</button>
+                    <button class="btn-secondary" onclick="closeGoatDetailModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Mountain Goat Farm</h4>
+                    <p>Professional goat farming with advanced genealogy tracking</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Breeding Program</h4>
+                    <ul>
+                        <li>Genetic Diversity Management</li>
+                        <li>Pedigree Tracking</li>
+                        <li>Smart Breeding Recommendations</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Mountain Goat Farm. Advanced Genealogy System.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="farm-records.js"></script>
+    <script src="genealogy.js"></script>
+</body>
+</html>
