@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - The Mountain Goat Farm</title>
+    <meta name="description" content="The page you're looking for doesn't exist. Navigate back to The Mountain Goat Farm management system.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="The_Mountain_Goat_Farm_Logo_Media (2).png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="farm-records.css">
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #38643A, #F8F4EA);
+            padding: 2rem;
+        }
+        
+        .error-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .error-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            border-radius: 50%;
+            border: 3px solid #38643A;
+        }
+        
+        .error-code {
+            font-size: 6rem;
+            font-weight: 800;
+            color: #38643A;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .error-title {
+            font-size: 2rem;
+            color: #635240;
+            margin: 1rem 0;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .error-message {
+            color: #666;
+            margin: 1.5rem 0;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .error-actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .error-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .error-btn.primary {
+            background: #38643A;
+            color: white;
+        }
+        
+        .error-btn.primary:hover {
+            background: #2d4f2d;
+            transform: translateY(-2px);
+        }
+        
+        .error-btn.secondary {
+            background: #F8F4EA;
+            color: #635240;
+            border: 2px solid #635240;
+        }
+        
+        .error-btn.secondary:hover {
+            background: #635240;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .farm-features {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #F8F4EA;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .feature-card {
+            background: #F8F4EA;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .feature-card h4 {
+            color: #38643A;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .feature-card a {
+            color: #635240;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        
+        .feature-card a:hover {
+            color: #38643A;
+        }
+        
+        @media (max-width: 768px) {
+            .error-content {
+                padding: 2rem;
+            }
+            
+            .error-code {
+                font-size: 4rem;
+            }
+            
+            .error-title {
+                font-size: 1.5rem;
+            }
+            
+            .error-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .error-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-content">
+            <img src="The_Mountain_Goat_Farm_Logo_Media (2).png" alt="The Mountain Goat Farm Logo" class="error-logo">
+            
+            <h1 class="error-code">404</h1>
+            <h2 class="error-title">Lost in the Mountains?</h2>
+            
+            <p class="error-message">
+                🐐 Oops! It looks like this page has wandered off like a curious goat. 
+                The path you're looking for doesn't exist in our farm management system.
+            </p>
+            
+            <div class="error-actions">
+                <a href="farm-records.html" class="error-btn primary">
+                    🏠 Return to Farm Dashboard
+                </a>
+                <a href="javascript:history.back()" class="error-btn secondary">
+                    ← Go Back
+                </a>
+            </div>
+            
+            <div class="farm-features">
+                <h3 style="color: #38643A; margin-bottom: 1rem;">Explore Our Farm Management System:</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🐐</div>
+                        <h4>Livestock Records</h4>
+                        <a href="goat-records.html">Manage Goats</a>
+                    </div>
+                    <div class="feature-card">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
+                        <h4>Financial Management</h4>
+                        <a href="financial-records.html">View Finances</a>
+                    </div>
+                    <div class="feature-card">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+                        <h4>Tax Records</h4>
+                        <a href="tax-records.html">Tax Compliance</a>
+                    </div>
+                    <div class="feature-card">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏥</div>
+                        <h4>Health Monitoring</h4>
+                        <a href="health-records.html">Health Records</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; color: #999; font-size: 0.9rem;">
+                <p>🏔️ The Mountain Goat Farm - Excellence in Mountain Agriculture Since 2020</p>
+                <p>Kirinyaga County, Kenya | info@mountaingoatfarm.co.ke</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
