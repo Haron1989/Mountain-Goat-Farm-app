@@ -1784,7 +1784,150 @@ section {
     }
 }
 
-/* ===== TAX RECORDS STYLES ===== */
+/* ===== ENHANCED BRANDING & LOGIN MODAL ===== */
+
+/* Login Modal Branding */
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--logo-green);
+}
+
+.login-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(56, 100, 58, 0.3);
+    border: 3px solid var(--logo-green);
+}
+
+.login-header h2 {
+    color: var(--logo-green);
+    font-family: 'Playfair Display', serif;
+    margin: 0.5rem 0;
+    font-size: 1.8rem;
+}
+
+.login-header p {
+    color: var(--logo-brown);
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* Enhanced Logo Styling in Navigation */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo img {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--logo-yellow);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.logo img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+    font-family: 'Playfair Display', serif;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin: 0;
+}
+
+/* Enhanced Navigation */
+header {
+    background: linear-gradient(135deg, var(--logo-green) 0%, var(--logo-brown) 100%);
+    border-bottom: 3px solid var(--logo-yellow);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--logo-yellow);
+}
+
+.nav-links a.active {
+    background: var(--logo-yellow);
+    color: var(--logo-brown);
+    font-weight: 600;
+}
+
+/* Farm Slogan & Footer */
+.farm-slogan {
+    text-align: center;
+    color: var(--logo-brown);
+    font-style: italic;
+    font-size: 0.9rem;
+    margin: 1rem 0;
+    opacity: 0.8;
+}
+
+.farm-footer {
+    background: linear-gradient(135deg, var(--logo-brown) 0%, var(--logo-green) 100%);
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 3rem;
+    border-top: 3px solid var(--logo-yellow);
+}
+
+.farm-footer .farm-slogan {
+    color: var(--logo-yellow);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    opacity: 1;
+}
+
+/* Mountain Divider Enhancement */
+.mountain-divider-enhanced {
+    width: 100%;
+    height: 80px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 80' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0,80 L0,50 Q30,45 60,55 Q90,40 120,50 Q150,35 180,45 Q210,30 240,40 Q270,25 300,35 Q330,20 360,30 Q390,15 420,25 Q450,10 480,20 Q510,5 540,15 Q570,0 600,10 L600,80 Z' fill='%2338643A' opacity='0.8'/%3E%3Cpath d='M0,80 L0,60 Q40,55 80,65 Q120,50 160,60 Q200,45 240,55 Q280,40 320,50 Q360,35 400,45 Q440,30 480,40 Q520,25 560,35 Q580,20 600,30 L600,80 Z' fill='%23635240' opacity='0.6'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-size: cover;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.mountain-divider-enhanced::after {
+    content: "🏔️ From the foothills of Mount Kenya 🏔️";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--logo-brown);
+    font-weight: 500;
+    border: 1px solid var(--logo-green);
+}
 
 /* Tax Overview Dashboard */
 .tax-overview {
