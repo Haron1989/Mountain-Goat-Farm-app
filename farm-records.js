@@ -1699,6 +1699,11 @@ class FarmRecordsManager {
                 this.initializeTutorialSystem();
             }, 1000); // Delay to ensure DOM is fully loaded
             
+            // Initialize tags and categories system
+            setTimeout(() => {
+                this.initializeTagsAndCategories();
+            }, 1500); // Delay to ensure other systems are loaded
+            
             console.log('✅ App initialization completed successfully');
         } catch (error) {
             console.error('❌ Critical error during initialization:', error);
@@ -1727,6 +1732,44 @@ class FarmRecordsManager {
             console.log('🎓 Tutorial system initialized successfully');
         } catch (error) {
             console.error('Tutorial system initialization failed:', error);
+        }
+    }
+
+    // Initialize tags and categories system
+    initializeTagsAndCategories() {
+        try {
+            // Initialize the tags system
+            this.initializeTagsSystem();
+            
+            // Add tag menu button to interface
+            this.addTagMenuButton();
+            
+            // Add CSS styles for tags
+            this.addTagsCSS();
+            
+            // Setup quick filter handlers
+            this.setupQuickFilterHandlers();
+            
+            // Enhance existing record displays with tags after a short delay
+            setTimeout(() => {
+                this.enhanceRecordDisplaysWithTags();
+            }, 2000);
+            
+            this.logAudit('tags_system', 'Tags and categories system initialized');
+            console.log('🏷️ Tags and categories system initialized successfully');
+        } catch (error) {
+            console.error('Tags system initialization failed:', error);
+        }
+    }
+
+    // Add CSS styles for tags system
+    addTagsCSS() {
+        if (!document.getElementById('tags-styles')) {
+            const link = document.createElement('link');
+            link.id = 'tags-styles';
+            link.rel = 'stylesheet';
+            link.href = 'tags-styles.css';
+            document.head.appendChild(link);
         }
     }
 
@@ -1952,7 +1995,7 @@ class FarmRecordsManager {
         });
     }
 
-    // Reset tutorial progress
+            // Reset tutorial progress
     resetTutorialProgress() {
         if (confirm('Are you sure you want to reset all tutorial progress? This will mark all tutorials as incomplete.')) {
             localStorage.removeItem('completedTutorials');
@@ -1965,6 +2008,1520 @@ class FarmRecordsManager {
                 document.body.removeChild(menu);
             }
         }
+    }
+
+    // === CUSTOM TAGS & CATEGORIES SYSTEM ===
+    
+    // Initialize tags system with predefined categories and user-defined tags
+    initializeTagsSystem() {
+        // Load existing tags or create default ones
+        const existingTags = this.safeParseJSON(localStorage.getItem('farmTags'), null);
+        
+        if (!existingTags) {
+            // Initialize with default tag categories
+            this.tags = {
+                // Predefined categories with common tags
+                status: {
+                    name: 'Status',
+                    color: '#3498db',
+                    icon: '🏷️',
+                    tags: ['healthy', 'sick', 'quarantine', 'treatment', 'recovered', 'pregnant', 'lactating', 'dry']
+                },
+                quality: {
+                    name: 'Quality',
+                    color: '#27ae60',
+                    icon: '⭐',
+                    tags: ['premium', 'standard', 'export', 'local', 'organic', 'certified', 'grade-a', 'grade-b']
+                },
+                production: {
+                    name: 'Production',
+                    color: '#e67e22',
+                    icon: '📊',
+                    tags: ['high-yield', 'low-yield', 'consistent', 'seasonal', 'peak', 'declining', 'improving']
+                },
+                management: {
+                    name: 'Management',
+                    color: '#9b59b6',
+                    icon: '📋',
+                    tags: ['needs-attention', 'follow-up', 'routine', 'urgent', 'scheduled', 'completed', 'pending']
+                },
+                breeding: {
+                    name: 'Breeding',
+                    color: '#e74c3c',
+                    icon: '💕',
+                    tags: ['breeding', 'bred', 'confirmed-pregnant', 'due-soon', 'kidded', 'open', 'AI-candidate']
+                },
+                financial: {
+                    name: 'Financial',
+                    color: '#f39c12',
+                    icon: '💰',
+                    tags: ['profitable', 'cost-effective', 'expensive', 'investment', 'revenue', 'loss', 'break-even']
+                }
+            };
+            
+            // Save default tags
+            localStorage.setItem('farmTags', JSON.stringify(this.tags));
+        } else {
+            this.tags = existingTags;
+        }
+        
+        // Initialize record tags storage
+        this.recordTags = this.safeParseJSON(localStorage.getItem('farmRecordTags'), {});
+        
+        this.logAudit('tags_system', 'Tags system initialized');
+    }
+
+    // Add a new custom tag to a category
+    addCustomTag(categoryId, tagName, color = null) {
+        if (!this.tags[categoryId]) {
+            // Create new category if it doesn't exist
+            this.tags[categoryId] = {
+                name: categoryId.charAt(0).toUpperCase() + categoryId.slice(1),
+                color: color || '#95a5a6',
+                icon: '🏷️',
+                tags: []
+            };
+        }
+        
+        // Sanitize tag name
+        const sanitizedTag = this.sanitizeInput(tagName.toLowerCase().trim());
+        
+        if (sanitizedTag && !this.tags[categoryId].tags.includes(sanitizedTag)) {
+            this.tags[categoryId].tags.push(sanitizedTag);
+            this.saveTags();
+            this.logAudit('tag_added', `Added tag "${sanitizedTag}" to category "${categoryId}"`);
+            return true;
+        }
+        
+        return false;
+    }
+
+    // Create a completely new tag category
+    createTagCategory(categoryName, color = '#95a5a6', icon = '🏷️') {
+        const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
+        
+        if (!this.tags[categoryId]) {
+            this.tags[categoryId] = {
+                name: this.sanitizeInput(categoryName),
+                color: color,
+                icon: icon,
+                tags: []
+            };
+            
+            this.saveTags();
+            this.logAudit('category_created', `Created new tag category: ${categoryName}`);
+            return categoryId;
+        }
+        
+        return null;
+    }
+
+    // Add tags to a specific record
+    addTagsToRecord(recordType, recordId, tags) {
+        const recordKey = `${recordType}_${recordId}`;
+        
+        if (!this.recordTags[recordKey]) {
+            this.recordTags[recordKey] = [];
+        }
+        
+        // Add new tags, avoiding duplicates
+        tags.forEach(tag => {
+            const sanitizedTag = this.sanitizeInput(tag.toLowerCase().trim());
+            if (sanitizedTag && !this.recordTags[recordKey].includes(sanitizedTag)) {
+                this.recordTags[recordKey].push(sanitizedTag);
+            }
+        });
+        
+        this.saveRecordTags();
+        this.logAudit('tags_added', `Added tags to ${recordType} record ${recordId}: ${tags.join(', ')}`);
+    }
+
+    // Remove tags from a record
+    removeTagsFromRecord(recordType, recordId, tags) {
+        const recordKey = `${recordType}_${recordId}`;
+        
+        if (this.recordTags[recordKey]) {
+            tags.forEach(tag => {
+                const index = this.recordTags[recordKey].indexOf(tag);
+                if (index > -1) {
+                    this.recordTags[recordKey].splice(index, 1);
+                }
+            });
+            
+            // Remove empty tag arrays
+            if (this.recordTags[recordKey].length === 0) {
+                delete this.recordTags[recordKey];
+            }
+            
+            this.saveRecordTags();
+            this.logAudit('tags_removed', `Removed tags from ${recordType} record ${recordId}: ${tags.join(', ')}`);
+        }
+    }
+
+    // Get all tags for a specific record
+    getRecordTags(recordType, recordId) {
+        const recordKey = `${recordType}_${recordId}`;
+        return this.recordTags[recordKey] || [];
+    }
+
+    // Filter records by tags
+    filterRecordsByTags(records, recordType, selectedTags, matchAll = false) {
+        if (!selectedTags || selectedTags.length === 0) {
+            return records;
+        }
+        
+        return records.filter(record => {
+            const recordTags = this.getRecordTags(recordType, record.id);
+            
+            if (matchAll) {
+                // All selected tags must be present
+                return selectedTags.every(tag => recordTags.includes(tag));
+            } else {
+                // At least one selected tag must be present
+                return selectedTags.some(tag => recordTags.includes(tag));
+            }
+        });
+    }
+
+    // Get all records with specific tags across all record types
+    getRecordsWithTags(tags, recordTypes = ['goat', 'breeding', 'health', 'milk', 'feed']) {
+        const results = [];
+        
+        recordTypes.forEach(recordType => {
+            const records = this.getRecordsByType(recordType);
+            const filteredRecords = this.filterRecordsByTags(records, recordType, tags, false);
+            
+            filteredRecords.forEach(record => {
+                results.push({
+                    type: recordType,
+                    record: record,
+                    tags: this.getRecordTags(recordType, record.id)
+                });
+            });
+        });
+        
+        return results;
+    }
+
+    // Get records by type helper method
+    getRecordsByType(recordType) {
+        switch (recordType) {
+            case 'goat': return this.goats;
+            case 'breeding': return this.breedingRecords;
+            case 'health': return this.healthRecords;
+            case 'milk': return this.milkRecords;
+            case 'feed': return this.feedRecords;
+            case 'product': return this.products;
+            case 'contact': return this.contacts;
+            case 'transaction': return this.transactions;
+            case 'sale': return this.sales;
+            default: return [];
+        }
+    }
+
+    // Show tag management interface
+    showTagManager() {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            position: relative;
+        `;
+
+        content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 style="margin: 0; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+                    🏷️ Tag Manager
+                </h2>
+                <button id="tag-manager-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #95a5a6;">×</button>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                    <button id="add-category-btn" style="padding: 10px 20px; background: linear-gradient(135deg, #3498db, #2ecc71); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Add Category
+                    </button>
+                    <button id="bulk-tag-btn" style="padding: 10px 20px; background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Bulk Tag Records
+                    </button>
+                    <button id="export-tags-btn" style="padding: 10px 20px; background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Export Tags
+                    </button>
+                </div>
+            </div>
+            
+            <div id="tag-categories-container">
+                ${this.renderTagCategories()}
+            </div>
+        `;
+
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        // Event listeners
+        content.querySelector('#tag-manager-close').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        content.querySelector('#add-category-btn').addEventListener('click', () => {
+            this.showAddCategoryDialog();
+        });
+
+        content.querySelector('#bulk-tag-btn').addEventListener('click', () => {
+            this.showBulkTagDialog();
+        });
+
+        content.querySelector('#export-tags-btn').addEventListener('click', () => {
+            this.exportTagsData();
+        });
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+
+    // Render tag categories for the manager
+    renderTagCategories() {
+        return Object.entries(this.tags).map(([categoryId, category]) => `
+            <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; color: ${category.color}; display: flex; align-items: center; gap: 8px;">
+                        ${category.icon} ${category.name}
+                    </h3>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="farmManager.addTagToCategory('${categoryId}')" 
+                                style="padding: 5px 10px; background: ${category.color}; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem;">
+                            Add Tag
+                        </button>
+                        <button onclick="farmManager.editCategory('${categoryId}')" 
+                                style="padding: 5px 10px; background: #95a5a6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem;">
+                            Edit
+                        </button>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    ${category.tags.map(tag => `
+                        <span style="background: ${category.color}20; color: ${category.color}; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem; display: flex; align-items: center; gap: 5px;">
+                            ${tag}
+                            <button onclick="farmManager.removeTagFromCategory('${categoryId}', '${tag}')" 
+                                    style="background: none; border: none; color: ${category.color}; cursor: pointer; font-size: 0.8rem; padding: 0;">
+                                ×
+                            </button>
+                        </span>
+                    `).join('')}
+                </div>
+                ${category.tags.length === 0 ? '<div style="color: #95a5a6; font-style: italic;">No tags in this category</div>' : ''}
+            </div>
+        `).join('');
+    }
+
+    // Add tag to category dialog
+    addTagToCategory(categoryId) {
+        const tagName = prompt(`Add a new tag to ${this.tags[categoryId].name}:`);
+        if (tagName) {
+            if (this.addCustomTag(categoryId, tagName)) {
+                this.refreshTagManager();
+                this.showNotification(`Tag "${tagName}" added successfully!`, 'success');
+            } else {
+                this.showNotification('Tag already exists or invalid name', 'error');
+            }
+        }
+    }
+
+    // Remove tag from category
+    removeTagFromCategory(categoryId, tagName) {
+        if (confirm(`Remove tag "${tagName}" from ${this.tags[categoryId].name}?`)) {
+            const tagIndex = this.tags[categoryId].tags.indexOf(tagName);
+            if (tagIndex > -1) {
+                this.tags[categoryId].tags.splice(tagIndex, 1);
+                this.saveTags();
+                this.refreshTagManager();
+                this.logAudit('tag_removed', `Removed tag "${tagName}" from category "${categoryId}"`);
+                this.showNotification(`Tag "${tagName}" removed successfully!`, 'success');
+            }
+        }
+    }
+
+    // Show tag selection interface for records
+    showTagSelector(recordType, recordId, existingTags = []) {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        `;
+
+        content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #2c3e50;">Select Tags</h3>
+                <button id="tag-selector-close" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #95a5a6;">×</button>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="quick-tag-input" placeholder="Type to add a quick tag..." 
+                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;">
+                <button id="add-quick-tag" style="padding: 8px 15px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Add Quick Tag
+                </button>
+            </div>
+            
+            <div id="tag-categories-selector">
+                ${this.renderTagSelector(existingTags)}
+            </div>
+            
+            <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+                <button id="clear-all-tags" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                    Clear All
+                </button>
+                <div>
+                    <button id="cancel-tags" style="padding: 10px 20px; background: #95a5a6; color: white; border: none; border-radius: 8px; cursor: pointer; margin-right: 10px;">
+                        Cancel
+                    </button>
+                    <button id="save-tags" style="padding: 10px 20px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Save Tags
+                    </button>
+                </div>
+            </div>
+        `;
+
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        // Track selected tags
+        let selectedTags = [...existingTags];
+
+        // Event listeners
+        content.querySelector('#tag-selector-close').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        content.querySelector('#cancel-tags').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        content.querySelector('#add-quick-tag').addEventListener('click', () => {
+            const input = content.querySelector('#quick-tag-input');
+            const tagName = input.value.trim();
+            if (tagName) {
+                selectedTags.push(tagName);
+                this.addCustomTag('custom', tagName, '#95a5a6'); // Add to custom category
+                input.value = '';
+                this.refreshTagSelector(content, selectedTags);
+            }
+        });
+
+        content.querySelector('#clear-all-tags').addEventListener('click', () => {
+            selectedTags = [];
+            this.refreshTagSelector(content, selectedTags);
+        });
+
+        content.querySelector('#save-tags').addEventListener('click', () => {
+            // Remove old tags and add new ones
+            const currentTags = this.getRecordTags(recordType, recordId);
+            this.removeTagsFromRecord(recordType, recordId, currentTags);
+            this.addTagsToRecord(recordType, recordId, selectedTags);
+            
+            this.showNotification('Tags updated successfully!', 'success');
+            document.body.removeChild(modal);
+            
+            // Refresh the current view if needed
+            this.refreshCurrentView();
+        });
+
+        // Handle tag selection
+        content.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tag-option')) {
+                const tagName = e.target.dataset.tag;
+                if (selectedTags.includes(tagName)) {
+                    selectedTags = selectedTags.filter(t => t !== tagName);
+                } else {
+                    selectedTags.push(tagName);
+                }
+                this.refreshTagSelector(content, selectedTags);
+            }
+        });
+
+        // Handle Enter key in quick tag input
+        content.querySelector('#quick-tag-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                content.querySelector('#add-quick-tag').click();
+            }
+        });
+    }
+
+    // Render tag selector with checkboxes
+    renderTagSelector(selectedTags = []) {
+        return Object.entries(this.tags).map(([categoryId, category]) => `
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: ${category.color}; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                    ${category.icon} ${category.name}
+                </h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    ${category.tags.map(tag => `
+                        <button class="tag-option" data-tag="${tag}" 
+                                style="background: ${selectedTags.includes(tag) ? category.color : category.color + '20'}; 
+                                       color: ${selectedTags.includes(tag) ? 'white' : category.color}; 
+                                       padding: 8px 12px; border: none; border-radius: 15px; cursor: pointer; 
+                                       font-size: 0.9rem; transition: all 0.3s ease;">
+                            ${selectedTags.includes(tag) ? '✓ ' : ''}${tag}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Refresh tag selector
+    refreshTagSelector(content, selectedTags) {
+        const container = content.querySelector('#tag-categories-selector');
+        container.innerHTML = this.renderTagSelector(selectedTags);
+    }
+
+    // Show smart tag filters interface
+    showSmartTagFilters() {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        `;
+
+        content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 style="margin: 0; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+                    🔍 Smart Tag Filters
+                </h2>
+                <button id="smart-filter-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #95a5a6;">×</button>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <div style="display: flex; gap: 15px; margin-bottom: 15px; align-items: center;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="filter-mode" value="any" checked> Any tag
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="filter-mode" value="all"> All tags
+                    </label>
+                    <button id="apply-filters" style="padding: 8px 15px; background: linear-gradient(135deg, #3498db, #2ecc71); color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: auto;">
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+            
+            <div id="filter-categories">
+                ${this.renderFilterCategories()}
+            </div>
+            
+            <div id="filter-results" style="margin-top: 25px; border-top: 1px solid #e0e0e0; padding-top: 20px;">
+                <h3 style="color: #2c3e50;">Filtered Results</h3>
+                <div id="results-container">
+                    Click "Apply Filters" to see results
+                </div>
+            </div>
+        `;
+
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        // Track selected filter tags
+        let filterTags = [];
+
+        // Event listeners
+        content.querySelector('#smart-filter-close').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        content.querySelector('#apply-filters').addEventListener('click', () => {
+            const matchAll = content.querySelector('input[name="filter-mode"]:checked').value === 'all';
+            this.applySmartFilters(filterTags, matchAll, content);
+        });
+
+        // Handle tag filter selection
+        content.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-tag')) {
+                const tagName = e.target.dataset.tag;
+                if (filterTags.includes(tagName)) {
+                    filterTags = filterTags.filter(t => t !== tagName);
+                    e.target.style.background = e.target.dataset.color + '20';
+                    e.target.style.color = e.target.dataset.color;
+                } else {
+                    filterTags.push(tagName);
+                    e.target.style.background = e.target.dataset.color;
+                    e.target.style.color = 'white';
+                }
+            }
+        });
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+
+    // Render filter categories
+    renderFilterCategories() {
+        return Object.entries(this.tags).map(([categoryId, category]) => `
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: ${category.color}; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                    ${category.icon} ${category.name}
+                </h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    ${category.tags.map(tag => `
+                        <button class="filter-tag" data-tag="${tag}" data-color="${category.color}"
+                                style="background: ${category.color}20; color: ${category.color}; 
+                                       padding: 8px 12px; border: none; border-radius: 15px; cursor: pointer; 
+                                       font-size: 0.9rem; transition: all 0.3s ease;">
+                            ${tag}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Apply smart filters and show results
+    applySmartFilters(filterTags, matchAll, content) {
+        if (filterTags.length === 0) {
+            content.querySelector('#results-container').innerHTML = '<div style="color: #95a5a6; font-style: italic;">Select tags to filter</div>';
+            return;
+        }
+
+        const results = this.getRecordsWithTags(filterTags);
+        const filteredResults = matchAll ? 
+            results.filter(item => filterTags.every(tag => item.tags.includes(tag))) :
+            results;
+
+        const resultsHTML = filteredResults.length > 0 ? 
+            filteredResults.map(item => `
+                <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                        <div>
+                            <strong style="color: #2c3e50;">${item.type.toUpperCase()}: ${item.record.name || item.record.tag || item.record.id}</strong>
+                            <div style="color: #7f8c8d; font-size: 0.9rem; margin-top: 5px;">
+                                ${this.getRecordSummary(item.record, item.type)}
+                            </div>
+                        </div>
+                        <button onclick="farmManager.editRecordTags('${item.type}', '${item.record.id}')" 
+                                style="padding: 5px 10px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                            Edit Tags
+                        </button>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                        ${item.tags.map(tag => {
+                            const category = this.getTagCategory(tag);
+                            return `<span style="background: ${category.color}20; color: ${category.color}; padding: 3px 8px; border-radius: 10px; font-size: 0.8rem;">${tag}</span>`;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('') :
+            '<div style="color: #95a5a6; font-style: italic;">No records found with selected tags</div>';
+
+        content.querySelector('#results-container').innerHTML = `
+            <div style="margin-bottom: 15px; color: #2c3e50;">
+                Found ${filteredResults.length} record(s) ${matchAll ? 'with ALL' : 'with ANY'} selected tags
+            </div>
+            ${resultsHTML}
+        `;
+    }
+
+    // Get record summary for display
+    getRecordSummary(record, type) {
+        switch (type) {
+            case 'goat':
+                return `${record.breed} • Born: ${record.dateOfBirth || 'Unknown'}`;
+            case 'health':
+                return `${record.treatmentType} • Date: ${record.date}`;
+            case 'milk':
+                return `${record.quantity} L • Date: ${record.date}`;
+            case 'breeding':
+                return `Doe: ${record.doe} • Buck: ${record.buck}`;
+            default:
+                return record.description || record.notes || 'No description';
+        }
+    }
+
+    // Get category for a tag
+    getTagCategory(tagName) {
+        for (const [categoryId, category] of Object.entries(this.tags)) {
+            if (category.tags.includes(tagName)) {
+                return category;
+            }
+        }
+        return { color: '#95a5a6', name: 'Unknown' };
+    }
+
+    // Quick edit record tags
+    editRecordTags(recordType, recordId) {
+        const existingTags = this.getRecordTags(recordType, recordId);
+        this.showTagSelector(recordType, recordId, existingTags);
+    }
+
+    // Save tags to localStorage
+    saveTags() {
+        localStorage.setItem('farmTags', JSON.stringify(this.tags));
+    }
+
+    // Save record tags to localStorage
+    saveRecordTags() {
+        localStorage.setItem('farmRecordTags', JSON.stringify(this.recordTags));
+    }
+
+    // Refresh tag manager interface
+    refreshTagManager() {
+        const container = document.querySelector('#tag-categories-container');
+        if (container) {
+            container.innerHTML = this.renderTagCategories();
+        }
+    }
+
+    // Refresh current view (placeholder for integration with existing views)
+    refreshCurrentView() {
+        // This would integrate with existing view refresh methods
+        console.log('Refreshing current view with updated tags');
+    }
+
+    // Show notification
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        const colors = {
+            success: '#27ae60',
+            error: '#e74c3c',
+            info: '#3498db',
+            warning: '#f39c12'
+        };
+
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${colors[type] || colors.info};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10001;
+            font-family: 'Montserrat', sans-serif;
+            max-width: 300px;
+            animation: slideIn 0.3s ease-out;
+        `;
+        
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Export tags data
+    exportTagsData() {
+        const taggedRecords = [];
+        
+        Object.entries(this.recordTags).forEach(([recordKey, tags]) => {
+            const [type, id] = recordKey.split('_');
+            taggedRecords.push({
+                recordType: type,
+                recordId: id,
+                tags: tags
+            });
+        });
+
+        const exportData = {
+            categories: this.tags,
+            taggedRecords: taggedRecords,
+            exportDate: new Date().toISOString()
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `farm-tags-export-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        this.logAudit('tags_exported', 'Tags data exported to JSON file');
+        this.showNotification('Tags data exported successfully!', 'success');
+    }
+
+    // Add tag menu button to main interface
+    addTagMenuButton() {
+        const tagMenuBtn = document.createElement('button');
+        tagMenuBtn.id = 'tag-menu-btn';
+        tagMenuBtn.style.cssText = `
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        `;
+        tagMenuBtn.innerHTML = '🏷️';
+        tagMenuBtn.title = 'Tags & Categories';
+
+        tagMenuBtn.addEventListener('mouseenter', () => {
+            tagMenuBtn.style.transform = 'scale(1.1)';
+            tagMenuBtn.style.boxShadow = '0 6px 20px rgba(230, 126, 34, 0.6)';
+        });
+
+        tagMenuBtn.addEventListener('mouseleave', () => {
+            tagMenuBtn.style.transform = 'scale(1)';
+            tagMenuBtn.style.boxShadow = '0 4px 15px rgba(230, 126, 34, 0.4)';
+        });
+
+        tagMenuBtn.addEventListener('click', () => {
+            this.showTagMenu();
+        });
+
+        document.body.appendChild(tagMenuBtn);
+    }
+
+    // Show main tag menu
+    showTagMenu() {
+        const menu = document.createElement('div');
+        menu.style.cssText = `
+            position: fixed;
+            bottom: 160px;
+            left: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 1001;
+            font-family: 'Montserrat', sans-serif;
+            min-width: 200px;
+            border: 2px solid #e67e22;
+        `;
+
+        menu.innerHTML = `
+            <div style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                🏷️ Tags & Categories
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="farmManager.showTagManager(); this.parentElement.parentElement.remove();" 
+                        style="padding: 8px 12px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; text-align: left;">
+                    📋 Manage Tags
+                </button>
+                <button onclick="farmManager.showSmartTagFilters(); this.parentElement.parentElement.remove();" 
+                        style="padding: 8px 12px; background: #9b59b6; color: white; border: none; border-radius: 5px; cursor: pointer; text-align: left;">
+                    🔍 Smart Filters
+                </button>
+                <button onclick="farmManager.showTagStatistics(); this.parentElement.parentElement.remove();" 
+                        style="padding: 8px 12px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; text-align: left;">
+                    📊 Tag Statistics
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(menu);
+
+        // Auto-hide after 10 seconds
+        setTimeout(() => {
+            if (menu.parentNode) {
+                menu.parentNode.removeChild(menu);
+            }
+        }, 10000);
+
+        // Close when clicking outside
+        const closeHandler = (e) => {
+            if (!menu.contains(e.target) && e.target.id !== 'tag-menu-btn') {
+                if (menu.parentNode) {
+                    menu.parentNode.removeChild(menu);
+                }
+                document.removeEventListener('click', closeHandler);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', closeHandler), 100);
+    }
+
+    // Show tag statistics
+    showTagStatistics() {
+        const stats = this.calculateTagStatistics();
+        
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        `;
+
+        content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 style="margin: 0; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+                    📊 Tag Statistics
+                </h2>
+                <button id="stats-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #95a5a6;">×</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                <div style="background: linear-gradient(135deg, #3498db, #2ecc71); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.totalCategories}</div>
+                    <div>Categories</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #e67e22, #f39c12); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.totalTags}</div>
+                    <div>Total Tags</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold;">${stats.taggedRecords}</div>
+                    <div>Tagged Records</div>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">Most Used Tags</h3>
+                ${stats.mostUsedTags.map(item => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #ecf0f1;">
+                        <span style="color: #2c3e50;">${item.tag}</span>
+                        <span style="background: #3498db; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.9rem;">${item.count}</span>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div>
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">Category Usage</h3>
+                ${Object.entries(stats.categoryUsage).map(([category, data]) => `
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span style="color: ${data.color}; font-weight: 600;">${data.icon} ${data.name}</span>
+                            <span style="color: #7f8c8d;">${data.usage} records</span>
+                        </div>
+                        <div style="background: #ecf0f1; border-radius: 10px; height: 8px; overflow: hidden;">
+                            <div style="background: ${data.color}; height: 100%; width: ${Math.max(5, (data.usage / stats.taggedRecords * 100))}%; border-radius: 10px;"></div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        content.querySelector('#stats-close').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+
+    // Calculate tag statistics
+    calculateTagStatistics() {
+        const stats = {
+            totalCategories: Object.keys(this.tags).length,
+            totalTags: Object.values(this.tags).reduce((sum, cat) => sum + cat.tags.length, 0),
+            taggedRecords: Object.keys(this.recordTags).length,
+            mostUsedTags: [],
+            categoryUsage: {}
+        };
+
+        // Count tag usage
+        const tagCounts = {};
+        Object.values(this.recordTags).forEach(recordTags => {
+            recordTags.forEach(tag => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+        });
+
+        // Get most used tags
+        stats.mostUsedTags = Object.entries(tagCounts)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 10)
+            .map(([tag, count]) => ({ tag, count }));
+
+        // Calculate category usage
+        Object.entries(this.tags).forEach(([categoryId, category]) => {
+            const categoryTagCount = category.tags.reduce((sum, tag) => {
+                return sum + (tagCounts[tag] || 0);
+            }, 0);
+
+            stats.categoryUsage[categoryId] = {
+                name: category.name,
+                color: category.color,
+                icon: category.icon,
+                usage: categoryTagCount
+            };
+        });
+
+        return stats;
+    }
+
+    // === INTEGRATION WITH EXISTING RECORD VIEWS ===
+    
+    // Add tag display and edit buttons to record tables
+    enhanceRecordDisplaysWithTags() {
+        // Add tags to goat records
+        this.addTagsToRecordTable('goats-table', 'goat');
+        
+        // Add tags to breeding records
+        this.addTagsToRecordTable('breeding-table', 'breeding');
+        
+        // Add tags to health records
+        this.addTagsToRecordTable('health-table', 'health');
+        
+        // Add tags to milk records
+        this.addTagsToRecordTable('milk-table', 'milk');
+        
+        // Add tags to feed records
+        this.addTagsToRecordTable('feed-table', 'feed');
+        
+        this.logAudit('tags_integration', 'Record displays enhanced with tags');
+    }
+
+    // Add tags column and buttons to specific record table
+    addTagsToRecordTable(tableId, recordType) {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+
+        // Add tags header to table if it doesn't exist
+        const headerRow = table.querySelector('thead tr');
+        if (headerRow && !headerRow.querySelector('.tags-header')) {
+            const tagHeader = document.createElement('th');
+            tagHeader.className = 'tags-header';
+            tagHeader.innerHTML = '🏷️ Tags';
+            tagHeader.style.cssText = 'min-width: 150px; text-align: center;';
+            headerRow.appendChild(tagHeader);
+        }
+
+        // Add tags cells to each row
+        const bodyRows = table.querySelectorAll('tbody tr');
+        bodyRows.forEach((row, index) => {
+            if (!row.querySelector('.tags-cell')) {
+                const tagCell = document.createElement('td');
+                tagCell.className = 'tags-cell';
+                tagCell.style.cssText = 'padding: 8px; text-align: center; vertical-align: middle;';
+                
+                const records = this.getRecordsByType(recordType);
+                const record = records[index];
+                
+                if (record) {
+                    tagCell.innerHTML = this.renderRecordTagsCell(recordType, record.id);
+                }
+                
+                row.appendChild(tagCell);
+            }
+        });
+    }
+
+    // Render tags cell for a specific record
+    renderRecordTagsCell(recordType, recordId) {
+        const tags = this.getRecordTags(recordType, recordId);
+        
+        return `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; max-width: 200px;">
+                    ${tags.slice(0, 3).map(tag => {
+                        const category = this.getTagCategory(tag);
+                        return `<span class="record-tag" style="background: ${category.color}20; color: ${category.color}; padding: 2px 6px; border-radius: 8px; font-size: 0.7rem;">${tag}</span>`;
+                    }).join('')}
+                    ${tags.length > 3 ? `<span style="color: #7f8c8d; font-size: 0.7rem;">+${tags.length - 3} more</span>` : ''}
+                </div>
+                <button onclick="farmManager.editRecordTags('${recordType}', '${recordId}')" 
+                        style="padding: 4px 8px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.7rem; min-width: 60px;">
+                    ${tags.length === 0 ? 'Add Tags' : 'Edit Tags'}
+                </button>
+            </div>
+        `;
+    }
+
+    // Add quick tag filter bar to any page
+    addQuickTagFilter(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const filterBar = document.createElement('div');
+        filterBar.id = 'quick-tag-filter';
+        filterBar.style.cssText = `
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        `;
+
+        filterBar.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <div style="font-weight: 600; color: #2c3e50; display: flex; align-items: center; gap: 5px;">
+                    🔍 Quick Filter:
+                </div>
+                <div id="quick-filter-tags" style="display: flex; flex-wrap: wrap; gap: 8px; flex: 1;">
+                    ${this.renderQuickFilterTags()}
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="farmManager.clearQuickFilter()" 
+                            style="padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                        Clear
+                    </button>
+                    <button onclick="farmManager.showSmartTagFilters()" 
+                            style="padding: 6px 12px; background: #9b59b6; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                        Advanced
+                    </button>
+                </div>
+            </div>
+        `;
+
+        container.insertBefore(filterBar, container.firstChild);
+    }
+
+    // Render quick filter tags (most used tags)
+    renderQuickFilterTags() {
+        const tagCounts = {};
+        Object.values(this.recordTags).forEach(recordTags => {
+            recordTags.forEach(tag => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+        });
+
+        const popularTags = Object.entries(tagCounts)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 8)
+            .map(([tag]) => tag);
+
+        return popularTags.map(tag => {
+            const category = this.getTagCategory(tag);
+            return `
+                <button class="quick-filter-tag" data-tag="${tag}" 
+                        style="background: ${category.color}20; color: ${category.color}; 
+                               padding: 6px 10px; border: none; border-radius: 12px; cursor: pointer; 
+                               font-size: 0.8rem; transition: all 0.3s ease;">
+                    ${tag}
+                </button>
+            `;
+        }).join('');
+    }
+
+    // Handle quick filter tag clicks
+    setupQuickFilterHandlers() {
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('quick-filter-tag')) {
+                const tag = e.target.dataset.tag;
+                const isActive = e.target.classList.contains('active');
+                
+                if (isActive) {
+                    e.target.classList.remove('active');
+                    e.target.style.background = e.target.style.background.replace(/[^20]/g, '') + '20';
+                    this.removeActiveFilter(tag);
+                } else {
+                    e.target.classList.add('active');
+                    const category = this.getTagCategory(tag);
+                    e.target.style.background = category.color;
+                    e.target.style.color = 'white';
+                    this.addActiveFilter(tag);
+                }
+                
+                this.applyQuickFilters();
+            }
+        });
+    }
+
+    // Manage active filters
+    addActiveFilter(tag) {
+        if (!this.activeFilters) this.activeFilters = [];
+        if (!this.activeFilters.includes(tag)) {
+            this.activeFilters.push(tag);
+        }
+    }
+
+    removeActiveFilter(tag) {
+        if (!this.activeFilters) this.activeFilters = [];
+        this.activeFilters = this.activeFilters.filter(t => t !== tag);
+    }
+
+    clearQuickFilter() {
+        this.activeFilters = [];
+        
+        // Reset visual state of filter buttons
+        const filterTags = document.querySelectorAll('.quick-filter-tag');
+        filterTags.forEach(btn => {
+            btn.classList.remove('active');
+            const category = this.getTagCategory(btn.dataset.tag);
+            btn.style.background = category.color + '20';
+            btn.style.color = category.color;
+        });
+        
+        this.applyQuickFilters();
+    }
+
+    // Apply active filters to current view
+    applyQuickFilters() {
+        // This would integrate with existing table filtering logic
+        console.log('Applying filters:', this.activeFilters);
+        
+        // Show filter status
+        this.showFilterStatus();
+        
+        // Here you would filter the visible records based on activeFilters
+        // This is a placeholder for integration with existing view logic
+    }
+
+    // Show current filter status
+    showFilterStatus() {
+        const existingStatus = document.getElementById('filter-status');
+        if (existingStatus) {
+            existingStatus.remove();
+        }
+
+        if (!this.activeFilters || this.activeFilters.length === 0) {
+            return;
+        }
+
+        const status = document.createElement('div');
+        status.id = 'filter-status';
+        status.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            z-index: 1000;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+        `;
+
+        status.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span>🔍 Filtering by: ${this.activeFilters.join(', ')}</span>
+                <button onclick="farmManager.clearQuickFilter()" 
+                        style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 2px 6px; border-radius: 4px; cursor: pointer;">
+                    ×
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(status);
+
+        // Auto-hide after 10 seconds
+        setTimeout(() => {
+            if (status.parentNode) {
+                status.parentNode.removeChild(status);
+            }
+        }, 10000);
+    }
+
+    // Bulk tag operations for selected records
+    showBulkTagDialog() {
+        if (!this.selectedGoats || this.selectedGoats.size === 0) {
+            this.showNotification('Please select some records first', 'warning');
+            return;
+        }
+
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        `;
+
+        content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 style="margin: 0; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+                    🏷️ Bulk Tag Operations
+                </h2>
+                <button id="bulk-tag-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #95a5a6;">×</button>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                <strong>Selected Records:</strong> ${this.selectedGoats.size} items
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">Choose Operation:</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button id="bulk-add-tags" style="padding: 12px 20px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; cursor: pointer; text-align: left;">
+                        ➕ Add Tags to Selected Records
+                    </button>
+                    <button id="bulk-remove-tags" style="padding: 12px 20px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; cursor: pointer; text-align: left;">
+                        ➖ Remove Tags from Selected Records
+                    </button>
+                    <button id="bulk-replace-tags" style="padding: 12px 20px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 8px; cursor: pointer; text-align: left;">
+                        🔄 Replace All Tags
+                    </button>
+                </div>
+            </div>
+        `;
+
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        // Event listeners
+        content.querySelector('#bulk-tag-close').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        content.querySelector('#bulk-add-tags').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            this.showBulkTagSelector('add');
+        });
+
+        content.querySelector('#bulk-remove-tags').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            this.showBulkTagSelector('remove');
+        });
+
+        content.querySelector('#bulk-replace-tags').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            this.showBulkTagSelector('replace');
+        });
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+
+    // Show tag selector for bulk operations
+    showBulkTagSelector(operation) {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        `;
+
+        const operationTitles = {
+            add: '➕ Add Tags to Selected Records',
+            remove: '➖ Remove Tags from Selected Records',
+            replace: '🔄 Replace All Tags'
+        };
+
+        content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #2c3e50;">${operationTitles[operation]}</h3>
+                <button id="bulk-selector-close" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #95a5a6;">×</button>
+            </div>
+            
+            <div id="bulk-tag-categories">
+                ${this.renderTagSelector([])}
+            </div>
+            
+            <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+                <button id="cancel-bulk" style="padding: 10px 20px; background: #95a5a6; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                    Cancel
+                </button>
+                <button id="apply-bulk" style="padding: 10px 20px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                    Apply to ${this.selectedGoats.size} Records
+                </button>
+            </div>
+        `;
+
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        let selectedTags = [];
+
+        // Event listeners
+        content.querySelector('#bulk-selector-close').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        content.querySelector('#cancel-bulk').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        content.querySelector('#apply-bulk').addEventListener('click', () => {
+            this.executeBulkTagOperation(operation, selectedTags);
+            document.body.removeChild(modal);
+        });
+
+        // Handle tag selection
+        content.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tag-option')) {
+                const tagName = e.target.dataset.tag;
+                if (selectedTags.includes(tagName)) {
+                    selectedTags = selectedTags.filter(t => t !== tagName);
+                } else {
+                    selectedTags.push(tagName);
+                }
+                this.refreshBulkTagSelector(content, selectedTags);
+            }
+        });
+    }
+
+    // Execute bulk tag operation on selected records
+    executeBulkTagOperation(operation, tags) {
+        if (tags.length === 0) {
+            this.showNotification('Please select at least one tag', 'warning');
+            return;
+        }
+
+        let count = 0;
+        const recordType = 'goat'; // Assuming we're working with goats, but this could be dynamic
+
+        this.selectedGoats.forEach(recordId => {
+            const currentTags = this.getRecordTags(recordType, recordId);
+            
+            switch (operation) {
+                case 'add':
+                    this.addTagsToRecord(recordType, recordId, tags);
+                    count++;
+                    break;
+                case 'remove':
+                    this.removeTagsFromRecord(recordType, recordId, tags);
+                    count++;
+                    break;
+                case 'replace':
+                    this.removeTagsFromRecord(recordType, recordId, currentTags);
+                    this.addTagsToRecord(recordType, recordId, tags);
+                    count++;
+                    break;
+            }
+        });
+
+        this.showNotification(`${operation.charAt(0).toUpperCase() + operation.slice(1)} operation completed on ${count} records`, 'success');
+        this.logAudit('bulk_tag_operation', `${operation} tags on ${count} records: ${tags.join(', ')}`);
+        
+        // Refresh the current view
+        this.refreshCurrentView();
+        this.enhanceRecordDisplaysWithTags();
+    }
+
+    // Refresh bulk tag selector
+    refreshBulkTagSelector(content, selectedTags) {
+        const container = content.querySelector('#bulk-tag-categories');
+        container.innerHTML = this.renderTagSelector(selectedTags);
     }
 
     // Enhanced mobile responsiveness setup
