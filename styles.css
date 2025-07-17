@@ -1238,8 +1238,10 @@ section {
 
 .actions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .action-btn {
@@ -1352,16 +1354,22 @@ section {
     }
     
     .actions-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        max-width: 100%;
     }
     
     .action-btn {
-        padding: 15px;
+        padding: 12px 8px;
     }
     
     .action-btn span {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .action-btn p {
+        font-size: 0.8rem;
+        margin: 5px 0 0 0;
     }
     
     /* Modal Mobile */
@@ -1623,6 +1631,26 @@ section {
     
     #weather-temp {
         font-size: 1.3rem;
+    }
+    
+    /* Actions grid for very small screens */
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .action-btn {
+        padding: 10px 5px;
+        border-radius: 10px;
+    }
+    
+    .action-btn span {
+        font-size: 1rem;
+    }
+    
+    .action-btn p {
+        font-size: 0.7rem;
+        margin: 3px 0 0 0;
     }
 }
 
