@@ -1,5 +1,497 @@
 // Farm Records Management System
 class FarmRecordsManager {
+    // End-to-End Encryption (Demo - AES)
+    encryptData(data, key = 'demo-key') {
+        // Demo: XOR-based pseudo-encryption (replace with AES in production)
+        const str = JSON.stringify(data);
+        let out = '';
+        for (let i = 0; i < str.length; i++) {
+            out += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+        }
+        return btoa(out);
+    }
+    decryptData(data, key = 'demo-key') {
+        try {
+            const str = atob(data);
+            let out = '';
+            for (let i = 0; i < str.length; i++) {
+                out += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+            }
+            return JSON.parse(out);
+        } catch { return null; }
+    }
+
+    // Role-Based Access Control (RBAC)
+    getRolePermissions(role) {
+        const roles = {
+            administrator: ['all'],
+            vet: ['view_health', 'add_health', 'view_animals'],
+            inspector: ['view_animals', 'view_reports'],
+            consultant: ['view_animals', 'view_reports', 'add_notes'],
+            external: ['view_animals', 'view_reports']
+        };
+        return roles[role] || [];
+    }
+    // Enforce RBAC for record access
+    hasPermission(permission) {
+        if (!this.currentUser) return false;
+        const perms = this.getRolePermissions(this.currentUser.role);
+        return perms.includes('all') || perms.includes(permission);
+    }
+
+    // Automated Threat Detection (Demo)
+    detectThreats() {
+        const auditLog = JSON.parse(localStorage.getItem('externalAccessAuditLog') || '[]');
+        const failedLogins = auditLog.filter(e => e.action === 'login_failed').length;
+        const rapidExports = auditLog.filter(e => e.action === 'compliance_export').length;
+        if (failedLogins > 5) {
+            this.showAdminNotification('Multiple failed login attempts detected!');
+        }
+        if (rapidExports > 10) {
+            this.showAdminNotification('Unusual number of exports detected!');
+        }
+    }
+
+    // Data Retention & Deletion Policies
+    enforceDataRetention(days = 365) {
+        if (!confirm(`Delete all goat records older than ${days} days? This cannot be undone.`)) return;
+        const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+        this.goats = this.goats.filter(g => new Date(g.dateAdded).getTime() > cutoff);
+        localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+        this.logAudit('data_retention', `Old goat records deleted (older than ${days} days)`);
+    }
+
+    // Privacy Mode for Demonstrations
+    enablePrivacyMode() {
+        document.body.classList.add('privacy-mode');
+        // Mask all personal/sensitive data in UI
+        document.querySelectorAll('.goat-name').forEach(el => { el.textContent = 'Anonymous'; });
+        document.querySelectorAll('.contact-name, .contact-email, .transaction-amount, .health-status').forEach(el => { el.textContent = '***'; });
+        this.logAudit('privacy_mode', 'Privacy mode enabled');
+    }
+    disablePrivacyMode() {
+        document.body.classList.remove('privacy-mode');
+        this.logAudit('privacy_mode', 'Privacy mode disabled');
+    }
+
+    // Secure API Gateway (Demo)
+    callAPI(endpoint, payload) {
+        // Simulate API call with logging and rate limit
+        if (!this.checkRateLimit(this.currentUser)) return;
+        this.logAudit('api_call', `Endpoint: ${endpoint}, Payload: ${JSON.stringify(payload)}`);
+        alert('API call simulated. No real data sent.');
+    }
+
+    // Multi-Language & Localization (Demo)
+    setLanguage(lang) {
+        localStorage.setItem('farmAppLang', lang);
+        this.logAudit('language_change', `Language set to ${lang}`);
+        document.documentElement.lang = lang;
+        alert(`Language switched to ${lang}. (Demo only)`);
+    }
+
+    // Customizable Dashboard Widgets (Demo)
+    setDashboardWidgets(widgets) {
+        localStorage.setItem('dashboardWidgets', JSON.stringify(widgets));
+        this.logAudit('dashboard_customization', `Dashboard widgets set: ${widgets.join(', ')}`);
+        // ...update dashboard UI...
+    }
+
+    // Scheduled Data Backups (Demo)
+    scheduleBackup(intervalHours = 24) {
+        if (window.scheduledBackupId) clearInterval(window.scheduledBackupId);
+        window.scheduledBackupId = setInterval(() => {
+            const backup = {
+                goats: this.encryptData(this.goats),
+                breeding: this.encryptData(this.breedingRecords),
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('farmBackup', JSON.stringify(backup));
+            this.logAudit('backup', 'Scheduled backup completed');
+        }, intervalHours * 60 * 60 * 1000);
+    }
+
+    // Integration with External Services (Demo)
+    integrateWithService(serviceName, config) {
+        this.logAudit('integration', `Integrated with ${serviceName}: ${JSON.stringify(config)}`);
+        alert(`Integration with ${serviceName} simulated.`);
+    }
+
+    // Advanced Reporting & Analytics (Demo)
+    generateAnalyticsReport(type) {
+        this.logAudit('analytics', `Generated report: ${type}`);
+        // ...report logic...
+    }
+
+    // Mobile-Friendly & Offline Mode (Demo)
+    enableOfflineMode() {
+        localStorage.setItem('offlineMode', 'true');
+        this.logAudit('offline_mode', 'Offline mode enabled');
+        alert('Offline mode enabled. Data will be saved locally until reconnected.');
+    }
+    disableOfflineMode() {
+        localStorage.setItem('offlineMode', 'false');
+        this.logAudit('offline_mode', 'Offline mode disabled');
+        alert('Offline mode disabled. Data will sync to server.');
+    }
+
+    // Emergency Lockdown Feature
+    emergencyLockdown() {
+        localStorage.setItem('lockdown', 'true');
+        this.logAudit('lockdown', 'Emergency lockdown activated');
+        // Revoke all external access tokens
+        localStorage.setItem('externalAccessTokens', '[]');
+        alert('System is in lockdown. All external access revoked.');
+    }
+    releaseLockdown() {
+        localStorage.setItem('lockdown', 'false');
+        this.logAudit('lockdown', 'Lockdown released');
+        alert('System lockdown released.');
+    }
+
+    // Consent & Audit Trail for Data Sharing
+    recordConsent(user, dataType) {
+        this.logAudit('consent', `User ${user} consented to share ${dataType}`);
+        localStorage.setItem(`consent_${user}_${dataType}`, 'true');
+    }
+    hasConsent(user, dataType) {
+        return localStorage.getItem(`consent_${user}_${dataType}`) === 'true';
+    }
+
+    // User Training & Help Center (Demo)
+    showHelpCenter() {
+        const helpDiv = document.createElement('div');
+        helpDiv.id = 'help-center-modal';
+        helpDiv.style.cssText = 'position:fixed;top:10%;left:50%;transform:translateX(-50%);background:#fff;padding:32px 40px;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);z-index:3000;max-width:480px;font-family:Montserrat,sans-serif;';
+        helpDiv.innerHTML = `<h2>Help Center</h2><ul><li>How to add a goat record</li><li>How to export audit logs</li><li>How to enable privacy mode</li><li>Contact support: support@mountaingoatfarm.com</li></ul><button id='close-help-center'>Close</button>`;
+        document.body.appendChild(helpDiv);
+        document.getElementById('close-help-center').onclick = () => helpDiv.remove();
+        this.logAudit('help_center', 'Help center accessed');
+    }
+    // Two-Factor Authentication (2FA) - Demo implementation
+    request2FA(username) {
+        // Simulate sending a code
+        const code = Math.floor(100000 + Math.random() * 900000);
+        localStorage.setItem('farm2FACode', code);
+        alert(`2FA code sent to ${username}: ${code}`); // Replace with real delivery
+    }
+
+    verify2FA(inputCode) {
+        const code = localStorage.getItem('farm2FACode');
+        return inputCode == code;
+    }
+
+    // Granular Audit Logging
+    logAudit(action, details) {
+        try {
+            const auditLog = JSON.parse(localStorage.getItem('externalAccessAuditLog') || '[]');
+            auditLog.push({
+                timestamp: new Date().toISOString(),
+                user: this.currentUser ? this.currentUser.username : 'unknown',
+                action,
+                details
+            });
+            localStorage.setItem('externalAccessAuditLog', JSON.stringify(auditLog));
+        } catch (err) {
+            alert('Audit log error: ' + err.message);
+        }
+    }
+
+    // Data Masking for Sensitive Fields
+    maskSensitiveData(data, fields) {
+        const masked = { ...data };
+        fields.forEach(field => {
+            if (masked[field]) masked[field] = '***';
+        });
+        return masked;
+    }
+    // Use data masking in record display (example for goats)
+    getGoatDisplay(goat) {
+        if (this.currentUser && this.currentUser.role === 'external') {
+            return this.maskSensitiveData(goat, ['name', 'location', 'notes']);
+        }
+        return goat;
+    }
+
+    // Customizable Permissions
+    setUserPermissions(username, permissions) {
+        const users = JSON.parse(localStorage.getItem('farmUsers') || '[]');
+        const user = users.find(u => u.username === username);
+        if (user) {
+            user.permissions = permissions;
+            localStorage.setItem('farmUsers', JSON.stringify(users));
+        }
+    }
+
+    // Access Request Workflow
+    requestAccess(externalUser, requestedFields) {
+        // Log request and notify admin
+        this.logAudit('access_request', `User ${externalUser} requested access to: ${requestedFields.join(', ')}`);
+        this.showAdminNotification(`Access request from ${externalUser} for fields: ${requestedFields.join(', ')}`);
+    }
+
+    approveAccessRequest(externalUser, fields) {
+        // Grant access and log
+        this.setUserPermissions(externalUser, fields);
+        this.logAudit('access_approved', `Access approved for ${externalUser}: ${fields.join(', ')}`);
+    }
+
+    // Session Activity Monitoring
+    logSessionActivity(activity) {
+        const sessionLog = JSON.parse(localStorage.getItem('externalSessionLog') || '[]');
+        sessionLog.push({
+            timestamp: new Date().toISOString(),
+            user: this.currentUser ? this.currentUser.username : 'unknown',
+            activity
+        });
+        localStorage.setItem('externalSessionLog', JSON.stringify(sessionLog));
+    }
+
+    // Secure Token Revocation
+    revokeToken(tokenId) {
+        let tokens = JSON.parse(localStorage.getItem('externalAccessTokens') || '[]');
+        tokens = tokens.filter(t => t.id !== tokenId);
+        localStorage.setItem('externalAccessTokens', JSON.stringify(tokens));
+        this.logAudit('token_revoked', `Token ${tokenId} revoked.`);
+        this.showAdminNotification(`Token ${tokenId} has been revoked.`);
+    }
+
+    // UI Accessibility Improvements
+    improveAccessibility() {
+        // Add ARIA roles and keyboard navigation for read-only banner and help center
+        const banner = document.getElementById('readonly-banner');
+        if (banner) {
+            banner.setAttribute('role', 'status');
+            banner.setAttribute('tabindex', '0');
+        }
+        const helpCenter = document.getElementById('help-center-modal');
+        if (helpCenter) {
+            helpCenter.setAttribute('role', 'dialog');
+            helpCenter.setAttribute('aria-modal', 'true');
+            helpCenter.setAttribute('tabindex', '0');
+        }
+    }
+
+    // API Rate Limiting (Demo)
+    checkRateLimit(user) {
+        const now = Date.now();
+        const key = `rateLimit_${user.username}`;
+        const lastCall = parseInt(localStorage.getItem(key) || '0');
+        if (now - lastCall < 2000) { // 2 seconds between calls
+            alert('Rate limit exceeded. Please wait before making another request.');
+            return false;
+        }
+        localStorage.setItem(key, now);
+        return true;
+    }
+
+    // Compliance Export (PDF/XLSX - Demo)
+    exportCompliance(format = 'pdf') {
+        // For demo, just log and show notification
+        this.logAudit('compliance_export', `Exported data in ${format} format.`);
+        this.showAdminNotification(`Compliance export in ${format} format completed.`);
+    }
+    // Read-Only UI Mode for External Users
+    enableReadOnlyUIMode() {
+        // Disable all form inputs and action buttons
+        const inputs = document.querySelectorAll('input, textarea, select, button');
+        inputs.forEach(el => {
+            // Only disable if not a navigation or export button
+            if (!el.classList.contains('nav-btn') && !el.classList.contains('export-btn')) {
+                el.disabled = true;
+                el.classList.add('readonly-ui');
+            }
+        });
+        // Optionally hide or disable add/edit/delete buttons
+        const actionBtns = document.querySelectorAll('.action-btn, .add-btn, .edit-btn, .delete-btn');
+        actionBtns.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('readonly-ui');
+        });
+        // Add a banner to indicate read-only mode
+        if (!document.getElementById('readonly-banner')) {
+            const banner = document.createElement('div');
+            banner.id = 'readonly-banner';
+            banner.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                background: #f39c12;
+                color: #fff;
+                text-align: center;
+                font-size: 1.1rem;
+                font-family: 'Montserrat', sans-serif;
+                font-weight: 600;
+                padding: 12px 0;
+                z-index: 2000;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            `;
+            banner.textContent = 'Read-Only Mode: You have view-only access. Editing is disabled.';
+            document.body.appendChild(banner);
+        }
+    }
+    // Access Expiry Notification
+    notifyAccessExpiry(token) {
+        // Notify external user
+        if (token && token.expiresAt) {
+            const now = Date.now();
+            const expiresAt = new Date(token.expiresAt).getTime();
+            const timeLeft = expiresAt - now;
+            if (timeLeft <= 0) {
+                this.showExternalWelcomeMessage('Your access token has expired. Please contact the administrator for renewal.');
+            } else if (timeLeft < 10 * 60 * 1000) { // less than 10 minutes left
+                this.showExternalWelcomeMessage('Your access token will expire soon. Please save your work or contact the administrator.');
+            }
+        }
+        // Notify admin (simple notification for demo)
+        if (token && token.expiresAt && token.user) {
+            const now = Date.now();
+            const expiresAt = new Date(token.expiresAt).getTime();
+            const timeLeft = expiresAt - now;
+            if (timeLeft <= 0) {
+                this.showAdminNotification(`External access for user ${token.user} has expired.`);
+            } else if (timeLeft < 10 * 60 * 1000) {
+                this.showAdminNotification(`External access for user ${token.user} will expire in less than 10 minutes.`);
+            }
+        }
+    }
+
+    showAdminNotification(message) {
+        // Simple admin notification (could be improved for real dashboard)
+        const adminDiv = document.createElement('div');
+        adminDiv.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #e67e22, #f1c40f);
+            color: #2c3e50;
+            padding: 18px 22px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            z-index: 1002;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            max-width: 320px;
+            animation: slideIn 0.5s ease-out;
+        `;
+        adminDiv.innerHTML = `<div style="font-size: 1rem;">${message}</div>`;
+        document.body.appendChild(adminDiv);
+        setTimeout(() => {
+            adminDiv.style.animation = 'slideOut 0.5s ease-out';
+            setTimeout(() => {
+                if (adminDiv.parentNode) {
+                    adminDiv.parentNode.removeChild(adminDiv);
+                }
+            }, 500);
+        }, 6000);
+    }
+    // === External Access Security & Controls ===
+    // Restrict access to certain IP addresses or regions
+    isIPAllowed(ip) {
+        // Example: allow only specific IPs or ranges
+        const allowedIPs = ['192.168.1.100', '203.0.113.0/24'];
+        // Simple check for demo; use a proper IP range check in production
+        return allowedIPs.some(allowed => ip === allowed || (allowed.endsWith('/24') && ip.startsWith(allowed.replace('/24', ''))));
+    }
+
+    isLocationAllowed(location) {
+        // Example: allow only certain regions
+        const allowedRegions = ['Kenya', 'Uganda'];
+        return allowedRegions.includes(location);
+    }
+
+    // Download/Export Controls
+    canExportReports(user) {
+        // Only allow if user has export permission
+        return user && user.permissions && user.permissions.includes('export_reports');
+    }
+
+    canExportAuditLog(user) {
+        // Only allow if user has audit log export permission
+        return user && user.permissions && user.permissions.includes('export_audit_log');
+    }
+
+    exportAuditLog() {
+        // Example: export audit log to CSV
+        const auditLog = JSON.parse(localStorage.getItem('externalAccessAuditLog') || '[]');
+        let csv = 'Timestamp,User,Action,Details\n';
+        auditLog.forEach(entry => {
+            csv += `${entry.timestamp},${entry.user},${entry.action},${entry.details}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'audit-log.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Custom Welcome Message for External Users
+    showExternalWelcomeMessage(message) {
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #2980b9, #6dd5fa);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            z-index: 1001;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            max-width: 350px;
+            animation: slideIn 0.5s ease-out;
+        `;
+        welcomeDiv.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 1.8rem;">👋</span>
+                <div>
+                    <div style="font-size: 1.1rem; margin-bottom: 5px;">${message}</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Welcome, trusted external user!</div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(welcomeDiv);
+        setTimeout(() => {
+            welcomeDiv.style.animation = 'slideOut 0.5s ease-out';
+            setTimeout(() => {
+                if (welcomeDiv.parentNode) {
+                    welcomeDiv.parentNode.removeChild(welcomeDiv);
+                }
+            }, 500);
+        }, 6000);
+    }
+
+    // Session Timeout for External Users
+    startExternalSessionTimeout(timeoutMinutes = 15) {
+        if (this.externalSessionTimeoutId) {
+            clearTimeout(this.externalSessionTimeoutId);
+        }
+        this.externalSessionTimeoutId = setTimeout(() => {
+            alert('Session expired due to inactivity. You have been logged out.');
+            this.logout();
+        }, timeoutMinutes * 60 * 1000);
+        // Reset timer on user activity
+        ['mousemove', 'keydown', 'click'].forEach(event => {
+            window.addEventListener(event, this.resetExternalSessionTimeout.bind(this, timeoutMinutes));
+        });
+    }
+
+    resetExternalSessionTimeout(timeoutMinutes = 15) {
+        if (this.externalSessionTimeoutId) {
+            clearTimeout(this.externalSessionTimeoutId);
+        }
+        this.externalSessionTimeoutId = setTimeout(() => {
+            alert('Session expired due to inactivity. You have been logged out.');
+            this.logout();
+        }, timeoutMinutes * 60 * 1000);
+    }
     constructor() {
         this.currentUser = null;
         this.goats = JSON.parse(localStorage.getItem('farmGoats') || '[]');
@@ -83,21 +575,37 @@ class FarmRecordsManager {
     }
 
     login(username, password) {
-        // Simple authentication - in production, use proper authentication
+        // Two-Factor Authentication for admin
         if (username === 'admin' && password === 'farm2024') {
-            this.currentUser = { username, loginTime: new Date().toISOString() };
+            this.request2FA(username);
+            const inputCode = prompt('Enter the 2FA code sent to your device:');
+            if (!this.verify2FA(inputCode)) {
+                alert('Invalid 2FA code. Access denied.');
+                return false;
+            }
+            this.currentUser = { username, loginTime: new Date().toISOString(), role: 'administrator', permissions: ['export_reports', 'export_audit_log'] };
             localStorage.setItem('farmRecordsAuth', JSON.stringify(this.currentUser));
-            
-            // Hide login modal and show main content
             document.getElementById('login-modal').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
-            
-            // Show welcome message
             this.showWelcomeMessage();
-            
             this.initializeApp();
+            this.logAudit('login', 'Admin logged in');
+            return true;
+        } else if (username === 'external' && password === 'guest2025') {
+            // External user login
+            this.currentUser = { username, loginTime: new Date().toISOString(), role: 'external', permissions: ['export_reports'] };
+            localStorage.setItem('farmRecordsAuth', JSON.stringify(this.currentUser));
+            document.getElementById('login-modal').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            this.showExternalWelcomeMessage('Welcome to Mountain Goat Farm Records! Please follow the instructions provided.');
+            this.startExternalSessionTimeout();
+            this.enableReadOnlyUIMode();
+            this.improveAccessibility();
+            this.initializeApp();
+            this.logAudit('login', 'External user logged in');
             return true;
         }
+        this.logAudit('login_failed', `Failed login attempt for ${username}`);
         return false;
     }
 
@@ -514,8 +1022,50 @@ class FarmRecordsManager {
                 const modalContent = e.target.closest('.modal-content');
                 
                 if (modalContent) {
-                    // Handle modal tabs
-                    this.switchModalTab(modalContent, tabName);
+                    // Handle modal tabs for different roles/modal types
+                    // Extendable: Add more roles/modal types as needed
+                    if (modalContent.classList.contains('goat-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'goat');
+                    } else if (modalContent.classList.contains('breeding-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'breeding');
+                    } else if (modalContent.classList.contains('meat-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'meat');
+                    } else if (modalContent.classList.contains('milk-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'milk');
+                    } else if (modalContent.classList.contains('feed-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'feed');
+                    } else if (modalContent.classList.contains('health-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'health');
+                    } else if (modalContent.classList.contains('product-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'product');
+                    } else if (modalContent.classList.contains('contact-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'contact');
+                    } else if (modalContent.classList.contains('task-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'task');
+                    } else if (modalContent.classList.contains('reminder-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'reminder');
+                    } else if (modalContent.classList.contains('transaction-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'transaction');
+                    } else if (modalContent.classList.contains('crop-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'crop');
+                    } else if (modalContent.classList.contains('lease-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'lease');
+                    } else if (modalContent.classList.contains('equipment-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'equipment');
+                    } else if (modalContent.classList.contains('laborer-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'laborer');
+                    } else if (modalContent.classList.contains('assignment-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'assignment');
+                    } else if (modalContent.classList.contains('payment-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'payment');
+                    } else if (modalContent.classList.contains('user-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'user');
+                    } else if (modalContent.classList.contains('settings-modal-content')) {
+                        this.switchModalTab(modalContent, tabName, 'settings');
+                    } else {
+                        // Default fallback for unknown modal types
+                        this.switchModalTab(modalContent, tabName);
+                    }
                 }
             }
         });
@@ -775,59 +1325,6 @@ class FarmRecordsManager {
                 const dueDate = new Date(record.expectedDueDate);
                 const today = new Date();
                 const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
-                return daysUntilDue >= 0 && daysUntilDue <= 7; // Due within 7 days
-            }
-            return false;
-        }).length;
-        
-        document.getElementById('breeding-alerts').textContent = breedingAlerts;
-        
-        // Active alerts calculation
-        const activeAlerts = healthAlerts + pendingTasks + remindersDue + breedingAlerts;
-        document.getElementById('active-alerts').textContent = activeAlerts;
-        document.getElementById('alert-details').textContent = activeAlerts === 0 ? 'All systems normal' : `${activeAlerts} items need attention`;
-        
-        // Update feed status
-        const feedStatus = this.calculateFeedStatus();
-        document.getElementById('feed-status').textContent = feedStatus;
-        
-        // Update charts
-        this.updateCharts();
-        
-        // Update recent activity
-        this.updateRecentActivity();
-        
-        // Update urgent alerts
-        this.updateUrgentAlerts();
-    }
-
-    calculateFeedStatus() {
-        // Simple feed status calculation - can be enhanced
-        const feedRecords = this.feedRecords.filter(record => {
-            const recordDate = new Date(record.date);
-            const today = new Date();
-            const daysDiff = Math.ceil((today - recordDate) / (1000 * 60 * 60 * 24));
-            return daysDiff <= 7; // Recent feeding records
-        });
-        
-        if (feedRecords.length === 0) return 'No Data';
-        return feedRecords.length > 5 ? 'Good' : 'Low';
-    }
-
-    updateCharts() {
-        // Update herd distribution chart
-        this.updateHerdChart();
-        
-        // Update revenue chart
-        this.updateRevenueChart();
-        
-        // Update feed chart
-        this.updateFeedChart();
-        
-        // Update task completion chart
-        this.updateTaskChart();
-    }
-
     updateHerdChart() {
         const canvas = document.getElementById('herd-chart');
         const ctx = canvas.getContext('2d');
@@ -1125,7 +1622,7 @@ class FarmRecordsManager {
         tbody.innerHTML = '';
         
         if (this.goats.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No goats registered yet</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No goats registered yet</td></tr>';
             return;
         }
         
@@ -1146,6 +1643,7 @@ class FarmRecordsManager {
             };
             
             row.innerHTML = `
+                <td><input type="checkbox" class="goat-checkbox" data-goat-id="${goat.id}"></td>
                 <td>${displayData.id}</td>
                 <td>${displayData.name}</td>
                 <td>${displayData.breed}</td>
@@ -1160,6 +1658,10 @@ class FarmRecordsManager {
             `;
             tbody.appendChild(row);
         });
+        
+        // Update selection state if goats were previously selected
+        this.updateSelectionCounter();
+        this.updateMasterCheckbox();
     }
 
     showGoatModal(goat = null) {
@@ -1175,12 +1677,6 @@ class FarmRecordsManager {
             if (document.getElementById('goat-name')) document.getElementById('goat-name').value = goat.name || '';
             if (document.getElementById('goat-gender')) document.getElementById('goat-gender').value = goat.gender || '';
             if (document.getElementById('goat-dob')) document.getElementById('goat-dob').value = goat.dob || '';
-            if (document.getElementById('goat-breed')) document.getElementById('goat-breed').value = goat.breed || '';
-            if (document.getElementById('goat-location')) document.getElementById('goat-location').value = goat.location || '';
-            if (document.getElementById('goat-status')) document.getElementById('goat-status').value = goat.status || 'alive';
-            
-            // Legacy fields (for backward compatibility)
-            if (document.getElementById('goat-age')) document.getElementById('goat-age').value = goat.age || '';
             if (document.getElementById('goat-color')) document.getElementById('goat-color').value = goat.color || '';
             if (document.getElementById('goat-milk-production')) document.getElementById('goat-milk-production').value = goat.milkProduction || '';
             if (document.getElementById('goat-health-status')) document.getElementById('goat-health-status').value = goat.healthStatus || '';
