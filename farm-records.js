@@ -70,13 +70,117 @@ class FarmRecordsManager {
         return true;
     }
 
-    // Automated Threat Detection (Demo)
+    // Enhanced Automated Threat Detection
     detectThreats() {
-        const auditLog = JSON.parse(localStorage.getItem('externalAccessAuditLog') || '[]');
-        const failedLogins = auditLog.filter(e => e.action === 'login_failed').length;
-        if (failedLogins > 5) {
-            this.showAdminNotification('Multiple failed login attempts detected!');
+        try {
+            const auditLog = JSON.parse(localStorage.getItem('externalAccessAuditLog') || '[]');
+            const currentTime = Date.now();
+            const oneHourAgo = currentTime - (60 * 60 * 1000);
+            const recentEvents = auditLog.filter(e => new Date(e.timestamp).getTime() > oneHourAgo);
+            
+            const threats = [];
+
+            // 1. Failed login attempts
+            const failedLogins = recentEvents.filter(e => e.action === 'login_failed');
+            if (failedLogins.length > 5) {
+                threats.push({
+                    type: 'brute_force',
+                    severity: 'high',
+                    message: `${failedLogins.length} failed login attempts in the last hour`,
+                    count: failedLogins.length
+                });
+            }
+
+            // 2. Rapid API calls (potential DoS)
+            const apiCalls = recentEvents.filter(e => e.action === 'api_call');
+            if (apiCalls.length > 100) {
+                threats.push({
+                    type: 'dos_attempt',
+                    severity: 'medium',
+                    message: `Unusually high API call volume: ${apiCalls.length} calls in last hour`,
+                    count: apiCalls.length
+                });
+            }
+
+            // 3. Permission violations
+            const permissionDenials = recentEvents.filter(e => e.action === 'permission_denied');
+            if (permissionDenials.length > 10) {
+                threats.push({
+                    type: 'privilege_escalation',
+                    severity: 'medium',
+                    message: `Multiple permission violations: ${permissionDenials.length} attempts`,
+                    count: permissionDenials.length
+                });
+            }
+
+            // 4. Suspicious user activity patterns
+            const userActions = recentEvents.reduce((acc, event) => {
+                const user = event.user || 'unknown';
+                acc[user] = (acc[user] || 0) + 1;
+                return acc;
+            }, {});
+
+            Object.entries(userActions).forEach(([user, count]) => {
+                if (count > 50 && user !== 'admin') {
+                    threats.push({
+                        type: 'suspicious_activity',
+                        severity: 'medium',
+                        message: `User ${user} performed ${count} actions in last hour`,
+                        user: user,
+                        count: count
+                    });
+                }
+            });
+
+            // 5. Check for error patterns
+            const errors = recentEvents.filter(e => e.action.includes('_error'));
+            if (errors.length > 20) {
+                threats.push({
+                    type: 'system_errors',
+                    severity: 'low',
+                    message: `High error rate: ${errors.length} errors in last hour`,
+                    count: errors.length
+                });
+            }
+
+            // Log and notify about threats
+            if (threats.length > 0) {
+                threats.forEach(threat => {
+                    this.logAudit('threat_detected', JSON.stringify(threat));
+                    
+                    if (threat.severity === 'high') {
+                        this.showAdminNotification(`🚨 HIGH THREAT: ${threat.message}`);
+                        
+                        // Auto-trigger emergency lockdown for severe threats
+                        if (threat.type === 'brute_force' && threat.count > 10) {
+                            this.emergencyLockdown();
+                        }
+                    } else if (threat.severity === 'medium') {
+                        this.showAdminNotification(`⚠️ THREAT: ${threat.message}`);
+                    }
+                });
+
+                console.warn('🛡️ Threat Detection Results:', threats);
+                return threats;
+            }
+
+            this.logAudit('threat_scan', 'No threats detected');
+            return [];
+        } catch (error) {
+            this.logAudit('threat_detection_error', `Threat detection failed: ${error.message}`);
+            console.error('Threat detection error:', error);
+            return [];
         }
+    }
+
+    // Run threat detection periodically
+    startThreatMonitoring() {
+        // Run threat detection every 5 minutes
+        setInterval(() => {
+            this.detectThreats();
+        }, 5 * 60 * 1000);
+        
+        this.logAudit('threat_monitoring', 'Threat monitoring started');
     }
 
     // Data Retention & Deletion Policies (with backup protection)
@@ -150,12 +254,112 @@ class FarmRecordsManager {
         this.logAudit('privacy_mode', 'Privacy mode disabled');
     }
 
-    // Secure API Gateway (Demo)
+    // Secure API Gateway (Enhanced Security)
     callAPI(endpoint, payload) {
-        // Simulate API call with logging and rate limit
-        if (!this.checkRateLimit(this.currentUser)) return;
-        this.logAudit('api_call', `Endpoint: ${endpoint}, Payload: ${JSON.stringify(payload)}`);
-        // ...actual API logic...
+        try {
+            // Validate user and permissions
+            if (!this.currentUser) {
+                throw new Error('User not authenticated');
+            }
+
+            // Rate limiting check
+            if (!this.checkRateLimit(this.currentUser)) {
+                throw new Error('Rate limit exceeded');
+            }
+
+            // Input validation
+            const sanitizedEndpoint = this.sanitizeInput(endpoint);
+            if (!sanitizedEndpoint || sanitizedEndpoint.length === 0) {
+                throw new Error('Invalid endpoint');
+            }
+
+            // Enhanced security checks
+            if (!this.validateAPIRequest(sanitizedEndpoint, payload)) {
+                throw new Error('Invalid API request');
+            }
+
+            // Simulate secure API call with comprehensive logging
+            const apiCall = {
+                endpoint: sanitizedEndpoint,
+                payload: this.sanitizeAPIPayload(payload),
+                timestamp: new Date().toISOString(),
+                user: this.currentUser.username,
+                userAgent: navigator.userAgent || 'Unknown',
+                ip: this.getClientIP()
+            };
+
+            this.logAudit('api_call', `Secure API call: ${JSON.stringify(apiCall)}`);
+            
+            // Simulate response with security headers
+            const response = {
+                status: 'success',
+                data: 'API response data',
+                headers: {
+                    'Content-Security-Policy': "default-src 'self'",
+                    'X-Frame-Options': 'DENY',
+                    'X-Content-Type-Options': 'nosniff'
+                }
+            };
+
+            this.logAudit('api_response', `API call successful: ${sanitizedEndpoint}`);
+            return response;
+        } catch (error) {
+            this.logAudit('api_error', `API call failed: ${error.message}`);
+            console.error('API Gateway Error:', error);
+            throw error;
+        }
+    }
+
+    // Validate API requests
+    validateAPIRequest(endpoint, payload) {
+        // Check endpoint whitelist
+        const allowedEndpoints = [
+            '/api/goats', '/api/health', '/api/breeding', '/api/reports',
+            '/api/feed', '/api/products', '/api/contacts'
+        ];
+        
+        if (!allowedEndpoints.some(allowed => endpoint.startsWith(allowed))) {
+            return false;
+        }
+
+        // Validate payload size (max 1MB)
+        const payloadSize = JSON.stringify(payload || {}).length;
+        if (payloadSize > 1024 * 1024) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // Sanitize API payload
+    sanitizeAPIPayload(payload) {
+        if (!payload || typeof payload !== 'object') {
+            return {};
+        }
+
+        const sanitized = {};
+        Object.keys(payload).forEach(key => {
+            const sanitizedKey = this.sanitizeInput(key);
+            const value = payload[key];
+            
+            if (typeof value === 'string') {
+                sanitized[sanitizedKey] = this.sanitizeInput(value);
+            } else if (typeof value === 'number' || typeof value === 'boolean') {
+                sanitized[sanitizedKey] = value;
+            } else if (Array.isArray(value)) {
+                sanitized[sanitizedKey] = value.map(item => 
+                    typeof item === 'string' ? this.sanitizeInput(item) : item
+                );
+            }
+        });
+
+        return sanitized;
+    }
+
+    // Get client IP (simplified for demo)
+    getClientIP() {
+        // In a real app, this would be determined server-side
+        return '127.0.0.1';
     }
 
     // Multi-Language & Localization (Demo)
@@ -621,11 +825,206 @@ class FarmRecordsManager {
             this.initializeAuth();
             this.setupEventListeners();
             this.setupBulkOperations();
+            this.setupMobileEnhancements(); // Add mobile support
+            this.startThreatMonitoring(); // Start security monitoring
             console.log('✅ App initialization completed successfully');
         } catch (error) {
             console.error('❌ Critical error during initialization:', error);
             this.handleInitializationError(error);
         }
+    }
+
+    // Enhanced mobile responsiveness setup
+    setupMobileEnhancements() {
+        try {
+            // Detect mobile device
+            this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            this.isTablet = /iPad|Android/i.test(navigator.userAgent) && !/Mobile/i.test(navigator.userAgent);
+            
+            if (this.isMobile || this.isTablet) {
+                document.body.classList.add('mobile-device');
+                
+                // Add touch-friendly enhancements
+                this.addTouchGestures();
+                this.optimizeForMobile();
+                this.addMobileNavigation();
+                
+                this.logAudit('mobile_enhancement', `Mobile optimizations applied for ${this.isMobile ? 'mobile' : 'tablet'} device`);
+            }
+
+            // Add responsive viewport listeners
+            window.addEventListener('resize', this.handleViewportChange.bind(this));
+            window.addEventListener('orientationchange', this.handleOrientationChange.bind(this));
+            
+            // Initial viewport setup
+            this.handleViewportChange();
+        } catch (error) {
+            console.error('Mobile enhancement setup failed:', error);
+        }
+    }
+
+    // Add touch gesture support
+    addTouchGestures() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!touchStartX || !touchStartY) return;
+
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+
+            // Swipe detection (minimum 50px movement)
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 0) {
+                    this.handleSwipeRight();
+                } else {
+                    this.handleSwipeLeft();
+                }
+            }
+
+            touchStartX = 0;
+            touchStartY = 0;
+        });
+    }
+
+    // Handle swipe gestures
+    handleSwipeRight() {
+        // Could implement navigation between sections
+        console.log('Swipe right detected');
+    }
+
+    handleSwipeLeft() {
+        // Could implement navigation between sections
+        console.log('Swipe left detected');
+    }
+
+    // Optimize interface for mobile
+    optimizeForMobile() {
+        // Larger touch targets
+        const buttons = document.querySelectorAll('button, .action-btn');
+        buttons.forEach(btn => {
+            btn.style.minHeight = '44px';
+            btn.style.minWidth = '44px';
+            btn.style.padding = '12px';
+        });
+
+        // Larger form inputs
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.style.fontSize = '16px'; // Prevents zoom on iOS
+            input.style.padding = '12px';
+            input.style.minHeight = '44px';
+        });
+
+        // Optimize tables for mobile
+        const tables = document.querySelectorAll('table');
+        tables.forEach(table => {
+            if (this.isMobile) {
+                table.style.fontSize = '14px';
+                // Make tables horizontally scrollable
+                const wrapper = document.createElement('div');
+                wrapper.style.overflowX = 'auto';
+                wrapper.style.WebkitOverflowScrolling = 'touch';
+                table.parentNode.insertBefore(wrapper, table);
+                wrapper.appendChild(table);
+            }
+        });
+    }
+
+    // Add mobile-friendly navigation
+    addMobileNavigation() {
+        if (this.isMobile) {
+            // Create hamburger menu if it doesn't exist
+            let hamburger = document.querySelector('.mobile-menu-toggle');
+            if (!hamburger) {
+                hamburger = document.createElement('button');
+                hamburger.className = 'mobile-menu-toggle';
+                hamburger.innerHTML = '☰';
+                hamburger.style.cssText = `
+                    position: fixed;
+                    top: 15px;
+                    left: 15px;
+                    z-index: 1000;
+                    background: #2c3e50;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    padding: 10px;
+                    font-size: 18px;
+                    cursor: pointer;
+                `;
+                
+                hamburger.addEventListener('click', this.toggleMobileMenu.bind(this));
+                document.body.appendChild(hamburger);
+            }
+        }
+    }
+
+    // Toggle mobile menu
+    toggleMobileMenu() {
+        const nav = document.querySelector('.nav-links');
+        if (nav) {
+            nav.classList.toggle('mobile-open');
+            if (nav.classList.contains('mobile-open')) {
+                nav.style.cssText = `
+                    position: fixed;
+                    top: 60px;
+                    left: 0;
+                    width: 100%;
+                    background: white;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    z-index: 999;
+                    display: block !important;
+                `;
+            } else {
+                nav.style.display = '';
+            }
+        }
+    }
+
+    // Handle viewport changes
+    handleViewportChange() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        // Adjust interface based on viewport size
+        if (width < 768) {
+            document.body.classList.add('small-screen');
+        } else {
+            document.body.classList.remove('small-screen');
+        }
+
+        // Adjust dashboard layout
+        if (width < 1024) {
+            document.body.classList.add('compact-layout');
+        } else {
+            document.body.classList.remove('compact-layout');
+        }
+
+        this.logAudit('viewport_change', `Viewport: ${width}x${height}`);
+    }
+
+    // Handle orientation changes
+    handleOrientationChange() {
+        setTimeout(() => {
+            this.handleViewportChange();
+            
+            // Refresh charts if they exist
+            if (typeof this.updateCharts === 'function') {
+                this.updateCharts();
+            }
+            
+            this.logAudit('orientation_change', `New orientation: ${window.orientation || 'unknown'}`);
+        }, 100);
     }
 
     // Handle critical initialization errors
@@ -1891,12 +2290,114 @@ class FarmRecordsManager {
             .replace(/'/g, '&#x27;');
     }
 
+    // Enhanced input sanitization with comprehensive validation
     sanitizeInput(value) {
         if (!value) return '';
-        return String(value).trim()
+        
+        let sanitized = String(value).trim();
+        
+        // Remove dangerous script tags and event handlers
+        sanitized = sanitized
             .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+            .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+            .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+            .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
             .replace(/javascript:/gi, '')
-            .replace(/on\w+\s*=/gi, '');
+            .replace(/vbscript:/gi, '')
+            .replace(/data:/gi, '')
+            .replace(/on\w+\s*=/gi, '')
+            .replace(/style\s*=/gi, '')
+            .replace(/expression\s*\(/gi, '');
+
+        // Remove SQL injection patterns
+        sanitized = sanitized
+            .replace(/('|(\\')|(;\s*(drop|alter|create|delete|insert|update)\s))/gi, '')
+            .replace(/(union\s+(all\s+)?select)/gi, '')
+            .replace(/(\|\||&&|;|\|)/g, '');
+
+        // Limit length to prevent buffer overflow
+        if (sanitized.length > 1000) {
+            sanitized = sanitized.substring(0, 1000);
+        }
+
+        return sanitized;
+    }
+
+    // Validate specific input types
+    validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    validatePhone(phone) {
+        // Kenyan phone number format
+        const phoneRegex = /^(\+254|0)[17]\d{8}$/;
+        return phoneRegex.test(phone.replace(/\s/g, ''));
+    }
+
+    validateNumber(value, min = null, max = null) {
+        const num = parseFloat(value);
+        if (isNaN(num)) return false;
+        if (min !== null && num < min) return false;
+        if (max !== null && num > max) return false;
+        return true;
+    }
+
+    validateDate(dateString) {
+        const date = new Date(dateString);
+        return date instanceof Date && !isNaN(date.getTime());
+    }
+
+    // Comprehensive form validation
+    validateFormData(formData, rules = {}) {
+        const errors = [];
+        
+        Object.keys(rules).forEach(field => {
+            const rule = rules[field];
+            const value = formData[field];
+            
+            // Required field check
+            if (rule.required && (!value || value.trim() === '')) {
+                errors.push(`${field} is required`);
+                return;
+            }
+            
+            if (value) {
+                // Type validation
+                switch (rule.type) {
+                    case 'email':
+                        if (!this.validateEmail(value)) {
+                            errors.push(`${field} must be a valid email`);
+                        }
+                        break;
+                    case 'phone':
+                        if (!this.validatePhone(value)) {
+                            errors.push(`${field} must be a valid phone number`);
+                        }
+                        break;
+                    case 'number':
+                        if (!this.validateNumber(value, rule.min, rule.max)) {
+                            errors.push(`${field} must be a valid number${rule.min ? ` (min: ${rule.min})` : ''}${rule.max ? ` (max: ${rule.max})` : ''}`);
+                        }
+                        break;
+                    case 'date':
+                        if (!this.validateDate(value)) {
+                            errors.push(`${field} must be a valid date`);
+                        }
+                        break;
+                }
+                
+                // Length validation
+                if (rule.minLength && value.length < rule.minLength) {
+                    errors.push(`${field} must be at least ${rule.minLength} characters`);
+                }
+                if (rule.maxLength && value.length > rule.maxLength) {
+                    errors.push(`${field} must be no more than ${rule.maxLength} characters`);
+                }
+            }
+        });
+        
+        return errors;
     }
 
     showGoatModal(goat = null) {
