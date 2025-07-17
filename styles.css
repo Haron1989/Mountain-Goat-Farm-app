@@ -1239,8 +1239,8 @@ section {
 .actions-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    max-width: 600px;
+    gap: 20px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -1248,12 +1248,17 @@ section {
     background: white;
     border: 2px solid #27ae60;
     border-radius: 15px;
-    padding: 20px;
+    padding: 18px 12px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
     color: #2c3e50;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .action-btn:hover {
@@ -1264,15 +1269,18 @@ section {
 }
 
 .action-btn span {
-    font-size: 2rem;
+    font-size: 2.2rem;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    line-height: 1;
 }
 
 .action-btn p {
     margin: 0;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    color: inherit;
 }
 
 /* Modal Enhancements */
@@ -1327,6 +1335,27 @@ section {
     border: 1px solid #f5c6cb;
 }
 
+/* Tablet Responsive - Medium screens */
+@media (max-width: 1024px) {
+    .actions-grid {
+        max-width: 700px;
+        gap: 18px;
+    }
+    
+    .action-btn {
+        padding: 16px 10px;
+        min-height: 90px;
+    }
+    
+    .action-btn span {
+        font-size: 2rem;
+    }
+    
+    .action-btn p {
+        font-size: 0.9rem;
+    }
+}
+
 /* Mobile Enhancements for New Features */
 @media (max-width: 768px) {
     .newsletter-section {
@@ -1355,21 +1384,24 @@ section {
     
     .actions-grid {
         grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
+        gap: 12px;
         max-width: 100%;
     }
     
     .action-btn {
-        padding: 12px 8px;
+        padding: 15px 8px;
+        min-height: 80px;
     }
     
     .action-btn span {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
+        margin-bottom: 6px;
     }
     
     .action-btn p {
-        font-size: 0.8rem;
-        margin: 5px 0 0 0;
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.1;
     }
     
     /* Modal Mobile */
@@ -1636,21 +1668,25 @@ section {
     /* Actions grid for very small screens */
     .actions-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        gap: 15px;
+        max-width: 100%;
     }
     
     .action-btn {
-        padding: 10px 5px;
-        border-radius: 10px;
+        padding: 16px 12px;
+        border-radius: 12px;
+        min-height: 90px;
     }
     
     .action-btn span {
-        font-size: 1rem;
+        font-size: 1.6rem;
+        margin-bottom: 8px;
     }
     
     .action-btn p {
-        font-size: 0.7rem;
-        margin: 3px 0 0 0;
+        font-size: 0.9rem;
+        margin: 0;
+        line-height: 1.2;
     }
 }
 
