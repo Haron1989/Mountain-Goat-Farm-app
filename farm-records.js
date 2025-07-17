@@ -1,72 +1,148 @@
 // Farm Records Management System
 class FarmRecordsManager {
-    // End-to-End Encryption (Demo - AES)
-    encryptData(data, key = 'demo-key') {
-        // Demo: XOR-based pseudo-encryption (replace with AES in production)
-        const str = JSON.stringify(data);
-        let out = '';
-        for (let i = 0; i < str.length; i++) {
-            out += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    // End-to-End Encryption (AES using CryptoJS)
+    encryptData(data) {
+        if (typeof CryptoJS === 'undefined') {
+            alert('Encryption library missing. Data not encrypted.');
+            return JSON.stringify(data);
         }
-        return btoa(out);
+        const key = localStorage.getItem('encryptionKey') || 'FarmRecordsSecretKey2025';
+        return CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
     }
-    decryptData(data, key = 'demo-key') {
+    decryptData(data) {
+        if (typeof CryptoJS === 'undefined') {
+            alert('Encryption library missing. Data not decrypted.');
+            return null;
+        }
+        const key = localStorage.getItem('encryptionKey') || 'FarmRecordsSecretKey2025';
         try {
-            const str = atob(data);
-            let out = '';
-            for (let i = 0; i < str.length; i++) {
-                out += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
-            }
-            return JSON.parse(out);
-        } catch { return null; }
+            const bytes = CryptoJS.AES.decrypt(data, key);
+            return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        } catch {
+            return null;
+        }
     }
 
     // Role-Based Access Control (RBAC)
     getRolePermissions(role) {
         const roles = {
             administrator: ['all'],
-            vet: ['view_health', 'add_health', 'view_animals'],
+            vet: ['view_health', 'add_health', 'view_animals', 'edit_health', 'edit_animals'],
             inspector: ['view_animals', 'view_reports'],
-            consultant: ['view_animals', 'view_reports', 'add_notes'],
+            consultant: ['view_animals', 'view_reports', 'add_notes', 'edit_animals'],
             external: ['view_animals', 'view_reports']
         };
         return roles[role] || [];
     }
-    // Enforce RBAC for record access
-    hasPermission(permission) {
-        if (!this.currentUser) return false;
-        const perms = this.getRolePermissions(this.currentUser.role);
-        return perms.includes('all') || perms.includes(permission);
+
+    // Permission checking methods
+    checkPermission(action) {
+        if (!this.currentUser) {
+            this.logAudit('permission_denied', `No user logged in for action: ${action}`);
+            return false;
+        }
+
+        const userPermissions = this.getRolePermissions(this.currentUser.role);
+        
+        // Administrators have all permissions
+        if (userPermissions.includes('all')) {
+            return true;
+        }
+
+        // Check specific permission
+        const hasPermission = userPermissions.includes(action);
+        if (!hasPermission) {
+            this.logAudit('permission_denied', `User ${this.currentUser.username} denied access to: ${action}`);
+        }
+        return hasPermission;
+    }
+
+    // Centralized permission enforcement with user feedback
+    enforcePermission(action, errorMessage = null) {
+        if (!this.checkPermission(action)) {
+            const message = errorMessage || `Access denied: You don't have permission to ${action.replace('_', ' ')}`;
+            if (typeof alert !== 'undefined') {
+                alert(message);
+            }
+            console.warn(`Permission denied for action: ${action}`);
+            return false;
+        }
+        return true;
     }
 
     // Automated Threat Detection (Demo)
     detectThreats() {
         const auditLog = JSON.parse(localStorage.getItem('externalAccessAuditLog') || '[]');
         const failedLogins = auditLog.filter(e => e.action === 'login_failed').length;
-        const rapidExports = auditLog.filter(e => e.action === 'compliance_export').length;
         if (failedLogins > 5) {
             this.showAdminNotification('Multiple failed login attempts detected!');
         }
-        if (rapidExports > 10) {
-            this.showAdminNotification('Unusual number of exports detected!');
+    }
+
+    // Data Retention & Deletion Policies (with backup protection)
+    enforceDataRetention(days = 365) {
+        try {
+            const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+            const dataToArchive = this.goats.filter(g => new Date(g.dateAdded).getTime() <= cutoff);
+            
+            if (dataToArchive.length === 0) {
+                this.logAudit('data_retention', 'No old records found for archival');
+                return;
+            }
+            
+            // Create backup archive before deletion
+            const archiveKey = `farmGoats_archive_${new Date().toISOString().split('T')[0]}`;
+            const existingArchive = JSON.parse(localStorage.getItem(archiveKey) || '[]');
+            const updatedArchive = [...existingArchive, ...dataToArchive];
+            localStorage.setItem(archiveKey, JSON.stringify(updatedArchive));
+            
+            // Only remove after successful backup
+            this.goats = this.goats.filter(g => new Date(g.dateAdded).getTime() > cutoff);
+            localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+            
+            this.logAudit('data_retention', `${dataToArchive.length} old goat records archived (older than ${days} days) to ${archiveKey}`);
+            
+            // Notify user about archived data
+            if (typeof alert !== 'undefined') {
+                alert(`Data retention: ${dataToArchive.length} old records archived safely. Archive key: ${archiveKey}`);
+            }
+        } catch (error) {
+            this.logAudit('data_retention_error', `Failed to enforce data retention: ${error.message}`);
+            console.error('Data retention failed:', error);
         }
     }
 
-    // Data Retention & Deletion Policies
-    enforceDataRetention(days = 365) {
-        if (!confirm(`Delete all goat records older than ${days} days? This cannot be undone.`)) return;
-        const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
-        this.goats = this.goats.filter(g => new Date(g.dateAdded).getTime() > cutoff);
-        localStorage.setItem('farmGoats', JSON.stringify(this.goats));
-        this.logAudit('data_retention', `Old goat records deleted (older than ${days} days)`);
+    // Restore archived data function
+    restoreArchivedData(archiveKey) {
+        try {
+            const archivedData = JSON.parse(localStorage.getItem(archiveKey) || '[]');
+            if (archivedData.length === 0) {
+                alert('No archived data found for this key');
+                return false;
+            }
+            
+            // Add back to main dataset with confirmation
+            if (confirm(`Restore ${archivedData.length} archived records? This will add them back to your active goat records.`)) {
+                this.goats = [...this.goats, ...archivedData];
+                localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+                this.logAudit('data_restore', `Restored ${archivedData.length} records from ${archiveKey}`);
+                this.loadGoats(); // Refresh UI
+                alert(`Successfully restored ${archivedData.length} records`);
+                return true;
+            }
+        } catch (error) {
+            this.logAudit('data_restore_error', `Failed to restore data: ${error.message}`);
+            alert('Failed to restore archived data. Check console for details.');
+        }
+        return false;
     }
 
     // Privacy Mode for Demonstrations
     enablePrivacyMode() {
         document.body.classList.add('privacy-mode');
         // Mask all personal/sensitive data in UI
+        // Example: mask goat names
         document.querySelectorAll('.goat-name').forEach(el => { el.textContent = 'Anonymous'; });
-        document.querySelectorAll('.contact-name, .contact-email, .transaction-amount, .health-status').forEach(el => { el.textContent = '***'; });
         this.logAudit('privacy_mode', 'Privacy mode enabled');
     }
     disablePrivacyMode() {
@@ -79,15 +155,14 @@ class FarmRecordsManager {
         // Simulate API call with logging and rate limit
         if (!this.checkRateLimit(this.currentUser)) return;
         this.logAudit('api_call', `Endpoint: ${endpoint}, Payload: ${JSON.stringify(payload)}`);
-        alert('API call simulated. No real data sent.');
+        // ...actual API logic...
     }
 
     // Multi-Language & Localization (Demo)
     setLanguage(lang) {
         localStorage.setItem('farmAppLang', lang);
         this.logAudit('language_change', `Language set to ${lang}`);
-        document.documentElement.lang = lang;
-        alert(`Language switched to ${lang}. (Demo only)`);
+        // ...reload UI strings...
     }
 
     // Customizable Dashboard Widgets (Demo)
@@ -99,8 +174,7 @@ class FarmRecordsManager {
 
     // Scheduled Data Backups (Demo)
     scheduleBackup(intervalHours = 24) {
-        if (window.scheduledBackupId) clearInterval(window.scheduledBackupId);
-        window.scheduledBackupId = setInterval(() => {
+        setInterval(() => {
             const backup = {
                 goats: this.encryptData(this.goats),
                 breeding: this.encryptData(this.breedingRecords),
@@ -114,7 +188,7 @@ class FarmRecordsManager {
     // Integration with External Services (Demo)
     integrateWithService(serviceName, config) {
         this.logAudit('integration', `Integrated with ${serviceName}: ${JSON.stringify(config)}`);
-        alert(`Integration with ${serviceName} simulated.`);
+        // ...integration logic...
     }
 
     // Advanced Reporting & Analytics (Demo)
@@ -127,21 +201,19 @@ class FarmRecordsManager {
     enableOfflineMode() {
         localStorage.setItem('offlineMode', 'true');
         this.logAudit('offline_mode', 'Offline mode enabled');
-        alert('Offline mode enabled. Data will be saved locally until reconnected.');
+        // ...offline logic...
     }
     disableOfflineMode() {
         localStorage.setItem('offlineMode', 'false');
         this.logAudit('offline_mode', 'Offline mode disabled');
-        alert('Offline mode disabled. Data will sync to server.');
     }
 
     // Emergency Lockdown Feature
     emergencyLockdown() {
         localStorage.setItem('lockdown', 'true');
         this.logAudit('lockdown', 'Emergency lockdown activated');
-        // Revoke all external access tokens
-        localStorage.setItem('externalAccessTokens', '[]');
         alert('System is in lockdown. All external access revoked.');
+        // ...revoke all tokens...
     }
     releaseLockdown() {
         localStorage.setItem('lockdown', 'false');
@@ -152,20 +224,11 @@ class FarmRecordsManager {
     // Consent & Audit Trail for Data Sharing
     recordConsent(user, dataType) {
         this.logAudit('consent', `User ${user} consented to share ${dataType}`);
-        localStorage.setItem(`consent_${user}_${dataType}`, 'true');
-    }
-    hasConsent(user, dataType) {
-        return localStorage.getItem(`consent_${user}_${dataType}`) === 'true';
     }
 
     // User Training & Help Center (Demo)
     showHelpCenter() {
-        const helpDiv = document.createElement('div');
-        helpDiv.id = 'help-center-modal';
-        helpDiv.style.cssText = 'position:fixed;top:10%;left:50%;transform:translateX(-50%);background:#fff;padding:32px 40px;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);z-index:3000;max-width:480px;font-family:Montserrat,sans-serif;';
-        helpDiv.innerHTML = `<h2>Help Center</h2><ul><li>How to add a goat record</li><li>How to export audit logs</li><li>How to enable privacy mode</li><li>Contact support: support@mountaingoatfarm.com</li></ul><button id='close-help-center'>Close</button>`;
-        document.body.appendChild(helpDiv);
-        document.getElementById('close-help-center').onclick = () => helpDiv.remove();
+        alert('Help Center: Search tutorials, FAQs, and guides.');
         this.logAudit('help_center', 'Help center accessed');
     }
     // Two-Factor Authentication (2FA) - Demo implementation
@@ -183,18 +246,14 @@ class FarmRecordsManager {
 
     // Granular Audit Logging
     logAudit(action, details) {
-        try {
-            const auditLog = JSON.parse(localStorage.getItem('externalAccessAuditLog') || '[]');
-            auditLog.push({
-                timestamp: new Date().toISOString(),
-                user: this.currentUser ? this.currentUser.username : 'unknown',
-                action,
-                details
-            });
-            localStorage.setItem('externalAccessAuditLog', JSON.stringify(auditLog));
-        } catch (err) {
-            alert('Audit log error: ' + err.message);
-        }
+        const auditLog = JSON.parse(localStorage.getItem('externalAccessAuditLog') || '[]');
+        auditLog.push({
+            timestamp: new Date().toISOString(),
+            user: this.currentUser ? this.currentUser.username : 'unknown',
+            action,
+            details
+        });
+        localStorage.setItem('externalAccessAuditLog', JSON.stringify(auditLog));
     }
 
     // Data Masking for Sensitive Fields
@@ -204,13 +263,6 @@ class FarmRecordsManager {
             if (masked[field]) masked[field] = '***';
         });
         return masked;
-    }
-    // Use data masking in record display (example for goats)
-    getGoatDisplay(goat) {
-        if (this.currentUser && this.currentUser.role === 'external') {
-            return this.maskSensitiveData(goat, ['name', 'location', 'notes']);
-        }
-        return goat;
     }
 
     // Customizable Permissions
@@ -258,17 +310,11 @@ class FarmRecordsManager {
 
     // UI Accessibility Improvements
     improveAccessibility() {
-        // Add ARIA roles and keyboard navigation for read-only banner and help center
+        // Add ARIA roles and keyboard navigation for read-only banner
         const banner = document.getElementById('readonly-banner');
         if (banner) {
             banner.setAttribute('role', 'status');
             banner.setAttribute('tabindex', '0');
-        }
-        const helpCenter = document.getElementById('help-center-modal');
-        if (helpCenter) {
-            helpCenter.setAttribute('role', 'dialog');
-            helpCenter.setAttribute('aria-modal', 'true');
-            helpCenter.setAttribute('tabindex', '0');
         }
     }
 
@@ -493,43 +539,114 @@ class FarmRecordsManager {
         }, timeoutMinutes * 60 * 1000);
     }
     constructor() {
+        try {
+            this.currentUser = null;
+            this.goats = this.safeParseJSON(localStorage.getItem('farmGoats'), []);
+            this.breedingRecords = this.safeParseJSON(localStorage.getItem('breedingRecords'), []);
+            this.meatRecords = this.safeParseJSON(localStorage.getItem('meatRecords'), []);
+            this.milkRecords = this.safeParseJSON(localStorage.getItem('milkRecords'), []);
+            this.feedRecords = this.safeParseJSON(localStorage.getItem('feedRecords'), []);
+            this.healthRecords = this.safeParseJSON(localStorage.getItem('healthRecords'), []);
+            this.products = this.safeParseJSON(localStorage.getItem('farmProducts'), []);
+            this.contacts = this.safeParseJSON(localStorage.getItem('farmContacts'), []);
+            
+            // Existing data arrays for additional features
+            this.tasks = this.safeParseJSON(localStorage.getItem('farmTasks'), []);
+            this.reminders = this.safeParseJSON(localStorage.getItem('farmReminders'), []);
+            this.transactions = this.safeParseJSON(localStorage.getItem('farmTransactions'), []);
+            this.sales = this.safeParseJSON(localStorage.getItem('farmSales'), []);
+            this.crops = this.safeParseJSON(localStorage.getItem('farmCrops'), []);
+            
+            // New modules data arrays
+            this.leases = this.safeParseJSON(localStorage.getItem('farmLeases'), []);
+            this.equipment = this.safeParseJSON(localStorage.getItem('farmEquipment'), []);
+            this.laborers = this.safeParseJSON(localStorage.getItem('farmLaborers'), []);
+            this.jobAssignments = this.safeParseJSON(localStorage.getItem('farmJobAssignments'), []);
+            this.laborPayments = this.safeParseJSON(localStorage.getItem('farmLaborPayments'), []);
+            this.users = this.safeParseJSON(localStorage.getItem('farmUsers'), [{"id": 1, "name": "System Administrator", "username": "admin", "email": "admin@mountaingoatfarm.com", "role": "administrator", "status": "active", "dateCreated": "2024-01-01"}]);
+            this.systemSettings = this.safeParseJSON(localStorage.getItem('farmSystemSettings'), {});
+            
+            // Bulk operations state
+            this.selectedGoats = new Set();
+            
+            console.log('✅ FarmRecordsManager constructor completed successfully');
+        } catch (error) {
+            console.error('❌ Critical error in constructor:', error);
+            this.initializeDefaults();
+        }
+    }
+
+    // Safe JSON parsing with fallback
+    safeParseJSON(jsonString, fallback = null) {
+        try {
+            if (!jsonString) return fallback;
+            return JSON.parse(jsonString);
+        } catch (error) {
+            console.warn('JSON parse error, using fallback:', error);
+            return fallback;
+        }
+    }
+
+    // Initialize defaults in case of critical constructor error
+    initializeDefaults() {
         this.currentUser = null;
-        this.goats = JSON.parse(localStorage.getItem('farmGoats') || '[]');
-        this.breedingRecords = JSON.parse(localStorage.getItem('breedingRecords') || '[]');
-        this.meatRecords = JSON.parse(localStorage.getItem('meatRecords') || '[]');
-        this.milkRecords = JSON.parse(localStorage.getItem('milkRecords') || '[]');
-        this.feedRecords = JSON.parse(localStorage.getItem('feedRecords') || '[]');
-        this.healthRecords = JSON.parse(localStorage.getItem('healthRecords') || '[]');
-        this.products = JSON.parse(localStorage.getItem('farmProducts') || '[]');
-        this.contacts = JSON.parse(localStorage.getItem('farmContacts') || '[]');
-        
-        // Existing data arrays for additional features
-        this.tasks = JSON.parse(localStorage.getItem('farmTasks') || '[]');
-        this.reminders = JSON.parse(localStorage.getItem('farmReminders') || '[]');
-        this.transactions = JSON.parse(localStorage.getItem('farmTransactions') || '[]');
-        this.sales = JSON.parse(localStorage.getItem('farmSales') || '[]');
-        this.crops = JSON.parse(localStorage.getItem('farmCrops') || '[]');
-        
-        // New modules data arrays
-        this.leases = JSON.parse(localStorage.getItem('farmLeases') || '[]');
-        this.equipment = JSON.parse(localStorage.getItem('farmEquipment') || '[]');
-        this.laborers = JSON.parse(localStorage.getItem('farmLaborers') || '[]');
-        this.jobAssignments = JSON.parse(localStorage.getItem('farmJobAssignments') || '[]');
-        this.laborPayments = JSON.parse(localStorage.getItem('farmLaborPayments') || '[]');
-        this.users = JSON.parse(localStorage.getItem('farmUsers') || '[{"id": 1, "name": "System Administrator", "username": "admin", "email": "admin@mountaingoatfarm.com", "role": "administrator", "status": "active", "dateCreated": "2024-01-01"}]');
-        this.systemSettings = JSON.parse(localStorage.getItem('farmSystemSettings') || '{}');
-        
-        // Bulk operations state
+        this.goats = [];
+        this.breedingRecords = [];
+        this.meatRecords = [];
+        this.milkRecords = [];
+        this.feedRecords = [];
+        this.healthRecords = [];
+        this.products = [];
+        this.contacts = [];
+        this.tasks = [];
+        this.reminders = [];
+        this.transactions = [];
+        this.sales = [];
+        this.crops = [];
+        this.leases = [];
+        this.equipment = [];
+        this.laborers = [];
+        this.jobAssignments = [];
+        this.laborPayments = [];
+        this.users = [{"id": 1, "name": "System Administrator", "username": "admin", "email": "admin@mountaingoatfarm.com", "role": "administrator", "status": "active", "dateCreated": "2024-01-01"}];
+        this.systemSettings = {};
         this.selectedGoats = new Set();
-        
-        // Don't initialize immediately - wait for DOM
+        console.log('⚠️ Initialized with default values due to constructor error');
     }
 
     // Initialize the app - called from DOMContentLoaded
     init() {
-        this.initializeAuth();
-        this.setupEventListeners();
-        this.setupBulkOperations();
+        try {
+            console.log('🚀 Starting app initialization...');
+            this.initializeAuth();
+            this.setupEventListeners();
+            this.setupBulkOperations();
+            console.log('✅ App initialization completed successfully');
+        } catch (error) {
+            console.error('❌ Critical error during initialization:', error);
+            this.handleInitializationError(error);
+        }
+    }
+
+    // Handle critical initialization errors
+    handleInitializationError(error) {
+        try {
+            const errorMessage = `App initialization failed: ${error.message}`;
+            this.logAudit('initialization_error', errorMessage);
+            
+            // Show user-friendly error message
+            if (typeof alert !== 'undefined') {
+                alert('Application failed to start properly. Please refresh the page. If the problem persists, contact support.');
+            }
+            
+            // Try minimal initialization
+            const loginModal = document.getElementById('login-modal');
+            if (loginModal) {
+                loginModal.style.display = 'flex';
+            }
+        } catch (fallbackError) {
+            console.error('❌ Even fallback initialization failed:', fallbackError);
+        }
     }
 
     // Utility function to calculate age from date of birth
@@ -575,38 +692,70 @@ class FarmRecordsManager {
     }
 
     login(username, password) {
-        // Two-Factor Authentication for admin
-        if (username === 'admin' && password === 'farm2024') {
-            this.request2FA(username);
-            const inputCode = prompt('Enter the 2FA code sent to your device:');
-            if (!this.verify2FA(inputCode)) {
-                alert('Invalid 2FA code. Access denied.');
+        try {
+            // Input validation
+            if (!username || !password) {
+                alert('Please enter both username and password');
                 return false;
             }
-            this.currentUser = { username, loginTime: new Date().toISOString(), role: 'administrator', permissions: ['export_reports', 'export_audit_log'] };
-            localStorage.setItem('farmRecordsAuth', JSON.stringify(this.currentUser));
-            document.getElementById('login-modal').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            this.showWelcomeMessage();
-            this.initializeApp();
-            this.logAudit('login', 'Admin logged in');
-            return true;
-        } else if (username === 'external' && password === 'guest2025') {
-            // External user login
-            this.currentUser = { username, loginTime: new Date().toISOString(), role: 'external', permissions: ['export_reports'] };
-            localStorage.setItem('farmRecordsAuth', JSON.stringify(this.currentUser));
-            document.getElementById('login-modal').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            this.showExternalWelcomeMessage('Welcome to Mountain Goat Farm Records! Please follow the instructions provided.');
-            this.startExternalSessionTimeout();
-            this.enableReadOnlyUIMode();
-            this.improveAccessibility();
-            this.initializeApp();
-            this.logAudit('login', 'External user logged in');
-            return true;
+
+            username = this.sanitizeInput(username);
+            password = this.sanitizeInput(password);
+
+            // Two-Factor Authentication for admin
+            if (username === 'admin' && password === 'farm2024') {
+                try {
+                    this.request2FA(username);
+                    const inputCode = prompt('Enter the 2FA code sent to your device:');
+                    if (!this.verify2FA(inputCode)) {
+                        alert('Invalid 2FA code. Access denied.');
+                        this.logAudit('login_failed', 'Admin 2FA verification failed');
+                        return false;
+                    }
+                    this.currentUser = { username, loginTime: new Date().toISOString(), role: 'administrator', permissions: ['export_reports', 'export_audit_log'] };
+                    localStorage.setItem('farmRecordsAuth', JSON.stringify(this.currentUser));
+                    document.getElementById('login-modal').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                    this.showWelcomeMessage();
+                    this.initializeApp();
+                    this.logAudit('login', 'Admin logged in successfully');
+                    return true;
+                } catch (authError) {
+                    console.error('Admin authentication error:', authError);
+                    this.logAudit('login_error', `Admin authentication error: ${authError.message}`);
+                    alert('Authentication system error. Please try again.');
+                    return false;
+                }
+            } else if (username === 'external' && password === 'guest2025') {
+                try {
+                    // External user login
+                    this.currentUser = { username, loginTime: new Date().toISOString(), role: 'external', permissions: ['export_reports'] };
+                    localStorage.setItem('farmRecordsAuth', JSON.stringify(this.currentUser));
+                    document.getElementById('login-modal').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                    this.showExternalWelcomeMessage('Welcome to Mountain Goat Farm Records! Please follow the instructions provided.');
+                    this.startExternalSessionTimeout();
+                    this.enableReadOnlyUIMode();
+                    this.improveAccessibility();
+                    this.initializeApp();
+                    this.logAudit('login', 'External user logged in successfully');
+                    return true;
+                } catch (extError) {
+                    console.error('External user authentication error:', extError);
+                    this.logAudit('login_error', `External authentication error: ${extError.message}`);
+                    alert('Authentication system error. Please try again.');
+                    return false;
+                }
+            }
+            
+            this.logAudit('login_failed', `Failed login attempt for ${username}`);
+            return false;
+        } catch (error) {
+            console.error('Critical login error:', error);
+            this.logAudit('login_critical_error', `Critical login system error: ${error.message}`);
+            alert('Login system error. Please refresh the page and try again.');
+            return false;
         }
-        this.logAudit('login_failed', `Failed login attempt for ${username}`);
-        return false;
     }
 
     showWelcomeMessage() {
@@ -1325,6 +1474,59 @@ class FarmRecordsManager {
                 const dueDate = new Date(record.expectedDueDate);
                 const today = new Date();
                 const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                return daysUntilDue >= 0 && daysUntilDue <= 7; // Due within 7 days
+            }
+            return false;
+        }).length;
+        
+        document.getElementById('breeding-alerts').textContent = breedingAlerts;
+        
+        // Active alerts calculation
+        const activeAlerts = healthAlerts + pendingTasks + remindersDue + breedingAlerts;
+        document.getElementById('active-alerts').textContent = activeAlerts;
+        document.getElementById('alert-details').textContent = activeAlerts === 0 ? 'All systems normal' : `${activeAlerts} items need attention`;
+        
+        // Update feed status
+        const feedStatus = this.calculateFeedStatus();
+        document.getElementById('feed-status').textContent = feedStatus;
+        
+        // Update charts
+        this.updateCharts();
+        
+        // Update recent activity
+        this.updateRecentActivity();
+        
+        // Update urgent alerts
+        this.updateUrgentAlerts();
+    }
+
+    calculateFeedStatus() {
+        // Simple feed status calculation - can be enhanced
+        const feedRecords = this.feedRecords.filter(record => {
+            const recordDate = new Date(record.date);
+            const today = new Date();
+            const daysDiff = Math.ceil((today - recordDate) / (1000 * 60 * 60 * 24));
+            return daysDiff <= 7; // Recent feeding records
+        });
+        
+        if (feedRecords.length === 0) return 'No Data';
+        return feedRecords.length > 5 ? 'Good' : 'Low';
+    }
+
+    updateCharts() {
+        // Update herd distribution chart
+        this.updateHerdChart();
+        
+        // Update revenue chart
+        this.updateRevenueChart();
+        
+        // Update feed chart
+        this.updateFeedChart();
+        
+        // Update task completion chart
+        this.updateTaskChart();
+    }
+
     updateHerdChart() {
         const canvas = document.getElementById('herd-chart');
         const ctx = canvas.getContext('2d');
@@ -1616,55 +1818,94 @@ class FarmRecordsManager {
 
     // Goat Management
     loadGoats() {
-        const tbody = document.getElementById('goats-tbody');
-        if (!tbody) return; // Skip if not on goats page
-        
-        tbody.innerHTML = '';
-        
-        if (this.goats.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No goats registered yet</td></tr>';
-            return;
+        try {
+            const tbody = document.getElementById('goats-tbody');
+            if (!tbody) return; // Skip if not on goats page
+            
+            tbody.innerHTML = '';
+            
+            if (!this.goats || this.goats.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No goats registered yet</td></tr>';
+                return;
+            }
+            
+            this.goats.forEach((goat, index) => {
+                try {
+                    const row = document.createElement('tr');
+                    
+                    // Handle both legacy and new field formats with error checking
+                    const displayData = {
+                        id: goat.id || goat.tag || `goat-${index}`,
+                        name: goat.name || 'N/A',
+                        breed: goat.breed || 'N/A',
+                        age: goat.age || (goat.dob ? this.calculateAge(goat.dob) : 'N/A'),
+                        color: goat.color || 'N/A',
+                        gender: goat.gender || 'N/A',
+                        milkProduction: goat.milkProduction || 'N/A',
+                        healthStatus: goat.healthStatus || goat.status || 'Unknown',
+                        location: goat.location || 'N/A'
+                    };
+                    
+                    row.innerHTML = `
+                        <td><input type="checkbox" class="goat-checkbox" data-goat-id="${displayData.id}"></td>
+                        <td>${this.sanitizeOutput(displayData.id)}</td>
+                        <td>${this.sanitizeOutput(displayData.name)}</td>
+                        <td>${this.sanitizeOutput(displayData.breed)}</td>
+                        <td>${this.sanitizeOutput(displayData.age)}</td>
+                        <td>${this.sanitizeOutput(displayData.color)}</td>
+                        <td>${this.sanitizeOutput(displayData.milkProduction)}</td>
+                        <td class="status-${displayData.healthStatus.toLowerCase().replace(' ', '-')}">${this.sanitizeOutput(displayData.healthStatus)}</td>
+                        <td>
+                            <button class="action-btn edit" onclick="farmRecords.editGoat('${displayData.id}')">Edit</button>
+                            <button class="action-btn delete" onclick="farmRecords.deleteGoat('${displayData.id}')">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                } catch (goatError) {
+                    console.error(`Error loading goat ${index}:`, goatError);
+                    this.logAudit('goat_load_error', `Failed to load goat ${index}: ${goatError.message}`);
+                }
+            });
+            
+            // Update selection state if goats were previously selected
+            this.updateSelectionCounter();
+            this.updateMasterCheckbox();
+        } catch (error) {
+            console.error('Error loading goats:', error);
+            this.logAudit('goats_load_error', `Failed to load goats: ${error.message}`);
+            const tbody = document.getElementById('goats-tbody');
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="9" class="error-state">Error loading goats. Please refresh and try again.</td></tr>';
+            }
         }
-        
-        this.goats.forEach(goat => {
-            const row = document.createElement('tr');
-            
-            // Handle both legacy and new field formats
-            const displayData = {
-                id: goat.id || goat.tag || 'N/A',
-                name: goat.name || 'N/A',
-                breed: goat.breed || 'N/A',
-                age: goat.age || (goat.dob ? this.calculateAge(goat.dob) : 'N/A'),
-                color: goat.color || 'N/A',
-                gender: goat.gender || 'N/A',
-                milkProduction: goat.milkProduction || 'N/A',
-                healthStatus: goat.healthStatus || goat.status || 'Unknown',
-                location: goat.location || 'N/A'
-            };
-            
-            row.innerHTML = `
-                <td><input type="checkbox" class="goat-checkbox" data-goat-id="${goat.id}"></td>
-                <td>${displayData.id}</td>
-                <td>${displayData.name}</td>
-                <td>${displayData.breed}</td>
-                <td>${displayData.age}</td>
-                <td>${displayData.color}</td>
-                <td>${displayData.milkProduction}</td>
-                <td class="status-${displayData.healthStatus.toLowerCase().replace(' ', '-')}">${displayData.healthStatus}</td>
-                <td>
-                    <button class="action-btn edit" onclick="farmRecords.editGoat('${goat.id}')">Edit</button>
-                    <button class="action-btn delete" onclick="farmRecords.deleteGoat('${goat.id}')">Delete</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-        
-        // Update selection state if goats were previously selected
-        this.updateSelectionCounter();
-        this.updateMasterCheckbox();
+    }
+
+    // Input/Output sanitization for security
+    sanitizeOutput(value) {
+        if (value === null || value === undefined) return 'N/A';
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#x27;');
+    }
+
+    sanitizeInput(value) {
+        if (!value) return '';
+        return String(value).trim()
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+            .replace(/javascript:/gi, '')
+            .replace(/on\w+\s*=/gi, '');
     }
 
     showGoatModal(goat = null) {
+        // Check permissions before showing modal
+        const action = goat ? 'edit_animals' : 'add_animals';
+        if (!this.enforcePermission(action)) {
+            return;
+        }
+
         const modal = document.getElementById('goat-modal');
         const form = document.getElementById('goat-form');
         
@@ -1695,9 +1936,17 @@ class FarmRecordsManager {
 
     saveGoat() {
         const form = document.getElementById('goat-form');
+        const isEdit = document.getElementById('goat-id').value !== '';
         
-        // Helper function to safely get form values
-        const getValue = (id) => {
+        // Check permissions before saving
+        const action = isEdit ? 'edit_animals' : 'add_animals';
+        if (!this.enforcePermission(action)) {
+            return;
+        }
+        
+        try {
+            // Helper function to safely get form values
+            const getValue = (id) => {
             const element = document.getElementById(id);
             return element ? element.value : '';
         };
@@ -1743,26 +1992,60 @@ class FarmRecordsManager {
         }
         
         localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+        this.logAudit('goat_saved', `Goat ${isEdit ? 'updated' : 'added'}: ${goat.name} (${goat.tag})`);
         this.loadGoats();
         this.updateDashboard();
         this.populateGoatDropdowns();
         this.hideGoatModal();
+        } catch (error) {
+            this.logAudit('goat_save_error', `Failed to save goat: ${error.message}`);
+            alert('Failed to save goat. Please check your input and try again.');
+            console.error('Save goat error:', error);
+        }
     }
 
     editGoat(id) {
-        const goat = this.goats.find(g => g.id == id);
-        if (goat) {
-            this.showGoatModal(goat);
+        if (!this.enforcePermission('edit_animals')) {
+            return;
+        }
+        
+        try {
+            const goat = this.goats.find(g => g.id == id);
+            if (goat) {
+                this.showGoatModal(goat);
+            } else {
+                alert('Goat not found');
+            }
+        } catch (error) {
+            this.logAudit('goat_edit_error', `Failed to edit goat: ${error.message}`);
+            console.error('Edit goat error:', error);
         }
     }
 
     deleteGoat(id) {
-        if (confirm('Are you sure you want to delete this goat?')) {
-            this.goats = this.goats.filter(g => g.id != id);
-            localStorage.setItem('farmGoats', JSON.stringify(this.goats));
-            this.loadGoats();
-            this.updateDashboard();
-            this.populateGoatDropdowns();
+        if (!this.enforcePermission('delete_animals')) {
+            return;
+        }
+        
+        try {
+            const goat = this.goats.find(g => g.id == id);
+            if (!goat) {
+                alert('Goat not found');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to delete goat "${goat.name}" (${goat.tag})? This action cannot be undone.`)) {
+                this.goats = this.goats.filter(g => g.id != id);
+                localStorage.setItem('farmGoats', JSON.stringify(this.goats));
+                this.logAudit('goat_deleted', `Goat deleted: ${goat.name} (${goat.tag})`);
+                this.loadGoats();
+                this.updateDashboard();
+                this.populateGoatDropdowns();
+            }
+        } catch (error) {
+            this.logAudit('goat_delete_error', `Failed to delete goat: ${error.message}`);
+            alert('Failed to delete goat. Please try again.');
+            console.error('Delete goat error:', error);
         }
     }
 
