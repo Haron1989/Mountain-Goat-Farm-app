@@ -1,0 +1,400 @@
+/* Micro-Tutorials System Styles */
+
+/* Tutorial overlay animations */
+@keyframes tutorialSlideIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px) scale(0.95); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+    }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0; 
+        transform: translateX(100%); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+@keyframes slideOut {
+    from { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+    to { 
+        opacity: 0; 
+        transform: translateX(100%); 
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1); 
+    }
+    50% { 
+        transform: scale(1.05); 
+    }
+}
+
+/* Tutorial highlight effect */
+.tutorial-highlight {
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.8) !important;
+    border: 3px solid #3498db !important;
+    border-radius: 5px !important;
+    position: relative !important;
+    z-index: 10001 !important;
+    animation: pulse 2s infinite;
+}
+
+/* Tutorial help terms */
+.tutorial-help-term {
+    position: relative;
+    cursor: help;
+    background: rgba(52, 152, 219, 0.1);
+    padding: 1px 3px;
+    border-radius: 3px;
+    transition: background-color 0.3s ease;
+}
+
+.tutorial-help-term:hover {
+    background: rgba(52, 152, 219, 0.2);
+}
+
+.tutorial-help-link {
+    color: #3498db !important;
+    font-size: 0.8em !important;
+    vertical-align: super !important;
+    cursor: pointer !important;
+    margin-left: 2px !important;
+    font-weight: bold !important;
+    transition: color 0.3s ease;
+}
+
+.tutorial-help-link:hover {
+    color: #2980b9 !important;
+}
+
+/* Tutorial content styling */
+.tutorial-content {
+    line-height: 1.6;
+    color: #2c3e50;
+}
+
+.tutorial-content h3 {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.tutorial-content h4 {
+    color: #34495e;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.tutorial-content ul {
+    padding-left: 20px;
+    margin-bottom: 15px;
+}
+
+.tutorial-content li {
+    margin-bottom: 5px;
+}
+
+.tutorial-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+.tutorial-warning {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    color: #856404;
+    font-weight: 500;
+}
+
+/* Withdrawal period examples */
+.withdrawal-examples {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.withdrawal-item {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 4px solid #e67e22;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Feed types styling */
+.feed-types {
+    display: grid;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.feed-item {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #27ae60;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Tutorial buttons */
+.tutorial-btn {
+    background: linear-gradient(135deg, #3498db, #2ecc71);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.tutorial-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.tutorial-btn:active {
+    transform: translateY(0);
+}
+
+.tutorial-btn.secondary {
+    background: #ecf0f1;
+    color: #2c3e50;
+}
+
+.tutorial-btn.secondary:hover {
+    background: #d5dbdb;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Tutorial menu styling */
+.tutorial-menu-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.tutorial-menu-item:hover {
+    border-color: #3498db;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.1);
+    transform: translateY(-2px);
+}
+
+.tutorial-menu-item.completed {
+    background: #f8f9fa;
+    border-color: #27ae60;
+}
+
+.tutorial-menu-item.completed:hover {
+    border-color: #27ae60;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.1);
+}
+
+/* Tutorial type badges */
+.tutorial-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: white;
+}
+
+.tutorial-badge.interactive {
+    background: #3498db;
+}
+
+.tutorial-badge.video {
+    background: #e67e22;
+}
+
+/* Tutorial progress bar */
+.tutorial-progress {
+    background: #ecf0f1;
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.tutorial-progress-fill {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+/* Quiz styling */
+.tutorial-quiz {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.quiz-question {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.quiz-option {
+    display: block;
+    margin-bottom: 10px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.quiz-option:hover {
+    background: #e9ecef;
+}
+
+.quiz-option input[type="radio"] {
+    margin-right: 8px;
+}
+
+.quiz-feedback {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.quiz-feedback.correct {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.quiz-feedback.incorrect {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Mobile responsiveness for tutorials */
+@media (max-width: 768px) {
+    .tutorial-content {
+        font-size: 0.9rem;
+    }
+    
+    .tutorial-section {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .withdrawal-examples,
+    .feed-types {
+        grid-template-columns: 1fr;
+    }
+    
+    .tutorial-menu-item {
+        padding: 15px;
+    }
+    
+    .tutorial-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Floating tutorial menu button */
+#tutorial-menu-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    font-size: 24px;
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+#tutorial-menu-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(155, 89, 182, 0.6);
+}
+
+/* Tutorial tips styling */
+.tutorial-tip {
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Accessibility improvements */
+.tutorial-overlay {
+    outline: none;
+}
+
+.tutorial-overlay *:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .tutorial-content {
+        color: #ecf0f1;
+    }
+    
+    .tutorial-section {
+        background: #34495e;
+        color: #ecf0f1;
+    }
+    
+    .tutorial-warning {
+        background: #8e7028;
+        color: #fff3cd;
+    }
+    
+    .withdrawal-item,
+    .feed-item {
+        background: #34495e;
+        color: #ecf0f1;
+    }
+    
+    .tutorial-quiz {
+        background: #34495e;
+        color: #ecf0f1;
+    }
+}

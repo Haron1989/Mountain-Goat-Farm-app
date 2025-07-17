@@ -362,6 +362,65 @@ class FarmRecordsManager {
         return '127.0.0.1';
     }
 
+    // Input sanitization function for security
+    sanitizeInput(input) {
+        if (typeof input !== 'string') {
+            return input;
+        }
+        
+        // Remove potentially dangerous characters and scripts
+        return input
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+            .replace(/<[^>]*>?/gm, '')
+            .replace(/javascript:/gi, '')
+            .replace(/on\w+\s*=/gi, '')
+            .trim();
+    }
+
+    // Output sanitization function
+    sanitizeOutput(output) {
+        if (typeof output !== 'string') {
+            return output;
+        }
+        
+        return output
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#x27;');
+    }
+
+    // Comprehensive form validation
+    validateFormData(formData) {
+        const errors = [];
+        
+        // Email validation
+        if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            errors.push('Invalid email format');
+        }
+        
+        // Phone validation
+        if (formData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
+            errors.push('Invalid phone number format');
+        }
+        
+        // Date validation
+        if (formData.date && isNaN(Date.parse(formData.date))) {
+            errors.push('Invalid date format');
+        }
+        
+        // Number validation
+        if (formData.number !== undefined && (isNaN(formData.number) || formData.number < 0)) {
+            errors.push('Invalid number value');
+        }
+        
+        return {
+            isValid: errors.length === 0,
+            errors: errors
+        };
+    }
+
     // Multi-Language & Localization (Demo)
     setLanguage(lang) {
         localStorage.setItem('farmAppLang', lang);
@@ -434,6 +493,813 @@ class FarmRecordsManager {
     showHelpCenter() {
         alert('Help Center: Search tutorials, FAQs, and guides.');
         this.logAudit('help_center', 'Help center accessed');
+    }
+
+    // === EMBEDDED MICRO-TUTORIALS SYSTEM ===
+    
+    // Tutorial database with context-specific help content
+    getTutorialDatabase() {
+        return {
+            'add-goat': {
+                title: '🐐 How to Add a New Goat',
+                type: 'interactive',
+                steps: [
+                    {
+                        text: 'Click the "Add New Goat" button to open the goat registration form.',
+                        highlight: '#add-goat-btn',
+                        position: 'bottom'
+                    },
+                    {
+                        text: 'Enter the goat\'s unique tag number. This should be visible on the ear tag.',
+                        highlight: '#goat-tag',
+                        position: 'right'
+                    },
+                    {
+                        text: 'Select the breed from the dropdown. If your breed isn\'t listed, you can type a custom one.',
+                        highlight: '#goat-breed',
+                        position: 'bottom'
+                    },
+                    {
+                        text: 'Enter the date of birth or purchase date to track the goat\'s age.',
+                        highlight: '#goat-dob',
+                        position: 'left'
+                    },
+                    {
+                        text: 'Click Save to add the goat to your records. You can always edit this information later.',
+                        highlight: '#goat-form button[type="submit"]',
+                        position: 'top'
+                    }
+                ],
+                tips: [
+                    '💡 Use clear, consistent naming for easy identification',
+                    '📸 Consider taking a photo for visual identification',
+                    '🏷️ Keep ear tags clean and legible'
+                ]
+            },
+            'withdrawal-period': {
+                title: '⏰ Understanding Withdrawal Periods',
+                type: 'video',
+                videoUrl: 'https://example.com/withdrawal-periods-tutorial.mp4',
+                content: `
+                    <div class="tutorial-content">
+                        <h3>What is a Withdrawal Period?</h3>
+                        <p>A withdrawal period is the time you must wait after giving medication to an animal before their milk or meat can be consumed or sold.</p>
+                        
+                        <div class="tutorial-section">
+                            <h4>📋 Why It Matters:</h4>
+                            <ul>
+                                <li>Ensures food safety for consumers</li>
+                                <li>Required by law in most countries</li>
+                                <li>Protects your farm's reputation</li>
+                                <li>Prevents antibiotic resistance</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="tutorial-section">
+                            <h4>🕐 Common Withdrawal Periods:</h4>
+                            <div class="withdrawal-examples">
+                                <div class="withdrawal-item">
+                                    <strong>Penicillin:</strong> 4 days (milk), 28 days (meat)
+                                </div>
+                                <div class="withdrawal-item">
+                                    <strong>Oxytetracycline:</strong> 5 days (milk), 22 days (meat)
+                                </div>
+                                <div class="withdrawal-item">
+                                    <strong>Ivermectin:</strong> 28 days (milk), 35 days (meat)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-warning">
+                            ⚠️ Always check the medication label for specific withdrawal times!
+                        </div>
+                    </div>
+                `,
+                quiz: [
+                    {
+                        question: 'What happens if you don\'t observe withdrawal periods?',
+                        options: ['Nothing happens', 'Food safety risk', 'Animals get sick', 'Lower milk production'],
+                        correct: 1,
+                        explanation: 'Not observing withdrawal periods creates food safety risks and may be illegal.'
+                    }
+                ]
+            },
+            'breeding-records': {
+                title: '💕 Managing Breeding Records',
+                type: 'interactive',
+                steps: [
+                    {
+                        text: 'Click "Add Breeding Record" to track mating activities.',
+                        highlight: '#add-breeding-record-btn',
+                        position: 'bottom'
+                    },
+                    {
+                        text: 'Select the doe (female goat) from your registered animals.',
+                        highlight: '#breeding-doe',
+                        position: 'right'
+                    },
+                    {
+                        text: 'Choose the buck (male goat) or enter "AI" for artificial insemination.',
+                        highlight: '#breeding-buck',
+                        position: 'left'
+                    },
+                    {
+                        text: 'Record the breeding date accurately for pregnancy tracking.',
+                        highlight: '#breeding-date',
+                        position: 'top'
+                    }
+                ],
+                tips: [
+                    '📅 Goat gestation period is approximately 150 days',
+                    '🔄 Track heat cycles every 18-21 days',
+                    '📝 Note any breeding complications'
+                ]
+            },
+            'milk-recording': {
+                title: '🥛 Recording Milk Production',
+                type: 'video',
+                content: `
+                    <div class="tutorial-content">
+                        <h3>Accurate Milk Recording</h3>
+                        <p>Proper milk recording helps track production, health, and profitability.</p>
+                        
+                        <div class="tutorial-section">
+                            <h4>📊 What to Record:</h4>
+                            <ul>
+                                <li>Date and time of milking</li>
+                                <li>Individual goat identification</li>
+                                <li>Milk quantity (liters/kg)</li>
+                                <li>Milk quality observations</li>
+                                <li>Any abnormalities</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="tutorial-section">
+                            <h4>🎯 Best Practices:</h4>
+                            <ul>
+                                <li>Milk at consistent times daily</li>
+                                <li>Use clean, calibrated measuring equipment</li>
+                                <li>Record immediately after milking</li>
+                                <li>Note environmental factors (weather, stress)</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            'health-monitoring': {
+                title: '🏥 Health Monitoring Basics',
+                type: 'interactive',
+                steps: [
+                    {
+                        text: 'Regular health checks help prevent disease and maintain productivity.',
+                        highlight: '#health-records',
+                        position: 'top'
+                    },
+                    {
+                        text: 'Record vaccinations with dates and withdrawal periods.',
+                        highlight: '#health-vaccination',
+                        position: 'right'
+                    },
+                    {
+                        text: 'Monitor temperature, appetite, and behavior daily.',
+                        highlight: '#health-symptoms',
+                        position: 'bottom'
+                    },
+                    {
+                        text: 'Always consult a veterinarian for serious health issues.',
+                        highlight: '#health-vet-contact',
+                        position: 'left'
+                    }
+                ],
+                tips: [
+                    '🌡️ Normal goat temperature: 101.5-103.5°F (38.6-39.7°C)',
+                    '👁️ Check eyes, nose, and udder daily',
+                    '🦶 Examine hooves regularly for hoof rot'
+                ]
+            },
+            'feed-management': {
+                title: '🌾 Feed Management Guide',
+                type: 'video',
+                content: `
+                    <div class="tutorial-content">
+                        <h3>Proper Feed Management</h3>
+                        <p>Good nutrition is essential for health, reproduction, and milk production.</p>
+                        
+                        <div class="tutorial-section">
+                            <h4>🥬 Feed Types:</h4>
+                            <div class="feed-types">
+                                <div class="feed-item">
+                                    <strong>Roughage:</strong> Hay, grass, browse (60-70% of diet)
+                                </div>
+                                <div class="feed-item">
+                                    <strong>Concentrates:</strong> Grains, pellets (20-30% of diet)
+                                </div>
+                                <div class="feed-item">
+                                    <strong>Supplements:</strong> Minerals, vitamins (as needed)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tutorial-section">
+                            <h4>📏 Feeding Guidelines:</h4>
+                            <ul>
+                                <li>Adult goat: 2-4% of body weight daily</li>
+                                <li>Lactating does: Increase by 1-2 lbs concentrate</li>
+                                <li>Fresh water: 1-3 gallons per day</li>
+                                <li>Feed at consistent times</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            }
+        };
+    }
+
+    // Show contextual tutorial based on current context
+    showContextualTutorial(tutorialId, triggerElement = null) {
+        const tutorials = this.getTutorialDatabase();
+        const tutorial = tutorials[tutorialId];
+        
+        if (!tutorial) {
+            console.warn(`Tutorial ${tutorialId} not found`);
+            return;
+        }
+
+        this.logAudit('tutorial_accessed', `User accessed tutorial: ${tutorialId}`);
+        
+        if (tutorial.type === 'interactive') {
+            this.showInteractiveTutorial(tutorial, triggerElement);
+        } else if (tutorial.type === 'video') {
+            this.showVideoTutorial(tutorial);
+        }
+    }
+
+    // Interactive step-by-step tutorial with highlights
+    showInteractiveTutorial(tutorial, triggerElement) {
+        let currentStep = 0;
+        let tutorialOverlay;
+
+        const createTutorialOverlay = () => {
+            // Remove existing overlay
+            const existing = document.getElementById('tutorial-overlay');
+            if (existing) existing.remove();
+
+            tutorialOverlay = document.createElement('div');
+            tutorialOverlay.id = 'tutorial-overlay';
+            tutorialOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.7);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Montserrat', sans-serif;
+            `;
+            document.body.appendChild(tutorialOverlay);
+        };
+
+        const showStep = (stepIndex) => {
+            const step = tutorial.steps[stepIndex];
+            if (!step) return;
+
+            // Create tutorial popup
+            const popup = document.createElement('div');
+            popup.style.cssText = `
+                background: white;
+                border-radius: 15px;
+                padding: 25px;
+                max-width: 400px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                position: relative;
+                animation: tutorialSlideIn 0.3s ease-out;
+            `;
+
+            popup.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <div style="background: linear-gradient(135deg, #3498db, #2ecc71); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                        ${stepIndex + 1}
+                    </div>
+                    <h3 style="margin: 0; color: #2c3e50;">${tutorial.title}</h3>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p style="color: #34495e; line-height: 1.6; margin: 0;">${step.text}</p>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="color: #7f8c8d; font-size: 0.9rem;">
+                        Step ${stepIndex + 1} of ${tutorial.steps.length}
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="tutorial-prev" style="padding: 8px 15px; border: 1px solid #bdc3c7; background: white; border-radius: 5px; cursor: pointer;" ${stepIndex === 0 ? 'disabled' : ''}>
+                            Previous
+                        </button>
+                        <button id="tutorial-next" style="padding: 8px 15px; background: linear-gradient(135deg, #3498db, #2ecc71); color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            ${stepIndex === tutorial.steps.length - 1 ? 'Finish' : 'Next'}
+                        </button>
+                    </div>
+                </div>
+                
+                <button id="tutorial-close" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer; color: #95a5a6;">×</button>
+            `;
+
+            tutorialOverlay.innerHTML = '';
+            tutorialOverlay.appendChild(popup);
+
+            // Highlight target element if specified
+            if (step.highlight) {
+                this.highlightElement(step.highlight, step.position);
+            }
+
+            // Add event listeners
+            const nextBtn = popup.querySelector('#tutorial-next');
+            const prevBtn = popup.querySelector('#tutorial-prev');
+            const closeBtn = popup.querySelector('#tutorial-close');
+
+            nextBtn.addEventListener('click', () => {
+                if (stepIndex === tutorial.steps.length - 1) {
+                    this.finishTutorial(tutorial);
+                } else {
+                    showStep(stepIndex + 1);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (stepIndex > 0) {
+                    showStep(stepIndex - 1);
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                this.closeTutorial();
+            });
+        };
+
+        createTutorialOverlay();
+        showStep(currentStep);
+
+        // Add CSS animations
+        if (!document.getElementById('tutorial-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'tutorial-styles';
+            styles.textContent = `
+                @keyframes tutorialSlideIn {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .tutorial-highlight {
+                    box-shadow: 0 0 20px rgba(52, 152, 219, 0.8) !important;
+                    border: 3px solid #3498db !important;
+                    border-radius: 5px !important;
+                    position: relative !important;
+                    z-index: 10001 !important;
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+    }
+
+    // Video-based tutorial with rich content
+    showVideoTutorial(tutorial) {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            border-radius: 15px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            position: relative;
+        `;
+
+        content.innerHTML = `
+            <div style="padding: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h2 style="margin: 0; color: #2c3e50;">${tutorial.title}</h2>
+                    <button id="video-tutorial-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #95a5a6;">×</button>
+                </div>
+                
+                ${tutorial.videoUrl ? `
+                    <div style="margin-bottom: 25px;">
+                        <video controls style="width: 100%; border-radius: 10px;">
+                            <source src="${tutorial.videoUrl}" type="video/mp4">
+                            Your browser does not support video playback.
+                        </video>
+                    </div>
+                ` : ''}
+                
+                ${tutorial.content}
+                
+                ${tutorial.quiz ? `
+                    <div style="margin-top: 25px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                        <h4 style="margin-top: 0; color: #2c3e50;">🧠 Quick Knowledge Check</h4>
+                        <div id="tutorial-quiz"></div>
+                    </div>
+                ` : ''}
+                
+                <div style="margin-top: 25px; text-align: center;">
+                    <button id="tutorial-complete" style="padding: 12px 30px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                        Mark as Complete
+                    </button>
+                </div>
+            </div>
+        `;
+
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        // Add quiz functionality
+        if (tutorial.quiz) {
+            this.renderTutorialQuiz(tutorial.quiz, content.querySelector('#tutorial-quiz'));
+        }
+
+        // Event listeners
+        content.querySelector('#video-tutorial-close').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        content.querySelector('#tutorial-complete').addEventListener('click', () => {
+            this.completeTutorial(tutorial);
+            document.body.removeChild(modal);
+        });
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+
+    // Render interactive quiz
+    renderTutorialQuiz(quiz, container) {
+        quiz.forEach((question, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.style.marginBottom = '20px';
+            
+            questionDiv.innerHTML = `
+                <div style="font-weight: 600; margin-bottom: 10px; color: #2c3e50;">
+                    ${question.question}
+                </div>
+                <div id="quiz-options-${index}">
+                    ${question.options.map((option, optIndex) => `
+                        <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                            <input type="radio" name="quiz-${index}" value="${optIndex}" style="margin-right: 8px;">
+                            ${option}
+                        </label>
+                    `).join('')}
+                </div>
+                <div id="quiz-feedback-${index}" style="margin-top: 10px; padding: 10px; border-radius: 5px; display: none;"></div>
+            `;
+            
+            container.appendChild(questionDiv);
+            
+            // Add answer checking
+            const options = questionDiv.querySelectorAll(`input[name="quiz-${index}"]`);
+            options.forEach(option => {
+                option.addEventListener('change', () => {
+                    const feedback = questionDiv.querySelector(`#quiz-feedback-${index}`);
+                    const isCorrect = parseInt(option.value) === question.correct;
+                    
+                    feedback.style.display = 'block';
+                    if (isCorrect) {
+                        feedback.style.background = '#d4edda';
+                        feedback.style.color = '#155724';
+                        feedback.innerHTML = `✅ Correct! ${question.explanation}`;
+                    } else {
+                        feedback.style.background = '#f8d7da';
+                        feedback.style.color = '#721c24';
+                        feedback.innerHTML = `❌ Not quite. ${question.explanation}`;
+                    }
+                });
+            });
+        });
+    }
+
+    // Highlight target element during tutorial
+    highlightElement(selector, position = 'top') {
+        // Remove existing highlights
+        document.querySelectorAll('.tutorial-highlight').forEach(el => {
+            el.classList.remove('tutorial-highlight');
+        });
+
+        const element = document.querySelector(selector);
+        if (element) {
+            element.classList.add('tutorial-highlight');
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    // Complete tutorial and track progress
+    completeTutorial(tutorial) {
+        const completedTutorials = JSON.parse(localStorage.getItem('completedTutorials') || '[]');
+        const tutorialId = Object.keys(this.getTutorialDatabase()).find(id => 
+            this.getTutorialDatabase()[id] === tutorial
+        );
+        
+        if (tutorialId && !completedTutorials.includes(tutorialId)) {
+            completedTutorials.push(tutorialId);
+            localStorage.setItem('completedTutorials', JSON.stringify(completedTutorials));
+        }
+        
+        this.logAudit('tutorial_completed', `Tutorial completed: ${tutorial.title}`);
+        this.showTutorialCompletionMessage(tutorial.title);
+    }
+
+    // Finish interactive tutorial
+    finishTutorial(tutorial) {
+        this.closeTutorial();
+        this.completeTutorial(tutorial);
+        
+        // Show tips if available
+        if (tutorial.tips && tutorial.tips.length > 0) {
+            this.showTutorialTips(tutorial.tips);
+        }
+    }
+
+    // Close tutorial and cleanup
+    closeTutorial() {
+        const overlay = document.getElementById('tutorial-overlay');
+        if (overlay) {
+            overlay.remove();
+        }
+        
+        // Remove highlights
+        document.querySelectorAll('.tutorial-highlight').forEach(el => {
+            el.classList.remove('tutorial-highlight');
+        });
+    }
+
+    // Show tutorial completion message
+    showTutorialCompletionMessage(title) {
+        const message = document.createElement('div');
+        message.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            z-index: 10001;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            max-width: 350px;
+            animation: slideIn 0.5s ease-out;
+        `;
+        
+        message.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 1.8rem;">🎓</span>
+                <div>
+                    <div style="font-size: 1.1rem; margin-bottom: 5px;">Tutorial Complete!</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">${title}</div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(message);
+        
+        setTimeout(() => {
+            message.style.animation = 'slideOut 0.5s ease-out';
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.parentNode.removeChild(message);
+                }
+            }, 500);
+        }, 4000);
+    }
+
+    // Show tutorial tips
+    showTutorialTips(tips) {
+        const tipsModal = document.createElement('div');
+        tipsModal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        `;
+
+        tipsModal.innerHTML = `
+            <div style="background: white; border-radius: 15px; padding: 30px; max-width: 500px; box-shadow: 0 15px 40px rgba(0,0,0,0.3);">
+                <h3 style="margin-top: 0; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+                    💡 Pro Tips
+                </h3>
+                <div style="margin-bottom: 25px;">
+                    ${tips.map(tip => `
+                        <div style="padding: 12px; margin-bottom: 10px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #3498db;">
+                            ${tip}
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="text-align: center;">
+                    <button id="tips-close" style="padding: 10px 25px; background: linear-gradient(135deg, #3498db, #2ecc71); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Got it!
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(tipsModal);
+
+        tipsModal.querySelector('#tips-close').addEventListener('click', () => {
+            document.body.removeChild(tipsModal);
+        });
+    }
+
+    // Add tutorial help buttons throughout the interface
+    addTutorialHelpers() {
+        // Helper configurations for different sections
+        const helpers = [
+            {
+                target: '#add-goat-btn',
+                tutorial: 'add-goat',
+                position: 'after'
+            },
+            {
+                target: '#add-breeding-record-btn',
+                tutorial: 'breeding-records',
+                position: 'after'
+            },
+            {
+                target: '#health-records',
+                tutorial: 'health-monitoring',
+                position: 'before'
+            },
+            {
+                target: '#milk-records',
+                tutorial: 'milk-recording',
+                position: 'before'
+            },
+            {
+                target: '#feed-records',
+                tutorial: 'feed-management',
+                position: 'before'
+            }
+        ];
+
+        helpers.forEach(helper => {
+            const target = document.querySelector(helper.target);
+            if (target) {
+                const helpBtn = document.createElement('button');
+                helpBtn.style.cssText = `
+                    background: linear-gradient(135deg, #3498db, #2ecc71);
+                    color: white;
+                    border: none;
+                    border-radius: 50%;
+                    width: 30px;
+                    height: 30px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    margin-left: 8px;
+                    position: relative;
+                    top: -2px;
+                    transition: all 0.3s ease;
+                `;
+                helpBtn.innerHTML = '?';
+                helpBtn.title = 'View tutorial';
+                
+                helpBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.showContextualTutorial(helper.tutorial, target);
+                });
+
+                helpBtn.addEventListener('mouseenter', () => {
+                    helpBtn.style.transform = 'scale(1.1)';
+                    helpBtn.style.boxShadow = '0 4px 12px rgba(52, 152, 219, 0.4)';
+                });
+
+                helpBtn.addEventListener('mouseleave', () => {
+                    helpBtn.style.transform = 'scale(1)';
+                    helpBtn.style.boxShadow = 'none';
+                });
+
+                if (helper.position === 'after') {
+                    target.parentNode.insertBefore(helpBtn, target.nextSibling);
+                } else {
+                    target.parentNode.insertBefore(helpBtn, target);
+                }
+            }
+        });
+    }
+
+    // Smart tutorial suggestions based on user behavior
+    suggestRelevantTutorials() {
+        const userActions = JSON.parse(localStorage.getItem('externalAccessAuditLog') || '[]');
+        const recentActions = userActions.filter(action => 
+            Date.now() - new Date(action.timestamp).getTime() < 24 * 60 * 60 * 1000
+        );
+
+        // Suggest tutorials based on recent struggles or new user behavior
+        const completedTutorials = JSON.parse(localStorage.getItem('completedTutorials') || '[]');
+        const suggestions = [];
+
+        // New user suggestions
+        if (userActions.length < 10) {
+            suggestions.push({
+                tutorial: 'add-goat',
+                reason: 'Get started by learning how to add your first goat!'
+            });
+        }
+
+        // Suggest based on incomplete actions
+        const failedLogins = recentActions.filter(a => a.action === 'login_failed');
+        if (failedLogins.length > 2 && !completedTutorials.includes('login-help')) {
+            suggestions.push({
+                tutorial: 'login-help',
+                reason: 'Having trouble logging in? This tutorial can help!'
+            });
+        }
+
+        if (suggestions.length > 0) {
+            this.showTutorialSuggestions(suggestions);
+        }
+    }
+
+    // Show tutorial suggestions popup
+    showTutorialSuggestions(suggestions) {
+        const suggestionsModal = document.createElement('div');
+        suggestionsModal.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 1001;
+            font-family: 'Montserrat', sans-serif;
+            max-width: 350px;
+            border: 2px solid #3498db;
+        `;
+
+        suggestionsModal.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="margin: 0; color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                    🎓 Helpful Tutorials
+                </h4>
+                <button id="suggestions-close" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #95a5a6;">×</button>
+            </div>
+            
+            ${suggestions.map(suggestion => `
+                <div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;" 
+                     onclick="farmManager.showContextualTutorial('${suggestion.tutorial}'); this.parentElement.parentElement.remove();">
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">
+                        ${this.getTutorialDatabase()[suggestion.tutorial]?.title || suggestion.tutorial}
+                    </div>
+                    <div style="font-size: 0.9rem; color: #7f8c8d;">
+                        ${suggestion.reason}
+                    </div>
+                </div>
+            `).join('')}
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <button onclick="this.parentElement.parentElement.remove();" style="padding: 8px 15px; background: #ecf0f1; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem;">
+                    Maybe later
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(suggestionsModal);
+
+        suggestionsModal.querySelector('#suggestions-close').addEventListener('click', () => {
+            document.body.removeChild(suggestionsModal);
+        });
+
+        // Auto-hide after 10 seconds
+        setTimeout(() => {
+            if (suggestionsModal.parentNode) {
+                suggestionsModal.parentNode.removeChild(suggestionsModal);
+            }
+        }, 10000);
     }
     // Two-Factor Authentication (2FA) - Demo implementation
     request2FA(username) {
@@ -827,10 +1693,277 @@ class FarmRecordsManager {
             this.setupBulkOperations();
             this.setupMobileEnhancements(); // Add mobile support
             this.startThreatMonitoring(); // Start security monitoring
+            
+            // Initialize tutorial system
+            setTimeout(() => {
+                this.initializeTutorialSystem();
+            }, 1000); // Delay to ensure DOM is fully loaded
+            
             console.log('✅ App initialization completed successfully');
         } catch (error) {
             console.error('❌ Critical error during initialization:', error);
             this.handleInitializationError(error);
+        }
+    }
+
+    // Initialize the tutorial system
+    initializeTutorialSystem() {
+        try {
+            // Add tutorial helper buttons throughout the interface
+            this.addTutorialHelpers();
+            
+            // Add contextual help for specific terms
+            this.addContextualHelp();
+            
+            // Check for tutorial suggestions for new/struggling users
+            setTimeout(() => {
+                this.suggestRelevantTutorials();
+            }, 3000); // Wait 3 seconds after app load
+            
+            // Add global tutorial menu
+            this.addTutorialMenu();
+            
+            this.logAudit('tutorial_system', 'Tutorial system initialized');
+            console.log('🎓 Tutorial system initialized successfully');
+        } catch (error) {
+            console.error('Tutorial system initialization failed:', error);
+        }
+    }
+
+    // Add contextual help for specific terms (like "withdrawal period")
+    addContextualHelp() {
+        // Terms that should have contextual help
+        const helpTerms = [
+            {
+                term: 'withdrawal period',
+                tutorial: 'withdrawal-period',
+                regex: /withdrawal\s+period/gi
+            },
+            {
+                term: 'breeding record',
+                tutorial: 'breeding-records',
+                regex: /breeding\s+record/gi
+            },
+            {
+                term: 'milk recording',
+                tutorial: 'milk-recording',
+                regex: /milk\s+record/gi
+            },
+            {
+                term: 'health monitoring',
+                tutorial: 'health-monitoring',
+                regex: /health\s+(monitoring|check)/gi
+            }
+        ];
+
+        // Find and enhance text nodes with help terms
+        const walker = document.createTreeWalker(
+            document.body,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+        );
+
+        const textNodes = [];
+        let node;
+        while (node = walker.nextNode()) {
+            if (node.parentElement && !node.parentElement.querySelector('.tutorial-help-link')) {
+                textNodes.push(node);
+            }
+        }
+
+        textNodes.forEach(textNode => {
+            let text = textNode.textContent;
+            let hasChanges = false;
+
+            helpTerms.forEach(helpTerm => {
+                if (helpTerm.regex.test(text)) {
+                    text = text.replace(helpTerm.regex, (match) => {
+                        hasChanges = true;
+                        return `<span class="tutorial-help-term" data-tutorial="${helpTerm.tutorial}">${match} <span class="tutorial-help-link">ⓘ</span></span>`;
+                    });
+                }
+            });
+
+            if (hasChanges) {
+                const wrapper = document.createElement('span');
+                wrapper.innerHTML = text;
+                textNode.parentNode.replaceChild(wrapper, textNode);
+
+                // Add click handlers to help links
+                wrapper.querySelectorAll('.tutorial-help-term').forEach(term => {
+                    term.style.cssText = `
+                        position: relative;
+                        cursor: help;
+                    `;
+                    
+                    const helpLink = term.querySelector('.tutorial-help-link');
+                    helpLink.style.cssText = `
+                        color: #3498db;
+                        font-size: 0.8em;
+                        vertical-align: super;
+                        cursor: pointer;
+                        margin-left: 2px;
+                    `;
+                    
+                    helpLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.showContextualTutorial(term.dataset.tutorial);
+                    });
+                });
+            }
+        });
+    }
+
+    // Add tutorial menu to the interface
+    addTutorialMenu() {
+        // Create floating tutorial menu button
+        const tutorialMenuBtn = document.createElement('button');
+        tutorialMenuBtn.id = 'tutorial-menu-btn';
+        tutorialMenuBtn.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        `;
+        tutorialMenuBtn.innerHTML = '🎓';
+        tutorialMenuBtn.title = 'Tutorials & Help';
+
+        tutorialMenuBtn.addEventListener('mouseenter', () => {
+            tutorialMenuBtn.style.transform = 'scale(1.1)';
+            tutorialMenuBtn.style.boxShadow = '0 6px 20px rgba(155, 89, 182, 0.6)';
+        });
+
+        tutorialMenuBtn.addEventListener('mouseleave', () => {
+            tutorialMenuBtn.style.transform = 'scale(1)';
+            tutorialMenuBtn.style.boxShadow = '0 4px 15px rgba(155, 89, 182, 0.4)';
+        });
+
+        tutorialMenuBtn.addEventListener('click', () => {
+            this.showTutorialMenu();
+        });
+
+        document.body.appendChild(tutorialMenuBtn);
+    }
+
+    // Show tutorial menu with all available tutorials
+    showTutorialMenu() {
+        const tutorials = this.getTutorialDatabase();
+        const completedTutorials = JSON.parse(localStorage.getItem('completedTutorials') || '[]');
+
+        const menu = document.createElement('div');
+        menu.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        `;
+
+        content.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 style="margin: 0; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+                    🎓 Farm Management Tutorials
+                </h2>
+                <button id="tutorial-menu-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #95a5a6;">×</button>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <div style="background: #e8f6f3; padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60;">
+                    <strong>📊 Progress:</strong> ${completedTutorials.length} of ${Object.keys(tutorials).length} tutorials completed
+                </div>
+            </div>
+            
+            <div style="display: grid; gap: 15px;">
+                ${Object.entries(tutorials).map(([id, tutorial]) => {
+                    const isCompleted = completedTutorials.includes(id);
+                    return `
+                        <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.3s ease; ${isCompleted ? 'background: #f8f9fa; border-color: #27ae60;' : ''}"
+                             onclick="farmManager.showContextualTutorial('${id}'); document.body.removeChild(document.querySelector('[style*=\"background: rgba(0,0,0,0.7)\"]'));">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                                <h4 style="margin: 0; color: #2c3e50;">${tutorial.title}</h4>
+                                <div style="display: flex; gap: 5px; align-items: center;">
+                                    ${isCompleted ? '<span style="color: #27ae60; font-size: 18px;">✅</span>' : ''}
+                                    <span style="background: ${tutorial.type === 'interactive' ? '#3498db' : '#e67e22'}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">
+                                        ${tutorial.type}
+                                    </span>
+                                </div>
+                            </div>
+                            <div style="color: #7f8c8d; font-size: 0.9rem;">
+                                ${tutorial.type === 'interactive' ? 'Step-by-step guided tutorial' : 'Video tutorial with interactive elements'}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            <div style="margin-top: 25px; text-align: center;">
+                <button onclick="document.body.removeChild(document.querySelector('[style*=\"background: rgba(0,0,0,0.7)\"]'))" 
+                        style="padding: 10px 25px; background: #ecf0f1; border: none; border-radius: 8px; cursor: pointer; margin-right: 10px;">
+                    Close
+                </button>
+                <button onclick="farmManager.resetTutorialProgress()" 
+                        style="padding: 10px 25px; background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                    Reset Progress
+                </button>
+            </div>
+        `;
+
+        menu.appendChild(content);
+        document.body.appendChild(menu);
+
+        content.querySelector('#tutorial-menu-close').addEventListener('click', () => {
+            document.body.removeChild(menu);
+        });
+
+        // Close on backdrop click
+        menu.addEventListener('click', (e) => {
+            if (e.target === menu) {
+                document.body.removeChild(menu);
+            }
+        });
+    }
+
+    // Reset tutorial progress
+    resetTutorialProgress() {
+        if (confirm('Are you sure you want to reset all tutorial progress? This will mark all tutorials as incomplete.')) {
+            localStorage.removeItem('completedTutorials');
+            this.logAudit('tutorial_reset', 'Tutorial progress reset by user');
+            alert('Tutorial progress has been reset. You can now retake all tutorials.');
+            
+            // Close menu and refresh
+            const menu = document.querySelector('[style*="background: rgba(0,0,0,0.7)"]');
+            if (menu) {
+                document.body.removeChild(menu);
+            }
         }
     }
 
