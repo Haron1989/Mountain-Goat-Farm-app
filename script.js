@@ -225,6 +225,34 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// ============ AI INSIGHTS INITIALIZATION ============
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize AI Insights System
+    if (typeof AIInsightsEngine !== 'undefined') {
+        window.aiInsights = new AIInsightsEngine();
+        window.aiInsights.init();
+        
+        // Add AI Insights floating button to the page
+        const floatingButton = document.createElement('button');
+        floatingButton.className = 'ai-insights-fab';
+        floatingButton.innerHTML = '🤖';
+        floatingButton.title = 'AI Farm Insights';
+        floatingButton.onclick = () => window.aiInsights.showInsightsDashboard();
+        document.body.appendChild(floatingButton);
+        
+        // Generate insights every 5 minutes
+        setInterval(() => {
+            if (window.aiInsights) {
+                window.aiInsights.generateInsights();
+            }
+        }, 300000);
+        
+        console.log('✅ AI Insights Engine initialized successfully');
+    } else {
+        console.warn('⚠️ AI Insights Engine not loaded');
+    }
+});
+
 // Admin contact details logic
 function setupAdminContact() {
     const editBtn = document.getElementById('admin-edit-contact');
