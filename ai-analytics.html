@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Analytics Dashboard - Mountain Goat Farm</title>
+    <link rel="icon" type="image/png" href="The_Mountain_Goat_Farm_Logo_Media (2).png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+    <link rel="stylesheet" href="ai-insights-styles.css">
+</head>
+<body class="admin-panel">
+    <header class="admin-header">
+        <nav>
+            <div class="logo">
+                <img src="The_Mountain_Goat_Farm_Logo_Media (2).png" alt="Mountain Goat Farm Logo">
+                <h1>🤖 AI Analytics Dashboard</h1>
+            </div>
+            <div class="admin-nav-links">
+                <a href="farm-records.html" class="btn btn-secondary">← Back to Farm Records</a>
+                <a href="index.html" class="btn btn-primary">Public Site</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>🧠 Advanced AI Analytics & Predictions</h2>
+                <p>Real-time AI-powered insights for optimal farm management</p>
+            </div>
+
+            <!-- AI Analytics will be injected here -->
+            <div id="ai-analytics-container">
+                <div class="loading-message">
+                    🤖 Initializing AI Analytics Engine...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="admin-footer">
+        <div class="container">
+            <p>&copy; 2025 The Mountain Goat Farm - AI Analytics Module</p>
+        </div>
+    </footer>
+
+    <!-- AI Analytics Scripts -->
+    <script src="ai-analytics.js"></script>
+    <script src="ai-insights-engine.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🤖 Loading AI Analytics Dashboard...');
+            
+            // Initialize AI Analytics
+            if (typeof AIAnalyticsEngine !== 'undefined') {
+                window.aiAnalytics = new AIAnalyticsEngine();
+                
+                // Move the dashboard to our container
+                setTimeout(() => {
+                    const aiDashboard = document.getElementById('aiAnalyticsDashboard');
+                    const container = document.getElementById('ai-analytics-container');
+                    
+                    if (aiDashboard && container) {
+                        container.innerHTML = '';
+                        container.appendChild(aiDashboard);
+                    } else {
+                        container.innerHTML = '<div class="error-message">❌ AI Analytics failed to load. Please check system requirements.</div>';
+                    }
+                }, 1000);
+            } else {
+                document.getElementById('ai-analytics-container').innerHTML = 
+                    '<div class="error-message">❌ AI Analytics engine not available. Please ensure all dependencies are loaded.</div>';
+            }
+        });
+    </script>
+
+    <style>
+        .admin-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+        }
+
+        .admin-header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .admin-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-header .logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .admin-header .logo h1 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .admin-nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .admin-main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 140px);
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .dashboard-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .dashboard-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .loading-message, .error-message {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: white;
+            font-size: 1.2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+
+        .admin-footer {
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Override AI dashboard styles for better integration */
+        #aiAnalyticsDashboard {
+            background: transparent !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    </style>
+</body>
+</html>

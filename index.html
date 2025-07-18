@@ -271,124 +271,43 @@
             </div>
         </section>
 
-        <!-- Smart Financial Dashboard Section -->
-        <section class="financial-dashboard-section">
+        <!-- Customer Success Stories Section -->
+        <section class="success-stories-section">
             <div class="container">
-                <div class="dashboard-header">
-                    <h2>📊 Financial Dashboard</h2>
-                    <div class="dashboard-period">
-                        <select id="financialPeriod">
-                            <option value="week">This Week</option>
-                            <option value="month" selected>This Month</option>
-                            <option value="quarter">This Quarter</option>
-                            <option value="year">This Year</option>
-                        </select>
-                    </div>
+                <div class="section-header">
+                    <h2>🌟 Customer Success Stories</h2>
+                    <p>Hear from our satisfied customers about their experience with our premium goats</p>
                 </div>
                 
-                <div class="financial-grid">
-                    <div class="financial-card revenue">
-                        <div class="card-icon">💰</div>
-                        <div class="card-content">
-                            <h3>Total Revenue</h3>
-                            <div class="amount" id="totalRevenue">KSh 0</div>
-                            <div class="trend positive" id="revenueTrend">↗ +0%</div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"The quality of breeding stock from Mountain Goat Farm is exceptional. Our herd has improved significantly since introducing their genetics."</p>
+                        </div>
+                        <div class="customer-info">
+                            <strong>John Kimani</strong>
+                            <span>Meru County Farmer</span>
                         </div>
                     </div>
                     
-                    <div class="financial-card expenses">
-                        <div class="card-icon">💸</div>
-                        <div class="card-content">
-                            <h3>Total Expenses</h3>
-                            <div class="amount" id="totalExpenses">KSh 0</div>
-                            <div class="trend negative" id="expensesTrend">↗ +0%</div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Professional service and healthy animals. The team's expertise in goat breeding is evident in every transaction."</p>
+                        </div>
+                        <div class="customer-info">
+                            <strong>Grace Wanjiku</strong>
+                            <span>Nyeri Agricultural Cooperative</span>
                         </div>
                     </div>
                     
-                    <div class="financial-card profit">
-                        <div class="card-icon">📈</div>
-                        <div class="card-content">
-                            <h3>Net Profit</h3>
-                            <div class="amount" id="netProfit">KSh 0</div>
-                            <div class="trend" id="profitTrend">→ 0%</div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Fast delivery and excellent communication. The goats arrived healthy and well-documented. Highly recommended!"</p>
                         </div>
-                    </div>
-                    
-                    <div class="financial-card transactions">
-                        <div class="card-icon">🔄</div>
-                        <div class="card-content">
-                            <h3>Transactions</h3>
-                            <div class="amount" id="totalTransactions">0</div>
-                            <div class="trend" id="transactionsTrend">→ 0%</div>
+                        <div class="customer-info">
+                            <strong>Peter Muriuki</strong>
+                            <span>Kiambu Livestock Trader</span>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="financial-charts">
-                    <div class="chart-container">
-                        <h3>Revenue vs Expenses</h3>
-                        <canvas id="revenueChart" width="400" height="200"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Cash Flow Timeline</h3>
-                        <canvas id="cashflowChart" width="400" height="200"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Smart Alerts & Recommendations Section -->
-        <section class="alerts-section">
-            <div class="container">
-                <div class="alerts-header">
-                    <h2>🔔 Smart Alerts & Recommendations</h2>
-                    <button id="alertSettings" class="btn-secondary">Settings</button>
-                </div>
-                
-                <div class="alerts-grid">
-                    <div class="alerts-column urgent">
-                        <h3>🚨 Urgent Alerts</h3>
-                        <div id="urgentAlerts" class="alerts-list">
-                            <!-- Urgent alerts will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <div class="alerts-column upcoming">
-                        <h3>⏰ Upcoming Tasks</h3>
-                        <div id="upcomingTasks" class="alerts-list">
-                            <!-- Upcoming tasks will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <div class="alerts-column recommendations">
-                        <h3>💡 Smart Recommendations</h3>
-                        <div id="smartRecommendations" class="alerts-list">
-                            <!-- Smart recommendations will be populated here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Digital Notice Board Section -->
-        <section class="notice-board-section">
-            <div class="container">
-                <div class="notice-header">
-                    <h2>📌 Digital Notice Board</h2>
-                    <button id="addNotice" class="btn-primary">+ Add Notice</button>
-                </div>
-                
-                <div class="notice-board">
-                    <div class="notice-filters">
-                        <button class="filter-btn active" data-filter="all">All</button>
-                        <button class="filter-btn" data-filter="announcement">📢 Announcements</button>
-                        <button class="filter-btn" data-filter="task">📋 Tasks</button>
-                        <button class="filter-btn" data-filter="event">📅 Events</button>
-                        <button class="filter-btn" data-filter="alert">⚠️ Alerts</button>
-                    </div>
-                    
-                    <div id="noticeBoard" class="notices-grid">
-                        <!-- Notices will be populated dynamically -->
                     </div>
                 </div>
             </div>
@@ -652,116 +571,6 @@
         </section>
     </main>
 
-    <!-- Product Management Modal -->
-    <div id="product-management-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
-        <div style="background:#fff; padding:24px; border-radius:8px; min-width:800px; max-width:90vw; max-height:80vh; overflow-y:auto;">
-            <h3>Product Management Dashboard</h3>
-            
-            <!-- Stock Alerts -->
-            <div id="stock-alerts" style="background:#fff3cd; border:1px solid #ffeaa7; padding:15px; border-radius:5px; margin-bottom:20px;">
-                <h4>📊 Stock Alerts</h4>
-                <div id="low-stock-items">
-                    <!-- Low stock items will be populated here -->
-                </div>
-            </div>
-            
-            <!-- Quick Actions -->
-            <div style="margin-bottom:20px;">
-                <button id="add-product-btn" style="background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:5px; margin-right:10px;">Add New Product</button>
-                <button id="add-bundle-btn" style="background:#3498db; color:white; border:none; padding:10px 20px; border-radius:5px; margin-right:10px;">Create Bundle</button>
-                <button id="seasonal-manager-btn" style="background:#f39c12; color:white; border:none; padding:10px 20px; border-radius:5px;">Seasonal Manager</button>
-            </div>
-            
-            <div id="products-list">
-                <!-- Products list will be populated here -->
-            </div>
-            
-            <button id="close-product-management" style="background:#95a5a6; color:white; border:none; padding:10px 20px; border-radius:5px; margin-top:20px;">Close</button>
-        </div>
-    </div>
-
-    <!-- Seasonal Manager Modal -->
-    <div id="seasonal-manager-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1001; align-items:center; justify-content:center;">
-        <div style="background:#fff; padding:24px; border-radius:8px; min-width:600px; max-width:90vw; max-height:80vh; overflow-y:auto;">
-            <h3>🍂 Seasonal Products Manager</h3>
-            <p>Manage which products are shown based on current season (Currently: <span id="current-season"></span>)</p>
-            
-            <div id="seasonal-products-list">
-                <!-- Seasonal products will be populated here -->
-            </div>
-            
-            <button id="close-seasonal-manager" style="background:#95a5a6; color:white; border:none; padding:10px 20px; border-radius:5px; margin-top:20px;">Close</button>
-        </div>
-    </div>
-
-    <!-- Add/Edit Product Modal -->
-    <div id="product-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1001; align-items:center; justify-content:center;">
-        <div style="background:#fff; padding:24px; border-radius:8px; min-width:500px; max-width:90vw; max-height:80vh; overflow-y:auto;">
-            <h3 id="product-modal-title">Add New Product</h3>
-            <form id="product-form">
-                <input type="hidden" id="product-id">
-                
-                <label>Product Name:<br><input type="text" id="product-name" required style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
-                
-                <label>Category:<br>
-                    <select id="product-category" required style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;">
-                        <option value="">Select Category</option>
-                        <option value="dairy">Dairy</option>
-                        <option value="skincare">Skincare</option>
-                        <option value="meat">Meat</option>
-                        <option value="bundles">Product Bundle</option>
-                        <option value="other">Other</option>
-                    </select>
-                </label><br>
-                
-                <label>Regular Price:<br><input type="text" id="product-price" placeholder="e.g., KSh 350/litre" required style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
-                
-                <label>Sale Price (optional):<br><input type="text" id="product-sale-price" placeholder="e.g., KSh 280/litre" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
-                
-                <label>Description:<br><textarea id="product-description" required style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px; height:80px;"></textarea></label><br>
-                
-                <label>Bundle Contents (if bundle):<br><textarea id="product-bundle-contents" placeholder="List what's included in this bundle" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px; height:60px;"></textarea></label><br>
-                
-                <label>Image URL:<br><input type="url" id="product-image" placeholder="https://example.com/image.jpg" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
-                
-                <label>Stock Quantity:<br><input type="number" id="product-stock-quantity" placeholder="Enter quantity" min="0" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
-                
-                <label>Low Stock Alert (when to warn):<br><input type="number" id="product-low-stock" placeholder="e.g., 5" min="0" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;"></label><br>
-                
-                <label>Season:<br>
-                    <select id="product-season" style="width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:4px;">
-                        <option value="">All Year</option>
-                        <option value="spring">Spring</option>
-                        <option value="summer">Summer</option>
-                        <option value="fall">Fall</option>
-                        <option value="winter">Winter</option>
-                    </select>
-                </label><br>
-                
-                <label>
-                    <input type="checkbox" id="product-featured" style="margin:5px;"> Featured Product
-                </label><br>
-                
-                <label>
-                    <input type="checkbox" id="product-new" style="margin:5px;"> New Product
-                </label><br>
-                
-                <label>
-                    <input type="checkbox" id="product-available" checked style="margin:5px;"> Available for Sale
-                </label><br>
-                
-                <label>
-                    <input type="checkbox" id="product-auto-stock" style="margin:5px;"> Enable Auto Stock Management
-                </label><br>
-                
-                <div style="margin-top:20px;">
-                    <button type="submit" style="background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:5px; margin-right:10px;">Save Product</button>
-                    <button type="button" id="product-cancel" style="background:#95a5a6; color:white; border:none; padding:10px 20px; border-radius:5px;">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Quote Request Modal -->
     <div id="quote-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
         <div style="background:#fff; padding:30px; border-radius:15px; min-width:400px; max-width:90vw; max-height:80vh; overflow-y:auto;">
@@ -894,75 +703,75 @@
 
     <!-- Load Core Scripts -->
     <script src="script.js"></script>
-    <script src="farm-records.js"></script>
     <script src="language-manager.js"></script>
     <script src="voice-commands.js"></script>
     <script src="mpesa-integration.js"></script>
     <script src="genealogy.js"></script>
     <script src="qr-scanner.js"></script>
-    <script src="ai-analytics.js"></script>
-    <script src="ai-insights-engine.js"></script>
-    <script src="iot-sensors.js"></script>
     
-    <!-- Revolutionary Next-Generation Features -->
-    <script src="farm-gpt-copilot.js"></script>
-    <script src="digital-twin-simulator.js"></script>
-    <script src="global-supply-chain.js"></script>
-    <script src="data-monetization-platform.js"></script>
-    <script src="world-class-dashboard.js"></script>
-    
-    <!-- Platform Initialization -->
+    <!-- Customer Experience Enhancements -->
     <script>
-        // Add dashboard launcher to navigation
+        // Customer-focused initialization
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Initializing World\'s Most Advanced Farm Management Platform...');
+            console.log('� Welcome to The Mountain Goat Farm - Kenya\'s Premier Goat Farm!');
             
-            // Add dashboard launcher button
-            const nav = document.querySelector('nav ul');
-            if (nav && !document.querySelector('.dashboard-launch-btn')) {
-                const dashboardLi = document.createElement('li');
-                dashboardLi.innerHTML = '<a href="#" onclick="openWorldClassDashboard()" class="dashboard-launch-btn" style="background: linear-gradient(45deg, #4CAF50, #45a049); color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">🚀 Launch World-Class Dashboard</a>';
-                nav.insertBefore(dashboardLi, nav.firstChild);
-            }
-            
-            console.log('✅ Platform ready with AI, IoT, Blockchain, and Global Integration!');
+            // Initialize customer features only
+            initializeCustomerFeatures();
         });
-
-        function openWorldClassDashboard() {
-            // Hide main content and show dashboard
-            document.querySelector('main').style.display = 'none';
-            document.querySelector('header').style.display = 'none';
-            document.querySelector('nav').style.display = 'none';
-            document.querySelector('footer').style.display = 'none';
+        
+        function initializeCustomerFeatures() {
+            // Weather widget update
+            updateWeatherWidget();
             
-            // Create dashboard container if it doesn't exist
-            if (!document.getElementById('worldClassDashboard')) {
-                window.worldClassDashboard = new WorldClassFarmDashboard();
-            } else {
-                document.getElementById('worldClassDashboard').style.display = 'block';
+            // Live statistics
+            updateLiveStats();
+            
+            // Newsletter signup
+            initializeNewsletter();
+        }
+        
+        function updateWeatherWidget() {
+            // Simple weather display for Kirinyaga County
+            const weatherWidget = document.querySelector('.weather-widget');
+            if (weatherWidget) {
+                // Display static favorable conditions for now
+                weatherWidget.innerHTML = `
+                    <div class="weather-icon">☀️</div>
+                    <div class="weather-info">
+                        <span class="weather-temp">22°C</span>
+                        <span class="weather-desc">Perfect Grazing</span>
+                        <span class="weather-location">Kirinyaga County</span>
+                    </div>
+                `;
             }
         }
-
-        function closeDashboard() {
-            // Show main content and hide dashboard
-            document.querySelector('main').style.display = 'block';
-            document.querySelector('header').style.display = 'block';
-            document.querySelector('nav').style.display = 'block';
-            document.querySelector('footer').style.display = 'block';
+        
+        function updateLiveStats() {
+            // Update live statistics for customers
+            const goatCount = document.getElementById('goat-count');
+            const productCount = document.getElementById('product-count');
+            const experienceYears = document.getElementById('experience-years');
+            const geneticsQuality = document.getElementById('genetics-quality');
             
-            const dashboard = document.getElementById('worldClassDashboard');
-            if (dashboard) {
-                dashboard.style.display = 'none';
+            if (goatCount) goatCount.textContent = '150+';
+            if (productCount) productCount.textContent = '25+';
+            if (experienceYears) experienceYears.textContent = '10+';
+            if (geneticsQuality) geneticsQuality.textContent = '95%';
+        }
+        
+        function initializeNewsletter() {
+            const newsletterForm = document.getElementById('newsletter-form');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = e.target.querySelector('input[type="email"]').value;
+                    // Store subscriber (in real app, this would go to backend)
+                    localStorage.setItem('newsletter_' + Date.now(), email);
+                    alert('Thank you for subscribing to our newsletter!');
+                    e.target.reset();
+                });
             }
         }
-
-        // Add keyboard shortcut for dashboard (Ctrl+Shift+D)
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-                e.preventDefault();
-                openWorldClassDashboard();
-            }
-        });
     </script>
     
     <!-- PWA Service Worker Registration -->

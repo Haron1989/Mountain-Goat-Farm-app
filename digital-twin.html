@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Twin Simulator - Mountain Goat Farm</title>
+    <link rel="icon" type="image/png" href="The_Mountain_Goat_Farm_Logo_Media (2).png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="farm-records.css">
+</head>
+<body class="admin-panel">
+    <header class="admin-header">
+        <nav>
+            <div class="logo">
+                <img src="The_Mountain_Goat_Farm_Logo_Media (2).png" alt="Mountain Goat Farm Logo">
+                <h1>🌐 Digital Twin Simulator</h1>
+            </div>
+            <div class="admin-nav-links">
+                <a href="farm-records.html" class="btn btn-secondary">← Back to Farm Records</a>
+                <a href="index.html" class="btn btn-primary">Public Site</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>🔬 Virtual Farm Simulation & Scenario Modeling</h2>
+                <p>Advanced what-if analysis and strategic decision making</p>
+            </div>
+
+            <!-- Digital Twin will be injected here -->
+            <div id="digital-twin-container">
+                <div class="loading-message">
+                    🌐 Initializing Digital Twin Simulator...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="admin-footer">
+        <div class="container">
+            <p>&copy; 2025 The Mountain Goat Farm - Digital Twin Module</p>
+        </div>
+    </footer>
+
+    <!-- Digital Twin Scripts -->
+    <script src="digital-twin-simulator.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🌐 Loading Digital Twin Simulator...');
+            
+            // Initialize Digital Twin Simulator
+            if (typeof DigitalTwinFarmSimulator !== 'undefined') {
+                window.digitalTwin = new DigitalTwinFarmSimulator();
+                
+                // Move the simulator to our container
+                setTimeout(() => {
+                    const container = document.getElementById('digital-twin-container');
+                    
+                    // Create simulator interface
+                    container.innerHTML = `
+                        <div class="simulator-dashboard">
+                            <div class="simulation-controls">
+                                <h3>🎛️ Simulation Controls</h3>
+                                <div class="control-panel">
+                                    <button class="sim-btn" onclick="digitalTwin.runFullSimulation()">▶️ Run Full Simulation</button>
+                                    <button class="sim-btn" onclick="digitalTwin.generateScenarios()">📊 Generate Scenarios</button>
+                                    <button class="sim-btn" onclick="digitalTwin.exportSimulationData()">💾 Export Data</button>
+                                </div>
+                            </div>
+                            
+                            <div class="scenarios-grid">
+                                <div class="scenario-card">
+                                    <h4>💧 Double Irrigation Scenario</h4>
+                                    <div class="scenario-metrics">
+                                        <span class="metric">+34% Grass Growth</span>
+                                        <span class="metric">+28% Carrying Capacity</span>
+                                        <span class="metric">175% ROI</span>
+                                    </div>
+                                    <button class="run-scenario" onclick="digitalTwin.runScenario('irrigation')">Run Scenario</button>
+                                </div>
+                                
+                                <div class="scenario-card">
+                                    <h4>🐐 New Breed Line (Kalahari Red)</h4>
+                                    <div class="scenario-metrics">
+                                        <span class="metric">+15.7% Profitability</span>
+                                        <span class="metric">Improved Hardiness</span>
+                                        <span class="metric">Market Premium</span>
+                                    </div>
+                                    <button class="run-scenario" onclick="digitalTwin.runScenario('breed')">Run Scenario</button>
+                                </div>
+                                
+                                <div class="scenario-card">
+                                    <h4>🌱 Feed Strategy Optimization</h4>
+                                    <div class="scenario-metrics">
+                                        <span class="metric">Cost Reduction</span>
+                                        <span class="metric">Efficiency Gains</span>
+                                        <span class="metric">Health Improvement</span>
+                                    </div>
+                                    <button class="run-scenario" onclick="digitalTwin.runScenario('feed')">Run Scenario</button>
+                                </div>
+                            </div>
+                            
+                            <div id="simulation-results" class="simulation-results">
+                                <h3>📈 Simulation Results</h3>
+                                <div class="results-placeholder">
+                                    Select a scenario above to view detailed simulation results
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }, 1000);
+            } else {
+                document.getElementById('digital-twin-container').innerHTML = 
+                    '<div class="error-message">❌ Digital Twin simulator not available. Please ensure all dependencies are loaded.</div>';
+            }
+        });
+    </script>
+
+    <style>
+        .admin-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+        }
+
+        .admin-header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .admin-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-header .logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .admin-header .logo h1 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .admin-nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .admin-main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 140px);
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .dashboard-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .dashboard-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .simulator-dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .simulation-controls {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .simulation-controls h3 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .control-panel {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .sim-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .sim-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .scenario-card h4 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .scenario-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .run-scenario {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .run-scenario:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .simulation-results {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .simulation-results h3 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .results-placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-message, .error-message {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: white;
+            font-size: 1.2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+
+        .admin-footer {
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+    </style>
+</body>
+</html>
