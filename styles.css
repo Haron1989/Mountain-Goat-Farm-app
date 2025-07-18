@@ -171,17 +171,12 @@ main {
     }
 }
 
-/* Hero Section */
+/* Hero Section - Mount Kenya & Mwea Landscape View */
 .hero {
-    background: linear-gradient(135deg, 
-        rgba(44, 62, 80, 0.85) 0%, 
-        rgba(52, 73, 94, 0.8) 20%, 
-        rgba(139, 69, 19, 0.6) 40%, 
-        rgba(34, 139, 34, 0.7) 60%, 
-        rgba(52, 73, 94, 0.8) 80%, 
-        rgba(44, 62, 80, 0.85) 100%), 
-        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
-    height: 80vh;
+    background:
+        linear-gradient(180deg, #6ec6ff 0%, #90caf9 40%, #e3f2fd 100%), /* Clear blue sky */
+        url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center bottom/cover no-repeat; /* Crisp Mount Kenya peak */
+    height: 85vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -189,34 +184,299 @@ main {
     text-align: center;
     position: relative;
     overflow: hidden;
-    border-bottom: 5px solid #8b4513;
+    border-bottom: 6px solid #8b4513;
+    /* Enhanced depth and atmosphere */
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.3);
 }
 
 .hero::before {
     content: "🏔️";
     position: absolute;
-    top: 15%;
-    left: 15%;
-    font-size: 3rem;
-    opacity: 0.4;
-    animation: float 8s ease-in-out infinite;
+    top: 12%;
+    left: 20%;
+    font-size: 4rem;
+    opacity: 0.6;
+    animation: mountainFloat 12s ease-in-out infinite;
     color: #e8f4f8;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
 }
 
 .hero::after {
-    content: "�";
+    content: "🌾";
     position: absolute;
-    bottom: 15%;
-    right: 15%;
-    font-size: 2.5rem;
-    opacity: 0.3;
-    animation: float 6s ease-in-out infinite reverse;
-    color: #d4af37;
+    bottom: 20%;
+    right: 25%;
+    font-size: 3rem;
+    opacity: 0.5;
+    animation: grassFloat 8s ease-in-out infinite reverse;
+    color: #90EE90;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
 }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+/* Additional Mount Kenya peak elements */
+.hero::after {
+    content: "🏔️";
+    position: absolute;
+    top: 8%;
+    left: 10%;
+    font-size: 2.5rem;
+    opacity: 0.4;
+    animation: mountainFloat 15s ease-in-out infinite;
+    color: #f0f8ff;
+    filter: blur(1px);
+}
+
+@keyframes mountainFloat {
+    0%, 100% { 
+        transform: translateY(0px) scale(1); 
+        opacity: 0.6;
+    }
+    50% { 
+        transform: translateY(-15px) scale(1.05); 
+        opacity: 0.8;
+    }
+}
+
+@keyframes grassFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        opacity: 0.5;
+    }
+    50% { 
+        transform: translateY(-10px) rotate(2deg); 
+        opacity: 0.7;
+    }
+}
+
+/* Mount Kenya Atmospheric Effects */
+.hero {
+    position: relative;
+}
+
+.hero:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        /* Morning mist layers */
+        radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 40%, rgba(240,248,255,0.08) 0%, transparent 60%),
+        /* Cloud formations */
+        radial-gradient(ellipse at 15% 25%, rgba(255,255,255,0.12) 0%, transparent 40%),
+        radial-gradient(ellipse at 85% 35%, rgba(248,250,252,0.1) 0%, transparent 45%);
+    pointer-events: none;
+    animation: mistDrift 20s ease-in-out infinite;
+}
+
+/* Floating landscape particles */
+.hero:after {
+    content: '🌤️';
+    position: absolute;
+    top: 15%;
+    right: 20%;
+    font-size: 2rem;
+    opacity: 0.4;
+    animation: cloudDrift 25s linear infinite;
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255,255,255,0.5);
+}
+
+/* Additional Mount Kenya elements */
+.hero .mountain-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(transparent 0%, transparent 20%, rgba(139,69,19,0.1) 50%, rgba(34,139,34,0.2) 100%);
+    pointer-events: none;
+}
+
+@keyframes mistDrift {
+    0%, 100% { 
+        transform: translateX(0px) scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: translateX(20px) scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+@keyframes cloudDrift {
+    0% { 
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+    50% { 
+        opacity: 0.6;
+    }
+    100% { 
+        transform: translateX(calc(100vw + 100px));
+        opacity: 0;
+    }
+}
+
+/* Mwea Plains Enhancement */
+.hero .plains-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: 
+        linear-gradient(to top, 
+            rgba(34,139,34,0.3) 0%, 
+            rgba(46,125,50,0.2) 30%, 
+            transparent 100%);
+    pointer-events: none;
+}
+
+/* Enhanced text readability against Mount Kenya backdrop */
+.hero-content {
+    position: relative;
+    z-index: 10;
+    background: rgba(0,0,0,0.3);
+    padding: 40px;
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* Mount Kenya Highland Mist Effects */
+.highland-mist {
+    display: none;
+}
+
+.mist-particle {
+    display: none;
+}
+
+.mist-1 {
+    width: 200px;
+    height: 100px;
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.mist-2 {
+    width: 300px;
+    height: 150px;
+    top: 25%;
+    left: 60%;
+    animation-delay: 5s;
+}
+
+.mist-3 {
+    width: 250px;
+    height: 120px;
+    top: 15%;
+    left: 35%;
+    animation-delay: 10s;
+}
+
+@keyframes mistFlow {
+    0%, 100% {
+        transform: translateX(0px) translateY(0px) scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translateX(30px) translateY(-10px) scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+/* Mwea Plains Grass Animation */
+.mwea-grass {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30%;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.grass-blade {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.4;
+    animation: grassSway 8s ease-in-out infinite;
+    color: #90EE90;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.grass-1 {
+    bottom: 15%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.grass-2 {
+    bottom: 20%;
+    left: 40%;
+    animation-delay: 2s;
+    font-size: 1.8rem;
+}
+
+.grass-3 {
+    bottom: 18%;
+    left: 65%;
+    animation-delay: 4s;
+}
+
+.grass-4 {
+    bottom: 22%;
+    left: 80%;
+    animation-delay: 6s;
+    font-size: 1.5rem;
+}
+
+@keyframes grassSway {
+    0%, 100% {
+        transform: rotate(-2deg) scale(1);
+        opacity: 0.4;
+    }
+    50% {
+        transform: rotate(3deg) scale(1.1);
+        opacity: 0.7;
+    }
+}
+
+/* Mount Kenya Parallax Enhancement */
+.mount-kenya-silhouette {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, 
+        rgba(100,120,140,0.3) 0%,
+        rgba(80,100,120,0.2) 50%,
+        transparent 100%);
+    clip-path: polygon(0 100%, 15% 60%, 25% 40%, 35% 45%, 45% 30%, 55% 35%, 65% 20%, 75% 25%, 85% 15%, 100% 20%, 100% 100%);
+}
+
+/* Weather overlay for authentic Kirinyaga atmosphere */
+.hero::before {
+    background: 
+        /* Altitude-based temperature gradient */
+        linear-gradient(to bottom, 
+            rgba(200,220,240,0.1) 0%,    /* Snow caps */
+            rgba(180,200,220,0.08) 30%,  /* Alpine zone */
+            rgba(160,180,200,0.06) 60%,  /* Highland forest */
+            rgba(100,150,100,0.04) 100%  /* Agricultural plains */
+        ),
+        /* Seasonal weather patterns */
+        radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 50%, rgba(240,248,255,0.08) 0%, transparent 50%);
 }
 
 .hero-content h2 {
@@ -1714,13 +1974,13 @@ section {
 .mount-kenya-silhouette {
     position: absolute;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 40%;
-    background: linear-gradient(to top, 
-        rgba(44, 62, 80, 0.9) 0%,
-        rgba(52, 73, 94, 0.7) 30%,
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(to top, #263238 90%, transparent 100%);
+    clip-path: polygon(0 100%, 12% 70%, 22% 60%, 32% 55%, 42% 50%, 52% 25%, 62% 40%, 72% 35%, 82% 60%, 92% 80%, 100% 100%);
+    z-index: 10;
+    box-shadow: 0 8px 32px rgba(38,50,56,0.3);
         rgba(108, 117, 125, 0.5) 60%,
         transparent 100%);
     clip-path: polygon(0% 100%, 5% 80%, 12% 85%, 18% 75%, 25% 80%, 32% 65%, 38% 70%, 45% 55%, 50% 40%, 55% 55%, 62% 70%, 68% 65%, 75% 80%, 82% 75%, 88% 85%, 95% 80%, 100% 100%);
