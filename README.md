@@ -1,4 +1,6 @@
-# The Mountain Goat Farm App �
+A modern, responsive web application for The Mountain Goat Farm showcasing our farm, goats, and premium meat products.
+
+# The Mountain Goat Farm App 🐐
 
 A modern, responsive web application for The Mountain Goat Farm showcasing our farm, goats, and premium meat products.
 
@@ -10,12 +12,13 @@ At The Mountain Goat Farm, we specialize in breeding excellence for meat goat pr
 
 ## Features
 
+- **Tabbed Navigation**: Public page sections (About, Products, Care Tips, Testimonials) are organized into tabs for easy access
+- **Unified Goat Gallery**: Champion herd and regular goats are now shown together in a single section
+- **Admin-Only Activity Feed**: Live farm activity feed is now accessible only from the admin dashboard
+- **Enhanced Customer Testimonials**: Dedicated tab for real customer stories and ratings
+- **Expert Goat Care Tips**: Easily accessible tips for optimal goat health and breeding
 - **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
-- **Interactive Goat Gallery**: Browse through our farm's premium breeding stock with detailed genetic information
-- **Product Showcase**: Display of farm products specializing in Grade A+ goat meat and superior breeding stock
-- **About Section**: Learn about our farm's history and superior meat goat breeding practices
 - **Contact Form**: Easy way for customers to get in touch
-- **Smooth Scrolling Navigation**: User-friendly navigation experience
 
 ## Technologies Used
 
@@ -42,10 +45,11 @@ At The Mountain Goat Farm, we specialize in breeding excellence for meat goat pr
 
 ```
 Mountain-Goat-Farm-app/
-├── index.html          # Main HTML file
-├── styles.css          # Stylesheet
-├── script.js           # JavaScript functionality
-└── README.md           # Project documentation
+├── index.html              # Main public site (now with tabbed navigation)
+├── styles.css              # Stylesheet
+├── farm-records.html       # Admin dashboard (with activity feed)
+├── script.js               # JavaScript functionality
+└── README.md               # Project documentation
 ```
 
 ## Farm Location

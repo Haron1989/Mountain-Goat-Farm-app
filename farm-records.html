@@ -1,3 +1,33 @@
+        <!-- Live Farm Activity Feed (moved from public site) -->
+        <section class="activity-feed-section">
+            <div class="container">
+                <div class="activity-feed-header">
+                    <h2>🚜 Live Farm Activity Feed</h2>
+                    <div class="activity-controls">
+                        <select id="activityFilter">
+                            <option value="all">All Activities</option>
+                            <option value="livestock">🐐 Livestock</option>
+                            <option value="health">💊 Health & Treatment</option>
+                            <option value="breeding">🍼 Breeding</option>
+                            <option value="sales">💰 Sales & Finance</option>
+                            <option value="feed">🌾 Feed & Nutrition</option>
+                            <option value="maintenance">🔧 Maintenance</option>
+                        </select>
+                        <button id="clearActivities" class="btn-secondary">Clear All</button>
+                    </div>
+                </div>
+                <div class="activity-feed-container">
+                    <div id="activityFeed" class="activity-feed">
+                        <!-- Activities will be populated dynamically -->
+                    </div>
+                    <div class="activity-feed-empty" id="activityEmpty" style="display: none;">
+                        <div class="empty-icon">📋</div>
+                        <h3>No Activities Yet</h3>
+                        <p>Farm activities will appear here as they happen</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 <!DOCTYPE html>
 <html lang="en">
 <head>

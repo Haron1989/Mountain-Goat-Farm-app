@@ -1,3 +1,32 @@
+        <!-- Tabbed Navigation for Public Sections -->
+        <section class="public-tabs-section">
+            <div class="container">
+                <div class="tabs-nav">
+                    <button class="tab-btn active" data-tab="about">About Our Farm</button>
+                    <button class="tab-btn" data-tab="products">Farm Products</button>
+                    <button class="tab-btn" data-tab="care">Expert Goat Care Tips</button>
+                    <button class="tab-btn" data-tab="testimonials">What Customers Say</button>
+                </div>
+                <div class="tabs-content">
+                    <div class="tab-content about-tab active">
+                        <!-- About Our Farm section moved here -->
+                        ...existing code for About Our Farm...
+                    </div>
+                    <div class="tab-content products-tab">
+                        <!-- Farm Products section moved here -->
+                        ...existing code for Farm Products...
+                    </div>
+                    <div class="tab-content care-tab">
+                        <!-- Expert Goat Care Tips section moved here -->
+                        ...existing code for Expert Goat Care Tips...
+                    </div>
+                    <div class="tab-content testimonials-tab">
+                        <!-- What Customers Say section moved here -->
+                        ...existing code for What Customers Say...
+                    </div>
+                </div>
+            </div>
+        </section>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -156,194 +185,16 @@
         </section>
 
         <!-- Meet the Herd Gallery Section -->
-        <section class="meet-the-herd">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Meet Our Champion Herd</h2>
-                    <p class="section-subtitle">Discover the stars of The Mountain Goat Farm - each with their own story of excellence</p>
-                </div>
-                
-                <div class="herd-carousel">
-                    <div class="carousel-container">
-                        <div class="carousel-track" id="herd-carousel-track">
-                            <!-- Champion Goat Cards -->
-                            <div class="champion-card">
-                                <div class="champion-image">
-                                    <img src="https://images.unsplash.com/photo-1518717758536-85ae29035b6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Bella - Boer Champion">
-                                    <div class="champion-badge">🏆 Champion</div>
-                                </div>
-                                <div class="champion-info">
-                                    <h3>Bella</h3>
-                                    <p class="breed">Premium Boer Doe</p>
-                                    <p class="genetics">Superior bloodline - Champion sire genetics</p>
-                                    <div class="stats">
-                                        <span>Weight: 68kg</span>
-                                        <span>Age: 3 years</span>
-                                        <span>Grade: A+</span>
-                                    </div>
-                                    <button class="view-details-btn" data-goat="bella">View Profile</button>
-                                </div>
-                            </div>
-                            
-                            <div class="champion-card">
-                                <div class="champion-image">
-                                    <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Rocky - Premier Buck">
-                                    <div class="champion-badge">👑 Premier Buck</div>
-                                </div>
-                                <div class="champion-info">
-                                    <h3>Rocky</h3>
-                                    <p class="breed">Elite Boer Buck</p>
-                                    <p class="genetics">Premium breeding buck - Superior genetics</p>
-                                    <div class="stats">
-                                        <span>Weight: 85kg</span>
-                                        <span>Age: 5 years</span>
-                                        <span>Grade: A+</span>
-                                    </div>
-                                    <button class="view-details-btn" data-goat="rocky">View Profile</button>
-                                </div>
-                            </div>
-                            
-                            <div class="champion-card">
-                                <div class="champion-image">
-                                    <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Charlie - Kiko Excellence">
-                                    <div class="champion-badge">🌟 Hardy Genetics</div>
-                                </div>
-                                <div class="champion-info">
-                                    <h3>Charlie</h3>
-                                    <p class="breed">Pure Kiko Buck</p>
-                                    <p class="genetics">Hardy New Zealand genetics - Disease resistant</p>
-                                    <div class="stats">
-                                        <span>Weight: 72kg</span>
-                                        <span>Age: 2 years</span>
-                                        <span>Grade: A</span>
-                                    </div>
-                                    <button class="view-details-btn" data-goat="charlie">View Profile</button>
-                                </div>
-                            </div>
-                            
-                            <!-- Farm Team Card -->
-                            <div class="champion-card team-card">
-                                <div class="champion-image">
-                                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Farm Team">
-                                    <div class="champion-badge">👥 Our Team</div>
-                                </div>
-                                <div class="champion-info">
-                                    <h3>Expert Care Team</h3>
-                                    <p class="breed">Professional Farm Staff</p>
-                                    <p class="genetics">Dedicated professionals ensuring the highest standards of animal welfare</p>
-                                    <div class="stats">
-                                        <span>Experience: 10+ years</span>
-                                        <span>Certification: Animal Husbandry</span>
-                                        <span>Specialization: Breeding</span>
-                                    </div>
-                                    <button class="view-details-btn" data-goat="team">Meet the Team</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <button class="carousel-btn prev" id="herd-prev">‹</button>
-                        <button class="carousel-btn next" id="herd-next">›</button>
-                    </div>
-                    
-                    <div class="carousel-indicators" id="herd-indicators">
-                        <span class="indicator active" data-slide="0"></span>
-                        <span class="indicator" data-slide="1"></span>
-                        <span class="indicator" data-slide="2"></span>
-                        <span class="indicator" data-slide="3"></span>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- Champion and regular goats will be shown together in the unified section below -->
 
         <!-- Mountain Divider -->
         <div class="mountain-divider"></div>
 
         <!-- Dynamic Farm Activity Feed Section -->
-        <section class="activity-feed-section">
-            <div class="container">
-                <div class="activity-feed-header">
-                    <h2>🚜 Live Farm Activity Feed</h2>
-                    <div class="activity-controls">
-                        <select id="activityFilter">
-                            <option value="all">All Activities</option>
-                            <option value="livestock">🐐 Livestock</option>
-                            <option value="health">💊 Health & Treatment</option>
-                            <option value="breeding">🍼 Breeding</option>
-                            <option value="sales">💰 Sales & Finance</option>
-                            <option value="feed">🌾 Feed & Nutrition</option>
-                            <option value="maintenance">🔧 Maintenance</option>
-                        </select>
-                        <button id="clearActivities" class="btn-secondary">Clear All</button>
-                    </div>
-                </div>
-                
-                <div class="activity-feed-container">
-                    <div id="activityFeed" class="activity-feed">
-                        <!-- Activities will be populated dynamically -->
-                    </div>
-                    <div class="activity-feed-empty" id="activityEmpty" style="display: none;">
-                        <div class="empty-icon">📋</div>
-                        <h3>No Activities Yet</h3>
-                        <p>Farm activities will appear here as they happen</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- Activity Feed moved to admin dashboard -->
 
         <!-- Enhanced Customer Testimonials Section -->
-        <section class="testimonials-section">
-            <div class="container">
-                <div class="section-header">
-                    <h2>💬 What Our Customers Say</h2>
-                    <p>Real experiences from farmers across Kenya who trust Mountain Goat Farm</p>
-                    <div class="testimonials-stats">
-                        <div class="stat-item">
-                            <span class="stat-number">98%</span>
-                            <span class="stat-label">Customer Satisfaction</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">200+</span>
-                            <span class="stat-label">Happy Customers</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">4.9★</span>
-                            <span class="stat-label">Average Rating</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="testimonials-carousel">
-                    <div class="testimonials-grid" id="testimonials-grid">
-                        <!-- Featured Testimonial -->
-                        <div class="testimonial-card featured">
-                            <div class="testimonial-header">
-                                <div class="customer-photo">
-                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face&auto=format" alt="David Mwangi" loading="lazy">
-                                </div>
-                                <div class="customer-details">
-                                    <h4>David Mwangi</h4>
-                                    <span class="customer-title">Commercial Farmer</span>
-                                    <span class="customer-location">📍 Nyeri County</span>
-                                    <div class="rating">⭐⭐⭐⭐⭐</div>
-                                </div>
-                            </div>
-                            <div class="testimonial-content">
-                                <blockquote>
-                                    "Mountain Goat Farm transformed my business! Their Boer goats increased my herd's meat quality by 40%. The breeding program guidance was exceptional, and within 18 months, my annual revenue doubled. Best investment I've ever made!"
-                                </blockquote>
-                            </div>
-                            <div class="testimonial-metrics">
-                                <span class="metric">+40% Meat Quality</span>
-                                <span class="metric">2x Revenue Growth</span>
-                                <span class="metric">18 Months ROI</span>
-                            </div>
-                        </div>
-
-                        <!-- Regular Testimonials -->
-                        <div class="testimonial-card">
-                            <div class="testimonial-header">
-                                <div class="customer-photo">
-                                    <img src="https://images.unsplash.com/photo-1494790108755-2616c15020c5?w=60&h=60&fit=crop&crop=face&auto=format" alt="Grace Wanjiku" loading="lazy">
+        <!-- Testimonials section moved to tab -->
                                 </div>
                                 <div class="customer-details">
                                     <h4>Grace Wanjiku</h4>
@@ -507,8 +358,8 @@
 
         <section id="goats" class="goats-section">
             <div class="container">
-                <h2>Our Goats</h2>
-                
+                <h2>Our Goats & Champion Herd</h2>
+                <p class="section-subtitle">Discover all our goats, including champions and breeding stock, in one place</p>
                 <!-- Goat Filtering Options -->
                 <div class="goat-filters">
                     <button class="filter-btn active" data-filter="all">All Goats</button>
@@ -517,55 +368,18 @@
                     <button class="filter-btn" data-filter="boer">Boer Breed</button>
                     <button class="filter-btn" data-filter="kiko">Kiko Breed</button>
                 </div>
-                
                 <div class="goat-grid" id="goat-grid">
-                    <!-- Goats will be populated by JavaScript -->
+                    <!-- Champion and regular goats will be populated by JavaScript or static markup -->
                 </div>
-                
                 <!-- Goat Care Tips -->
-                <div class="goat-care-tips">
-                    <h3>🐐 Expert Goat Care Tips</h3>
-                    <div class="tips-grid">
-                        <div class="tip-card">
-                            <h4>🌱 Nutrition</h4>
-                            <p>High-quality pasture and supplemental feed for optimal growth</p>
-                        </div>
-                        <div class="tip-card">
-                            <h4>🏥 Health</h4>
-                            <p>Regular vet checkups and vaccination schedules</p>
-                        </div>
-                        <div class="tip-card">
-                            <h4>🏠 Housing</h4>
-                            <p>Clean, dry shelter with proper ventilation</p>
-                        </div>
-                        <div class="tip-card">
-                            <h4>🧬 Breeding</h4>
-                            <p>Selective breeding for superior genetics and meat quality</p>
-                        </div>
-                    </div>
-                </div>
+                <!-- Goat Care Tips section moved to tab -->
             </div>
         </section>
 
         <!-- Mountain Divider -->
         <div class="mountain-divider"></div>
 
-        <section id="products" class="products-section">
-            <div class="container">
-                <h2>Farm Products</h2>
-                <div class="breeding-emphasis">
-                    <h3>🐐 Meat Goats – Quality Breeding, Superior Genetics 🏆</h3>
-                    <p>We specialize in breeding Kenya's finest meat goats with superior genetics for exceptional meat quality, rapid growth, and disease resistance.</p>
-                </div>
-                <button id="admin-manage-products" class="admin-btn">Admin: Manage Products</button>
-                
-                <!-- Product Categories Filter -->
-                <div class="product-filters">
-                    <button class="filter-btn active" data-category="all">All Products</button>
-                    <button class="filter-btn" data-category="meat">Meat Products</button>
-                    <button class="filter-btn" data-category="skincare">Skincare</button>
-                    <button class="filter-btn" data-category="other">Other</button>
-                    <button class="filter-btn" data-category="sale">🔥 On Sale</button>
+        <!-- Farm Products section moved to tab -->
                     <button class="filter-btn" data-category="new">✨ New</button>
                     <button class="filter-btn" data-category="seasonal">🍂 Seasonal</button>
                     <button class="filter-btn" data-category="bundles">📦 Bundles</button>
@@ -627,44 +441,7 @@
         <!-- Mountain Divider -->
         <div class="mountain-divider"></div>
 
-        <section id="about" class="about-section">
-            <div class="container">
-                <h2>About Our Farm</h2>
-                <div class="breeding-emphasis">
-                    <h3>🏆 Meat Goats – Quality Breeding, Superior Genetics Excellence 🏆</h3>
-                    <p>Leading Kenya's meat goat industry with award-winning breeding programs and genetically superior livestock for premium meat production. Our experienced team with over 10 years of expertise ensures exceptional quality from our newly established farm.</p>
-                </div>
-                <div class="about-content">
-                    <div class="about-text">
-                        <p>The Mountain Goat Farm is a newly established farm located on Kimicha-Kangai Road in Kirinyaga County, in the foothills of Mount Kenya. Founded by experienced professionals with over 10 years of expertise in goat breeding and livestock management, our team's extensive knowledge ensures the highest standards in meat goat production from day one.</p>
-                        <p>We pride ourselves on sustainable farming practices, superior genetics, and quality breeding programs that produce healthy, robust meat goats for both local and international markets. Our experienced staff brings proven expertise to deliver exceptional results. Raising Kenya's Finest Meat Goats – Quality Breeding, Superior Genetics from the Heart of the Mountain.</p>
-                    </div>
-                    <div class="farm-stats">
-                        <div class="stat">
-                            <h3 id="goat-count">25</h3>
-                            <p>Premium Goats</p>
-                        </div>
-                        <div class="stat">
-                            <h3>10+</h3>
-                            <p>Years Experience</p>
-                        </div>
-                        <div class="stat">
-                            <h3>100%</h3>
-                            <p>Quality Genetics</p>
-                        </div>
-                        <div class="stat">
-                            <h3>2025</h3>
-                            <p>Established</p>
-                        </div>
-                    </div>
-                    
-                    <div class="experience-highlight">
-                        <h3>🎯 Expert Team - Proven Experience</h3>
-                        <p>Our newly established farm is led by seasoned professionals with over 10 years of combined experience in goat breeding, livestock management, and meat production. We bring proven expertise to ensure the highest standards in meat goat breeding from day one.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- About Our Farm section moved to tab -->
 
         <!-- Mountain Divider -->
         <div class="mountain-divider"></div>
