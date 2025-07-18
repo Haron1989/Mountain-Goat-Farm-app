@@ -1,3 +1,74 @@
+        <!-- Farm Contact Details Management -->
+        <section class="contact-details-section">
+            <div class="container">
+                <h2>Farm Contact Details</h2>
+                <form id="contact-details-form">
+                    <div class="input-group">
+                        <label for="farm-address">Farm Address</label>
+                        <input type="text" id="farm-address" name="farm-address" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="farm-email">Farm Email</label>
+                        <input type="email" id="farm-email" name="farm-email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="farm-phone">Farm Phone</label>
+                        <input type="tel" id="farm-phone" name="farm-phone" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="farm-website">Farm Website</label>
+                        <input type="url" id="farm-website" name="farm-website">
+                    </div>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+                <div id="contact-details-status" style="margin-top:1rem;"></div>
+            </div>
+        </section>
+        <script>
+        // Load contact details from backend
+        function loadContactDetails() {
+            fetch('/api/contact-details')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('farm-address').value = data.farmAddress || '';
+                    document.getElementById('farm-email').value = data.farmEmail || '';
+                    document.getElementById('farm-phone').value = data.farmPhone || '';
+                    document.getElementById('farm-website').value = data.farmWebsite || '';
+                })
+                .catch(() => {
+                    document.getElementById('contact-details-status').textContent = 'Failed to load contact details.';
+                });
+        }
+        loadContactDetails();
+
+        // Save contact details to backend
+        document.getElementById('contact-details-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const farmAddress = document.getElementById('farm-address').value;
+            const farmEmail = document.getElementById('farm-email').value;
+            const farmPhone = document.getElementById('farm-phone').value;
+            const farmWebsite = document.getElementById('farm-website').value;
+            fetch('/api/contact-details', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ farmAddress, farmEmail, farmPhone, farmWebsite })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('contact-details-status').textContent = 'Contact details updated successfully!';
+                    setTimeout(function() {
+                        document.getElementById('contact-details-status').textContent = '';
+                    }, 3000);
+                } else {
+                    document.getElementById('contact-details-status').textContent = 'Failed to update contact details.';
+                }
+            })
+            .catch(() => {
+                document.getElementById('contact-details-status').textContent = 'Failed to update contact details.';
+            });
+        });
+        </script>
         <!-- Live Farm Activity Feed (moved from public site) -->
         <section class="activity-feed-section">
             <div class="container">
