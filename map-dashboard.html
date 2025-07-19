@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Farm Map Dashboard</title>
+  <link rel="stylesheet" href="audit-log-dashboard.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+  <main class="dashboard-main">
+    <h1>Farm Map Dashboard</h1>
+    <div id="map" style="height: 500px; width: 100%;"></div>
+    <section class="dashboard-form">
+      <h2>Add Goat Location/Event</h2>
+      <form id="map-form">
+        <label>Type:
+          <select id="form-type">
+            <option value="Goat">Goat</option>
+            <option value="Feed Zone">Feed Zone</option>
+            <option value="Event">Event</option>
+          </select>
+        </label>
+        <label>Name/ID: <input type="text" id="form-name" required></label>
+        <label>Latitude: <input type="number" id="form-lat" step="any" required></label>
+        <label>Longitude: <input type="number" id="form-lng" step="any" required></label>
+        <button type="submit">Add Marker</button>
+      </form>
+      <div id="map-form-status"></div>
+    </section>
+  </main>
+  <script src="map-dashboard.js"></script>
+</body>
+</html>

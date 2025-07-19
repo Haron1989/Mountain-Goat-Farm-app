@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Breeding & Genetic Analytics Dashboard</title>
+  <link rel="stylesheet" href="audit-log-dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div id="auth-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="close-auth" class="close">&times;</span>
+      <h2>Login</h2>
+      <form id="login-form">
+        <label>Username: <input type="text" id="login-username" required></label>
+        <label>Password: <input type="password" id="login-password" required></label>
+        <button type="submit">Login</button>
+      </form>
+      <div id="login-status"></div>
+      <hr>
+      <h2>Register</h2>
+      <form id="register-form">
+        <label>Username: <input type="text" id="register-username" required></label>
+        <label>Password: <input type="password" id="register-password" required></label>
+        <label>Role:
+          <select id="register-role">
+            <option value="staff">Staff</option>
+            <option value="manager">Manager</option>
+            <option value="external">External</option>
+          </select>
+        </label>
+        <button type="submit">Register</button>
+      </form>
+      <div id="register-status"></div>
+    </div>
+  </div>
+  <button id="open-auth">Login/Register</button>
+  <button id="logout-btn" style="display:none;">Logout</button>
+  <main class="dashboard-main" style="display:none;">
+    <section class="dashboard-filters">
+      <h2>Filter Breeding Records</h2>
+      <form id="breeding-filter-form">
+        <label>Goat ID: <input type="text" id="filter-goat-id"></label>
+        <label>Pregnant:
+          <select id="filter-pregnant">
+            <option value="">All</option>
+            <option value="true">Pregnant</option>
+            <option value="false">Not Pregnant</option>
+          </select>
+        </label>
+        <label>Lineage: <input type="text" id="filter-lineage"></label>
+        <button type="submit">Apply Filters</button>
+        <button type="button" id="clear-filters">Clear</button>
+      </form>
+    </section>
+    <h1>Breeding & Genetic Analytics</h1>
+    <section class="dashboard-section">
+      <div class="dashboard-card">
+        <h2>Pregnancy Tracking</h2>
+        <canvas id="pregnancy-chart"></canvas>
+      </div>
+      <div class="dashboard-card">
+        <h2>Overdue Kiddings</h2>
+        <canvas id="overdue-chart"></canvas>
+      </div>
+      <div class="dashboard-card">
+        <h2>Genetic Lineage</h2>
+        <canvas id="lineage-chart"></canvas>
+      </div>
+      <div class="dashboard-card">
+        <h2>Breeding Success Rate</h2>
+        <canvas id="success-chart"></canvas>
+      </div>
+    </section>
+    <section class="dashboard-form">
+      <h2>Add Breeding Record</h2>
+      <form id="breeding-form">
+        <label>Goat ID: <input type="text" id="form-goat-id" required></label>
+        <label>Pregnant: <input type="checkbox" id="form-pregnant"></label>
+        <label>Kidding Date: <input type="date" id="form-kidding-date"></label>
+        <label>Genetic Lineage: <input type="text" id="form-lineage"></label>
+        <button type="submit">Add Record</button>
+      </form>
+      <div id="breeding-form-status"></div>
+    </section>
+  </main>
+  <script src="breeding-analytics-dashboard.js"></script>
+  <script>
+    let userRole = '';
+    let authToken = '';
+    function showDashboard(role) {
+      document.querySelector('main.dashboard-main').style.display = '';
+      document.getElementById('logout-btn').style.display = '';
+      userRole = role;
+      // Role-based UI logic can be added here
+    }
+    function hideDashboard() {
+      document.querySelector('main.dashboard-main').style.display = 'none';
+      document.getElementById('logout-btn').style.display = 'none';
+    }
+    document.getElementById('logout-btn').onclick = function() {
+      authToken = '';
+      userRole = '';
+      hideDashboard();
+    };
+    // Listen for login success from JS logic and call showDashboard(role)
+    // ...existing code...
+  </script>
+</body>
+</html>
