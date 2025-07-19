@@ -1,0 +1,76 @@
+    <section class="dashboard-form">
+      <h2>Add Audit Log Entry</h2>
+      <form id="audit-log-form">
+        <label>User: <input type="text" id="form-user" required></label>
+        <label>Action: <input type="text" id="form-action" required></label>
+        <label>Details: <input type="text" id="form-details" required></label>
+        <button type="submit">Add Entry</button>
+      </form>
+      <div id="form-status"></div>
+    </section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Log Dashboard - Mountain Goat Farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="audit-log-dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Audit Log Dashboard</h1>
+            <p>Track all user activity, filter by user/date/module, and view system usage analytics.</p>
+        </header>
+        <section class="filters-section">
+            <label>User:
+                <select id="user-filter">
+                    <option value="">All Users</option>
+                </select>
+            </label>
+            <label>Date:
+                <input type="date" id="date-filter">
+            </label>
+            <label>Module:
+                <select id="module-filter">
+                    <option value="">All Modules</option>
+                </select>
+            </label>
+            <button id="export-btn">Export CSV</button>
+        </section>
+        <section class="log-table-section">
+            <table id="audit-log-table">
+                <thead>
+                    <tr>
+                        <th>Date/Time</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Module</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Log rows will be populated here -->
+                </tbody>
+            </table>
+        </section>
+        <section class="charts-section">
+            <div class="chart-card">
+                <h3>Most Active Staff</h3>
+                <canvas id="active-users-chart" height="120"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Peak Usage Hours</h3>
+                <canvas id="usage-hours-chart" height="120"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Action Breakdown</h3>
+                <canvas id="action-breakdown-chart" height="120"></canvas>
+            </div>
+        </section>
+    </div>
+    <script src="audit-log-dashboard.js"></script>
+</body>
+</html>

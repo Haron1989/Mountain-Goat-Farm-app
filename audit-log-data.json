@@ -1,15 +1,5 @@
-const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
-const http = require('http');
 const WebSocket = require('ws');
-const app = express();
-const server = http.createServer(app);
-const PORT = process.env.PORT || 3001;
-
-app.use(express.json());
-app.use(express.static(path.join(__dirname)));
-
 mongoose.connect('mongodb://localhost:27017/mountain_goat_farm', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const auditLogSchema = new mongoose.Schema({
@@ -30,17 +20,7 @@ function broadcastAuditLog(log) {
   });
 }
 
-// Get contact details
-// Get contact details (unchanged)
-const CONTACT_FILE = path.join(__dirname, 'contact-details.json');
-app.get('/api/contact-details', (req, res) => {
-  // ...existing code...
-});
-app.post('/api/contact-details', (req, res) => {
-  // ...existing code...
-});
-
-// Get audit log data from MongoDB
+// Get audit log data
 app.get('/api/audit-logs', async (req, res) => {
   try {
     const logs = await AuditLog.find().sort({ timestamp: -1 }).exec();
@@ -50,7 +30,7 @@ app.get('/api/audit-logs', async (req, res) => {
   }
 });
 
-// Add new audit log entry to MongoDB and broadcast via WebSocket
+// Add new audit log entry
 app.post('/api/audit-logs', async (req, res) => {
   const { timestamp, user, action, details } = req.body;
   if (!timestamp || !user || !action || !details) {
@@ -65,6 +45,10 @@ app.post('/api/audit-logs', async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const ws = new WebSocket('ws://localhost:3001');
+ws.onmessage = (event) => {
+  // Optionally, re-fetch logs or directly add new log to dashboard
+  refreshDashboard();
+};
+
+// feat: migrate audit log to MongoDB and enable real-time dashboard updates via WebSocket

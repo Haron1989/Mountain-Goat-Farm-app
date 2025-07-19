@@ -60,6 +60,49 @@ seamless integration with your existing workflows.
 Happy farming! 🐐🌱
 `);
 
+// --- Audit Log Dashboard Sample Data Initialization ---
+// Run this code in your browser console or Node.js to set up demo data for the dashboard
+const sampleAuditLog = [
+  {
+    "timestamp": "2025-07-19T09:15:00",
+    "user": "alice",
+    "action": "records_view",
+    "details": "Viewed goat records"
+  },
+  {
+    "timestamp": "2025-07-19T10:30:00",
+    "user": "bob",
+    "action": "health_update",
+    "details": "Updated health check for goat #12"
+  },
+  {
+    "timestamp": "2025-07-19T11:00:00",
+    "user": "alice",
+    "action": "records_edit",
+    "details": "Edited breeding record"
+  },
+  {
+    "timestamp": "2025-07-19T12:45:00",
+    "user": "carol",
+    "action": "financial_export",
+    "details": "Exported financial records"
+  },
+  {
+    "timestamp": "2025-07-19T13:20:00",
+    "user": "bob",
+    "action": "records_delete",
+    "details": "Deleted old feed record"
+  }
+];
+if (typeof window !== 'undefined') {
+  localStorage.setItem('externalAccessAuditLog', JSON.stringify(sampleAuditLog));
+  console.log('Sample audit log data loaded for dashboard demo.');
+} else if (typeof global !== 'undefined') {
+  // For Node.js demo, you could write to a file or mock localStorage
+  console.log('Sample audit log data available for dashboard demo (Node.js).');
+}
+// --- End Audit Log Dashboard Sample Data Initialization ---
+
 // If running in a browser environment, provide interactive demo
 if (typeof window !== 'undefined') {
     console.log(`

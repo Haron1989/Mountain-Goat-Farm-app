@@ -1,0 +1,12 @@
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const logs = await getAuditLogData();
+    populateFilters(logs);
+    let filtered = filterLogs(logs);
+    populateTable(filtered);
+    renderCharts(filtered);
+    // ...event listeners...
+  } catch (err) {
+    console.error('Error loading audit logs:', err);
+  }
+});

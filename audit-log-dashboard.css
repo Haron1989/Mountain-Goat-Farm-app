@@ -1,0 +1,116 @@
+/* Audit Log Dashboard Styles */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
+    padding: 40px 32px;
+    font-family: 'Montserrat', sans-serif;
+}
+header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+header h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+header p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+.filters-section {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+.filters-section label {
+    font-weight: 600;
+    color: #34495e;
+    font-size: 1rem;
+}
+.filters-section select,
+.filters-section input[type="date"] {
+    margin-left: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #bdc3c7;
+    font-size: 1rem;
+}
+#export-btn {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+#export-btn:hover {
+    background: linear-gradient(135deg, #229954, #27ae60);
+}
+.log-table-section {
+    margin-bottom: 40px;
+    overflow-x: auto;
+}
+#audit-log-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #f8f9fa;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+}
+#audit-log-table th, #audit-log-table td {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 1rem;
+}
+#audit-log-table th {
+    background: #27ae60;
+    color: white;
+    font-weight: 700;
+}
+#audit-log-table tr:nth-child(even) {
+    background: #ecf0f1;
+}
+#audit-log-table tr:hover {
+    background: #d5f5e3;
+}
+.charts-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 32px;
+    margin-top: 32px;
+}
+.chart-card {
+    background: #f8f9fa;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+    padding: 24px 18px;
+    text-align: center;
+}
+.chart-card h3 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-bottom: 18px;
+}
+@media (max-width: 700px) {
+    .dashboard-container {
+        padding: 18px 6px;
+    }
+    .filters-section {
+        gap: 12px;
+    }
+    .charts-section {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+}

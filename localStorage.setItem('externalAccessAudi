@@ -1,0 +1,21 @@
+localStorage.setItem('externalAccessAuditLog', JSON.stringify([
+  {
+    timestamp: '2025-07-19T09:15:00',
+    user: 'alice',
+    action: 'records_view',
+    details: 'Viewed goat records'
+  },
+  {
+    timestamp: '2025-07-19T10:30:00',
+    user: 'bob',
+    action: 'health_update',
+    details: 'Updated health check for goat #12'
+  },
+  {
+    timestamp: '2025-07-19T11:00:00',
+    user: 'alice',
+    action: 'records_edit',
+    details: 'Edited breeding record'
+  }
+  // Add more sample entries as needed
+]));

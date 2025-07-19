@@ -1,12 +1,9 @@
-/* Force all elements to start from top */
-* {
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    margin: 0 !important;
-    padding: 0 !important;
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-}
+[
+  {
+    "timestamp": "2025-07-19T09:15:00",
+    "user": "alice",
+    "action": "records_view",
+    "details": "Viewed goat records"
+  },
+  ...
+]
